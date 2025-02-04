@@ -12,9 +12,9 @@ export default {
         background: "var(--background)",
         foreground: "var(--foreground)",
       },
-      screens: {
-        'xs': {'min': '310px', 'max': '400px'},
-      },
+      // screens: {
+      //   'xs': {'min': '310px', 'max': '400px'},
+      // },
     },
   },
   plugins: [],
