@@ -4,10 +4,10 @@ import Image from "next/image";
 import { motion } from "framer-motion";
 
 const navItems = [
-  { name: "Techniques", delay: 1.8 },
-  { name: "Soundbank", delay: 2.0 },
-  { name: "Articles", delay: 2.2 },
-  { name: "Contact", delay: 2.4 },
+  { name: "Techniques", delay: 2 },
+  { name: "Soundbank", delay: 2.4 },
+  { name: "Articles", delay: 2.8 },
+  { name: "Contact", delay: 3.2 },
 ];
 
 export default function Home() {
@@ -46,10 +46,10 @@ export default function Home() {
           <motion.button
             key={item.name}
             className="btn btn-md glass text-white w-40 font-body px-2 hover:bg-yellow-200 hover:text-red-500 transition-colors duration-200"
-            initial={{ x: -50, opacity: 0 }}
+            initial={{ x: -90, opacity: 0 }}
             animate={{ x: 0, opacity: 1 }}
             transition={{
-              duration: 0.5,
+              duration: 1,
               delay: item.delay,
               ease: "easeOut"
             }}
