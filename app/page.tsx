@@ -3,6 +3,13 @@
 import Image from "next/image";
 import { motion } from "framer-motion";
 
+const navItems = [
+  { name: "Techniques", delay: 1.8 },
+  { name: "Soundbank", delay: 2.0 },
+  { name: "Articles", delay: 2.2 },
+  { name: "Contact", delay: 2.4 },
+];
+
 export default function Home() {
   return (
     <div className="relative min-h-screen">
@@ -26,6 +33,30 @@ export default function Home() {
         />
         {/* Dark overlay for better text readability */}
         <div className="absolute inset-0 bg-black/30" />
+      </motion.div>
+
+      {/* Navigation Buttons */}
+      <motion.div 
+        className="absolute z-20 left-8 top-20 sm:left-12 md:left-16 lg:left-24 flex flex-col gap-3"
+        initial={{ x: -100, opacity: 0 }}
+        animate={{ x: 0, opacity: 1 }}
+        transition={{ duration: 0.8, delay: 1.5 }}
+      >
+        {navItems.map((item) => (
+          <motion.button
+            key={item.name}
+            className="btn btn-md glass text-white w-40 font-body px-2 hover:bg-yellow-200 hover:text-red-500 transition-colors duration-200"
+            initial={{ x: -50, opacity: 0 }}
+            animate={{ x: 0, opacity: 1 }}
+            transition={{
+              duration: 0.5,
+              delay: item.delay,
+              ease: "easeOut"
+            }}
+          >
+            {item.name}
+          </motion.button>
+        ))}
       </motion.div>
 
       {/* Content */}
