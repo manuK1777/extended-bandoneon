@@ -12,10 +12,24 @@ export default {
         background: "var(--background)",
         foreground: "var(--foreground)",
       },
-      // screens: {
-      //   'xs': {'min': '310px', 'max': '400px'},
-      // },
+      fontFamily: {
+        body: [
+          "ui-monospace", 
+          "SFMono-Regular", 
+          "Menlo", 
+          "Monaco", 
+          "Consolas", 
+          "Liberation Mono", 
+          "Courier New", 
+          "monospace"
+        ]
+      },
     },
   },
-  plugins: [],
+  plugins: [require('daisyui')],
+
+  daisyui: {
+    themes: ["light", "night", "cyberpunk"], // List of DaisyUI's built-in themes
+  },
+
 } satisfies Config;
