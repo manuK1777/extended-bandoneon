@@ -1,4 +1,3 @@
-import { motion } from "framer-motion";
 import NavButton from "./NavButton";
 import NavButtonGroup from "./NavButtonGroup";
 
