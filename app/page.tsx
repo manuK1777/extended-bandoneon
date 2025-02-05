@@ -3,7 +3,7 @@
 import Head from "next/head";
 import Image from "next/image";
 import { motion } from "framer-motion";
-import NavButtons from "../components/NavButtons";
+import NavButtons from "../components/buttons/NavButtons";
 
 export default function Home() {
   return (
