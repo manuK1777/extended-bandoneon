@@ -1,23 +1,12 @@
 import NavButton from "./NavButton";
 import NavButtonGroup from "./NavButtonGroup";
-
-interface NavItem {
-  name: string;
-  delay: number;
-}
+import { NavItem, navItems } from "@/constants/navigation";
 
 interface NavButtonsProps {
   animated?: boolean;
   className?: string;
   direction?: "horizontal" | "vertical";
 }
-
-const navItems: NavItem[] = [
-  { name: "Techniques", delay: 2 },
-  { name: "Soundbank", delay: 2.4 },
-  { name: "Articles", delay: 2.8 },
-  { name: "Contact", delay: 3.2 },
-];
 
 export default function NavButtons({ 
   animated = true, 
@@ -30,7 +19,7 @@ export default function NavButtons({
       animated={animated}
       className={className}
     >
-      {navItems.map((item) => (
+      {navItems.map((item: NavItem) => (
         <NavButton
           key={item.name}
           name={item.name}

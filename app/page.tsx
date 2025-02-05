@@ -3,7 +3,7 @@
 import Head from "next/head";
 import Image from "next/image";
 import { motion } from "framer-motion";
-import NavButtons from "../components/buttons/NavButtons";
+import ResponsiveNav from "../components/navigation/ResponsiveNav";
 
 export default function Home() {
   return (
@@ -64,12 +64,8 @@ export default function Home() {
           <div className="absolute inset-0 bg-black/30" />
         </motion.div>
 
-        {/* Navigation Buttons */}
-        <NavButtons 
-          animated={true} 
-          direction="vertical"
-          className="absolute z-20 left-8 top-20 sm:left-12 md:left-16 lg:left-24"
-        />
+        {/* Navigation */}
+        <ResponsiveNav />
 
         {/* Content */}
         <motion.div
