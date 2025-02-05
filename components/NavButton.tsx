@@ -1,0 +1,30 @@
+import { motion } from "framer-motion";
+
+interface NavButtonProps {
+  name: string;
+  delay?: number;
+  animated?: boolean;
+  className?: string;
+}
+
+export default function NavButton({ 
+  name, 
+  delay = 0,
+  animated = true,
+  className = ""
+}: NavButtonProps) {
+  return (
+    <motion.button
+      key={name}
+      className={[
+        "btn btn-md glass text-white w-40 font-body px-2 hover:bg-yellow-200 hover:text-red-500 transition-colors duration-200",
+        className
+      ].filter(Boolean).join(" ")}
+      initial={animated ? { x: -90, opacity: 0 } : undefined}
+      animate={animated ? { x: 0, opacity: 1 } : undefined}
+      transition={animated ? { duration: 1, delay, ease: "easeOut" } : undefined}
+    >
+      {name}
+    </motion.button>
+  );
+}
