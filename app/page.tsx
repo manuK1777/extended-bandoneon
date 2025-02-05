@@ -41,7 +41,7 @@ export default function Home() {
         />
       </Head>
       
-      <div className="relative min-h-screen">
+      <div className="relative h-screen w-full overflow-hidden flex flex-col">
         {/* Hero Image */}
         <motion.div
           className="absolute inset-0"
