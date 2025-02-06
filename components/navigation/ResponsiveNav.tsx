@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import NavButtons from "../buttons/NavButtons";
 import { navItems } from "@/constants/navigation";
 import { useState } from "react";
+import Link from "next/link";
 
 export default function ResponsiveNav() {
   const [isOpen, setIsOpen] = useState(false);
@@ -48,7 +49,12 @@ export default function ResponsiveNav() {
           >
             {navItems.map((item) => (
               <li key={item.name} className="hover:bg-yellow-200">
-                <a className="text-xs sm:text-sm md:text-base font-body hover:text-red-500 transition-colors duration-200 py-2 px-1">{item.name}</a>
+                <Link 
+                  href={`/${item.name.toLowerCase()}`}
+                  className="text-xs sm:text-sm md:text-base font-body hover:text-red-500 transition-colors duration-200 py-2 px-1"
+                >
+                  {item.name}
+                </Link>
               </li>
             ))}
           </motion.ul>

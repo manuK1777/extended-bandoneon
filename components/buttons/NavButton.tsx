@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import Link from "next/link";
 
 interface NavButtonProps {
   name: string;
@@ -13,18 +14,22 @@ export default function NavButton({
   animated = true,
   className = ""
 }: NavButtonProps) {
+  const href = `/${name.toLowerCase()}`;
+  
   return (
-    <motion.button
-      key={name}
-      className={[
-        "btn bg-white/5 border-white/5 text-white font-body px-2 hover:bg-yellow-200 hover:text-red-500 transition-colors duration-200 text-sm sm:text-base rounded-none",
-        className
-      ].filter(Boolean).join(" ")}
-      initial={animated ? { x: -90, opacity: 0 } : undefined}
-      animate={animated ? { x: 0, opacity: 1 } : undefined}
-      transition={animated ? { duration: 1, delay, ease: "easeOut" } : undefined}
-    >
-      {name}
-    </motion.button>
+    <Link href={href}>
+      <motion.button
+        key={name}
+        className={[
+          "btn bg-white/5 border-white/5 text-white font-body px-2 hover:bg-yellow-200 hover:text-red-500 transition-colors duration-200 text-sm sm:text-base rounded-none w-full",
+          className
+        ].filter(Boolean).join(" ")}
+        initial={animated ? { x: -90, opacity: 0 } : undefined}
+        animate={animated ? { x: 0, opacity: 1 } : undefined}
+        transition={animated ? { duration: 1, delay, ease: "easeOut" } : undefined}
+      >
+        {name}
+      </motion.button>
+    </Link>
   );
 }
