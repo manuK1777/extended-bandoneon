@@ -17,7 +17,7 @@ export default function NavButton({
     <motion.button
       key={name}
       className={[
-        "btn glass text-white font-body px-2 hover:bg-yellow-200 hover:text-red-500 transition-colors duration-200",
+        "btn glass text-white font-body px-2 hover:bg-yellow-200 hover:text-red-500 transition-colors duration-200 text-sm sm:text-base",
         className
       ].filter(Boolean).join(" ")}
       initial={animated ? { x: -90, opacity: 0 } : undefined}
