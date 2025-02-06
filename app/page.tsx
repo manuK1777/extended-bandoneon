@@ -69,7 +69,7 @@ export default function Home() {
 
         {/* Content */}
         <motion.div
-          className="relative z-10 flex items-end justify-center min-h-screen pb-[3.5rem] sm:pb-8 lg:pb-[0]"
+          className="relative z-10 flex items-end justify-center min-h-screen pb-[6.5rem] sm:pb-[6rem] md:pb-[6rem] lg:pb-[0]"
           initial={{ y: 100, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ duration: 1, delay: 1.2 }}

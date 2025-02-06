@@ -10,7 +10,7 @@ export default function ResponsiveNav() {
     <>
       {/* Desktop Navigation */}
       <div className="hidden md:block absolute z-20 left-8 top-20 sm:left-12 md:left-16 lg:left-24">
-        <NavButtons animated={true} direction="vertical" />
+        <NavButtons animated={true} direction="vertical" className="w-40 md:w-44 lg:w-48" />
       </div>
 
       {/* Mobile Navigation */}
@@ -39,7 +39,7 @@ export default function ResponsiveNav() {
           </label>
           <motion.ul
             tabIndex={0}
-            className="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow backdrop-blur-md bg-white/30 rounded-box w-36"
+            className="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow backdrop-blur-md bg-white/30 rounded-box w-34 sm:w-36"
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: isOpen ? 1 : 0, y: isOpen ? 0 : -10 }}
             exit={{ opacity: 0, y: -10 }}
@@ -48,7 +48,7 @@ export default function ResponsiveNav() {
           >
             {navItems.map((item) => (
               <li key={item.name}>
-                <a className="text-lg font-body hover:bg-yellow-200 hover:text-red-500 transition-colors duration-200">{item.name}</a>
+                <a className="text-lg w-full font-body hover:bg-yellow-200 hover:text-red-500 transition-colors duration-200 py-2 px-3">{item.name}</a>
               </li>
             ))}
           </motion.ul>
