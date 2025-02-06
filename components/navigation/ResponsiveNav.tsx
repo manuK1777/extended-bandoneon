@@ -39,7 +39,7 @@ export default function ResponsiveNav() {
           </label>
           <motion.ul
             tabIndex={0}
-            className="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow backdrop-blur-md bg-white/30 rounded-box w-34 sm:w-36"
+            className="menu menu-sm dropdown-content mt-3 z-[1] p-2 backdrop-blur-md w-22 sm:w-32 flex items-left"
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: isOpen ? 1 : 0, y: isOpen ? 0 : -10 }}
             exit={{ opacity: 0, y: -10 }}
@@ -47,8 +47,8 @@ export default function ResponsiveNav() {
             onMouseDown={(e) => e.preventDefault()}
           >
             {navItems.map((item) => (
-              <li key={item.name}>
-                <a className="text-xs w-full font-body hover:bg-yellow-200 hover:text-red-500 transition-colors duration-200 py-2 px-3">{item.name}</a>
+              <li key={item.name} className="hover:bg-yellow-200">
+                <a className="text-xs sm:text-sm md:text-base font-body hover:text-red-500 transition-colors duration-200 py-2 px-1">{item.name}</a>
               </li>
             ))}
           </motion.ul>
