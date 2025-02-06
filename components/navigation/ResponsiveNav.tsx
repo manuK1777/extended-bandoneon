@@ -1,17 +1,31 @@
+"use client";
+
 import { motion } from "framer-motion";
 import NavButtons from "../buttons/NavButtons";
 import { navItems } from "@/constants/navigation";
 import { useState } from "react";
 import Link from "next/link";
 
-export default function ResponsiveNav() {
+interface ResponsiveNavProps {
+  direction?: "horizontal" | "vertical";
+  animated?: boolean;
+}
+
+export default function ResponsiveNav({ 
+  direction = "vertical",
+  animated = true 
+}: ResponsiveNavProps) {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
     <>
       {/* Desktop Navigation */}
-      <div className="hidden md:block absolute z-20 left-8 top-20 sm:left-12 md:left-16 lg:left-24">
-        <NavButtons animated={true} direction="vertical" className="w-40 md:w-44 lg:w-48" />
+      <div className={`hidden md:block ${direction === "vertical" ? "absolute z-20 left-8 top-20 sm:left-12 md:left-16 lg:left-24" : ""}`}>
+        <NavButtons 
+          animated={animated} 
+          direction={direction} 
+          className={direction === "vertical" ? "w-40 md:w-44 lg:w-48" : ""}
+        />
       </div>
 
       {/* Mobile Navigation */}
