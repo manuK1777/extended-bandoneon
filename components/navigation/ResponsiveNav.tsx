@@ -48,7 +48,7 @@ export default function ResponsiveNav() {
           >
             {navItems.map((item) => (
               <li key={item.name}>
-                <a className="text-lg w-full font-body hover:bg-yellow-200 hover:text-red-500 transition-colors duration-200 py-2 px-3">{item.name}</a>
+                <a className="text-xs w-full font-body hover:bg-yellow-200 hover:text-red-500 transition-colors duration-200 py-2 px-3">{item.name}</a>
               </li>
             ))}
           </motion.ul>
