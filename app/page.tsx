@@ -4,6 +4,7 @@ import Head from "next/head";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import ResponsiveNav from "../components/navigation/ResponsiveNav";
+import SocialMediaBar from "../components/SocialMediaBar";
 
 export default function Home() {
   return (
@@ -64,8 +65,14 @@ export default function Home() {
           <div className="absolute inset-0 bg-black/30" />
         </motion.div>
 
-        {/* Navigation */}
         <ResponsiveNav />
+
+        {/* Social Media Icons */}
+        {/* <div className="grid grid-cols-12 fixed top-10 w-full z-20">
+          <div className="col-start-9 col-span-3 md:col-start-11 md:col-span-2 pt-16 sm:pt-8">
+            <SocialMediaBar />
+          </div>
+        </div> */}
 
         {/* Content */}
         <motion.div
