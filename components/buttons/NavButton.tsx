@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 interface NavButtonProps {
   name: string;
@@ -17,15 +18,19 @@ export default function NavButton({
   className = ""
 }: NavButtonProps) {
   const href = `/${name.toLowerCase()}`;
+  const pathname = usePathname();
+  const isActive = pathname === href;
+  
+  const baseClasses = "btn bg-white/5 border-white/5 font-body px-2 transition-colors duration-200 text-sm sm:text-base rounded-none w-full";
+  const colorClasses = isActive 
+    ? "text-red-600  hover:bg-transparent hover:border-transparent" 
+    : "text-white bg-transparent border-transparent hover:bg-yellow-200 hover:text-red-500";
   
   return (
     <Link href={href}>
       <motion.button
         key={name}
-        className={[
-          "btn bg-white/5 border-white/5 text-white font-body px-2 hover:bg-yellow-200 hover:text-red-500 transition-colors duration-200 text-sm sm:text-base rounded-none w-full",
-          className
-        ].filter(Boolean).join(" ")}
+        className={[baseClasses, colorClasses, className].filter(Boolean).join(" ")}
         initial={animated ? { x: -90, opacity: 0 } : undefined}
         animate={animated ? { x: 0, opacity: 1 } : undefined}
         transition={animated ? { duration: 1, delay, ease: "easeOut" } : undefined}

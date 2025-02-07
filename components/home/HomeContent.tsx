@@ -3,7 +3,6 @@
 import { motion } from "framer-motion";
 import Image from "next/image";
 import ResponsiveNav from "../navigation/ResponsiveNav";
-import SocialMediaBar from "../SocialMediaBar";
 
 export default function HomeContent() {
   return (
@@ -31,11 +30,6 @@ export default function HomeContent() {
       </motion.div>
 
       <ResponsiveNav />
-
-      {/* Social Media Icons */}
-      {/* <div className="absolute top-8 right-8 z-20">
-        <SocialMediaBar />
-      </div> */}
 
       {/* Content */}
       <motion.div

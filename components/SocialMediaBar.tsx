@@ -19,7 +19,7 @@ const SocialMediaBar = ({ className = "" }: SocialMediaBarProps) => {
       className={`flex gap-6 ${className}`}
       initial={{ y: 100, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
-      transition={{ duration: 1, delay: 2 }}
+      transition={{ duration: 1, delay: 2}}
     >
       <a
         href="https://instagram.com/your-handle"
