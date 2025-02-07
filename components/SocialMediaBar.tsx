@@ -14,9 +14,11 @@ interface SocialMediaBarProps {
 }
 
 const SocialMediaBar = ({ className = "" }: SocialMediaBarProps) => {
+  const iconClass = "w-5 h-5 md:w-6 md:h-6 text-white hover:text-red-500 transition-colors duration-300 mt-4 md:mt-0";
+
   return (
     <motion.div 
-      className={`flex gap-6 ${className}`}
+      className={`flex gap-4 md:gap-6 ${className}`}
       initial={{ y: 100, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 1, delay: 2}}
@@ -25,33 +27,33 @@ const SocialMediaBar = ({ className = "" }: SocialMediaBarProps) => {
         href="https://instagram.com/your-handle"
         target="_blank"
         rel="noopener noreferrer"
-        className="text-white hover:text-red-500 transition-colors duration-300"
+        className="block"
       >
-        <FontAwesomeIcon icon={faInstagram} className="w-6 h-6" />
+        <FontAwesomeIcon icon={faInstagram} className={iconClass} />
       </a>
       <a
         href="https://soundcloud.com/your-handle"
         target="_blank"
         rel="noopener noreferrer"
-        className="text-white hover:text-red-500 transition-colors duration-300"
+        className="block"
       >
-        <FontAwesomeIcon icon={faSoundcloud} className="w-6 h-6" />
+        <FontAwesomeIcon icon={faSoundcloud} className={iconClass} />
       </a>
       <a
         href="https://youtube.com/@your-handle"
         target="_blank"
         rel="noopener noreferrer"
-        className="text-white hover:text-red-500 transition-colors duration-300"
+        className="block"
       >
-        <FontAwesomeIcon icon={faYoutube} className="w-6 h-6" />
+        <FontAwesomeIcon icon={faYoutube} className={iconClass} />
       </a>
       <a
         href="https://open.spotify.com/artist/your-id"
         target="_blank"
         rel="noopener noreferrer"
-        className="text-white hover:text-red-500 transition-colors duration-300"
+        className="block"
       >
-        <FontAwesomeIcon icon={faSpotify} className="w-6 h-6" />
+        <FontAwesomeIcon icon={faSpotify} className={iconClass} />
       </a>
     </motion.div>
   );

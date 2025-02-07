@@ -1,16 +1,18 @@
 import Link from 'next/link';
 
 const techniques = [
-  { id: 'opening', name: 'Opening' },
-  { id: 'closing', name: 'Closing' },
-  { id: 'bellows-shake', name: 'Bellows Shake' },
+  { id: 'technique-1', name: 'Technique 1' },
+  { id: 'technique-2', name: 'Technique 2' },
+  { id: 'technique-3', name: 'Technique 3' },
+  { id: 'technique-4', name: 'Technique 4' },
+  { id: 'technique-5', name: 'Technique 5' },
   // Add more techniques as needed
 ];
 
 export default function TechniquesPage() {
   return (
     <main className="min-h-screen p-8">
-      <h1 className="text-4xl font-bold mb-8">Bandoneon Techniques</h1>
+      <h1 className="text-4xl font-bold mb-8">Extended Techniques</h1>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {techniques.map((technique) => (
           <Link

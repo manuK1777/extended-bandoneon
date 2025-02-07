@@ -7,8 +7,8 @@ export default function Header() {
   return (
     <header className="fixed top-2 left-0 right-0 z-50 px-4 py-2">
       <div className="max-w-7xl mx-auto flex justify-between items-center">
-        {/* Home Icon */}
-        <div className="flex-shrink-0 z-20">
+        {/* Home Icon - Hidden on mobile */}
+        <div className="flex-shrink-0 z-20 hidden md:block">
           <Link href="/" className="block">
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -34,7 +34,7 @@ export default function Header() {
 
         {/* Social Media - Right */}
         <div className="flex-shrink-0 z-20">
-          <SocialMediaBar className="hidden md:flex" />
+          <SocialMediaBar className="flex" />
         </div>
       </div>
     </header>

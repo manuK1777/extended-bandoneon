@@ -5,6 +5,7 @@ import NavButtons from "../buttons/NavButtons";
 import { navItems } from "@/constants/navigation";
 import { useState } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 interface ResponsiveNavProps {
   direction?: "horizontal" | "vertical";
@@ -16,6 +17,15 @@ export default function ResponsiveNav({
   animated = true 
 }: ResponsiveNavProps) {
   const [isOpen, setIsOpen] = useState(false);
+  const pathname = usePathname();
+
+  const mobileNavItems = [
+    { name: "Home", href: "/" },
+    ...navItems.map(item => ({ 
+      name: item.name, 
+      href: `/${item.name.toLowerCase()}`
+    }))
+  ];
 
   return (
     <>
@@ -54,23 +64,27 @@ export default function ResponsiveNav({
           </label>
           <motion.ul
             tabIndex={0}
-            className="menu menu-sm dropdown-content mt-3 z-[1] p-2 backdrop-blur-md w-22 sm:w-32 flex items-left"
+            className="menu menu-sm dropdown-content mt-0 z-[1] p-2 backdrop-blur-md w-22 sm:w-32 flex items-left"
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: isOpen ? 1 : 0, y: isOpen ? 0 : -10 }}
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.2 }}
             onMouseDown={(e) => e.preventDefault()}
           >
-            {navItems.map((item) => (
-              <li key={item.name} className="hover:bg-yellow-200">
-                <Link 
-                  href={`/${item.name.toLowerCase()}`}
-                  className="text-xs sm:text-sm md:text-base font-body hover:text-red-500 transition-colors duration-200 py-2 px-1"
-                >
-                  {item.name}
-                </Link>
-              </li>
-            ))}
+            {mobileNavItems.map((item) => {
+              const isActive = pathname === item.href;
+              return (
+                <li key={item.name} className={`hover:bg-yellow-200 ${isActive ? 'bg-transparent' : ''}`}>
+                  <Link 
+                    href={item.href}
+                    className={`text-xs sm:text-sm md:text-base font-body transition-colors duration-200 py-2 px-1
+                      ${isActive ? 'text-red-600 hover:text-red-600' : 'hover:text-red-500'}`}
+                  >
+                    {item.name}
+                  </Link>
+                </li>
+              );
+            })}
           </motion.ul>
         </div>
       </div>
