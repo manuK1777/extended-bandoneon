@@ -20,10 +20,11 @@ export default function NavButton({
   const href = `/${name.toLowerCase()}`;
   const pathname = usePathname();
   const isActive = pathname === href;
+  const isHome = pathname === '/';
   
-  const baseClasses = "btn bg-white/5 border-white/5 font-body px-2 transition-colors duration-200 text-sm sm:text-base rounded-none w-full";
+  const baseClasses = `btn font-body px-2 transition-colors duration-200 text-sm sm:text-base rounded-none w-full ${isHome ? 'bg-white/5' : ''}`;
   const colorClasses = isActive 
-    ? "text-red-600  hover:bg-transparent hover:border-transparent" 
+    ? "text-red-600 bg-white/5 border-white/5 hover:bg-transparent hover:border-transparent" 
     : "text-white bg-transparent border-transparent hover:bg-yellow-200 hover:text-red-500";
   
   return (

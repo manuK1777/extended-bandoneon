@@ -7,7 +7,6 @@ import {
   faYoutube,
   faSpotify,
 } from "@fortawesome/free-brands-svg-icons";
-import { motion } from "framer-motion";
 
 interface SocialMediaBarProps {
   className?: string;
@@ -17,12 +16,7 @@ const SocialMediaBar = ({ className = "" }: SocialMediaBarProps) => {
   const iconClass = "w-5 h-5 md:w-6 md:h-6 text-white hover:text-red-500 transition-colors duration-300 mt-4 md:mt-0";
 
   return (
-    <motion.div 
-      className={`flex gap-4 md:gap-6 ${className}`}
-      initial={{ y: 100, opacity: 0 }}
-      animate={{ y: 0, opacity: 1 }}
-      transition={{ duration: 1, delay: 2}}
-    >
+    <div className={`flex gap-4 md:gap-6 ${className}`}>
       <a
         href="https://instagram.com/your-handle"
         target="_blank"
@@ -40,7 +34,7 @@ const SocialMediaBar = ({ className = "" }: SocialMediaBarProps) => {
         <FontAwesomeIcon icon={faSoundcloud} className={iconClass} />
       </a>
       <a
-        href="https://youtube.com/@your-handle"
+        href="https://youtube.com/your-channel"
         target="_blank"
         rel="noopener noreferrer"
         className="block"
@@ -55,7 +49,7 @@ const SocialMediaBar = ({ className = "" }: SocialMediaBarProps) => {
       >
         <FontAwesomeIcon icon={faSpotify} className={iconClass} />
       </a>
-    </motion.div>
+    </div>
   );
 };
 
