@@ -20,19 +20,21 @@ const techniquesData = {
 };
 
 type Props = {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
   searchParams: { [key: string]: string | string[] | undefined };
 };
 
-export default function TechniquePage({ params }: Props) {
-  const technique = techniquesData[params.id as keyof typeof techniquesData];
+export default async function TechniquePage({ params }: Props) {
+  const id = await params.then(p => p.id);
   
-  if (!technique) {
+  if (!techniquesData[id as keyof typeof techniquesData]) {
     notFound();
   }
 
+  const technique = techniquesData[id as keyof typeof techniquesData];
+  
   return (
     <main className="min-h-screen p-8">
       <div className="max-w-4xl mx-auto">
