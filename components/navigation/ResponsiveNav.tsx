@@ -79,6 +79,7 @@ export default function ResponsiveNav({
                     href={item.href}
                     className={`text-xs sm:text-sm md:text-base font-body transition-colors duration-200 py-2 px-1
                       ${isActive ? 'text-red-600 hover:text-red-600' : 'hover:text-red-500'}`}
+                    onClick={() => setIsOpen(false)}
                   >
                     {item.name}
                   </Link>

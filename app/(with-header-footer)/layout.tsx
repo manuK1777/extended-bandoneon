@@ -1,7 +1,7 @@
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 
-export default function WithHeaderLayout({
+export default function WithHeaderFooterLayout({
   children,
 }: {
   children: React.ReactNode;
@@ -9,7 +9,7 @@ export default function WithHeaderLayout({
   return (
     <>
       <Header />
-      <main className="pt-20">
+      <main className="pt-24">
         {children}
       </main>
       <Footer />
