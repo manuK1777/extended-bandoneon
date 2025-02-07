@@ -26,7 +26,7 @@ type Props = {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 };
 
-export default async function TechniquePage({ params, searchParams }: Props) {
+export default async function TechniquePage({ params }: Props) {
   const id = await params.then(p => p.id);
   
   if (!techniquesData[id as keyof typeof techniquesData]) {
