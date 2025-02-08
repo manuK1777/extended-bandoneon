@@ -3,7 +3,7 @@ import ResponsiveNav from '../navigation/ResponsiveNav';
 
 export default function Header() {
   return (
-    <header className="fixed top-2 left-0 right-0 z-50 px-4 py-2">
+    <header className="fixed top-2 left-0 right-0 z-50 px-4 py-2 shadow-sm md:backdrop-blur-sm">
       <div className="max-w-7xl mx-auto flex justify-between items-center">
         {/* Home Icon - Hidden on mobile */}
         <div className="flex-shrink-0 z-20 hidden md:block">

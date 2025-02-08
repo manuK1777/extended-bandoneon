@@ -64,7 +64,7 @@ export default function ResponsiveNav({
           </label>
           <motion.ul
             tabIndex={0}
-            className="menu menu-sm dropdown-content mt-0 z-[1] p-2 backdrop-blur-md w-22 sm:w-32 flex items-left"
+            className="menu menu-sm dropdown-content mt-0 z-40 p-2 backdrop-blur-md w-22 sm:w-32 flex items-left"
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: isOpen ? 1 : 0, y: isOpen ? 0 : -10 }}
             exit={{ opacity: 0, y: -10 }}

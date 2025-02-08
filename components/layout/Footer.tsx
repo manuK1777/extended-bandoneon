@@ -6,13 +6,13 @@ export default function Footer() {
     <footer className="w-full py-4 px-4 mt-auto bg-white/5">
       <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center text-sm font-body">
         <div className="mb-0 md:mb-0 flex">
-          {new Date().getFullYear()} -
+        &copy; {new Date().getFullYear()}&nbsp;
           <div className="mb-0 md:mb-0">
           <a 
             href="mailto:info@extendedbandoneon.com"
             className="hover:text-red-600 transition-colors duration-200"
           >
-            info@extendedbandoneon.com
+           The Extended Bandoneon
           </a>
           </div>
         </div>
