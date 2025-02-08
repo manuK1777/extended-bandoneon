@@ -1,6 +1,5 @@
 import Link from 'next/link';
 import ResponsiveNav from '../navigation/ResponsiveNav';
-import SocialMediaBar from '../SocialMediaBar';
 
 export default function Header() {
   return (
@@ -31,10 +30,6 @@ export default function Header() {
           <ResponsiveNav animated={false} direction="horizontal" />
         </div>
 
-        {/* Social Media - Right */}
-        <div className="flex-shrink-0 z-20">
-          <SocialMediaBar className="flex" />
-        </div>
       </div>
     </header>
   );
