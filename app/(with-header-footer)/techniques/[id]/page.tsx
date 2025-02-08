@@ -2,19 +2,19 @@ import { notFound } from 'next/navigation';
 
 // This would typically come from a database or API
 const techniquesData = {
-  'opening': {
-    name: 'Opening',
-    description: 'The opening technique for bandoneon involves...',
+  'technique-1': {
+    name: 'Technique 1',
+    description: 'The technique 1 for bandoneon involves...',
     // Add more details as needed
   },
-  'closing': {
-    name: 'Closing',
-    description: 'The closing technique for bandoneon involves...',
+  'technique-2': {
+    name: 'Technique 2',
+    description: 'The technique 2 for bandoneon involves...',
     // Add more details as needed
   },
-  'bellows-shake': {
-    name: 'Bellows Shake',
-    description: 'The bellows shake technique involves...',
+  'technique-3': {
+    name: 'Technique 3',
+    description: 'The technique 3 for bandoneon involves...',
     // Add more details as needed
   },
 };

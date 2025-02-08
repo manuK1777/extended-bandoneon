@@ -9,7 +9,7 @@ export default function WithHeaderFooterLayout({
   return (
     <>
       <Header />
-      <main className="pt-24">
+      <main className="pt-18 md:pt-24">
         {children}
       </main>
       <Footer />
