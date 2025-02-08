@@ -17,6 +17,16 @@ const techniquesData = {
     description: 'The technique 3 for bandoneon involves...',
     // Add more details as needed
   },
+  'technique-4': {
+    name: 'Technique 4',
+    description: 'The technique 4 for bandoneon involves...',
+    // Add more details as needed
+  },
+  'technique-5': {
+    name: 'Technique 5',
+    description: 'The technique 5 for bandoneon involves...',
+    // Add more details as needed
+  },
 };
 
 type Props = {
