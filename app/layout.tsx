@@ -19,6 +19,23 @@ export const metadata: Metadata = {
   },
   description: 'Explore the extended techniques of the bandoneon',
   keywords: ['bandoneon', 'music', 'techniques', 'learning'],
+  icons: {
+    icon: [
+      { url: '/favicon-16x16.png', sizes: '16x16', type: 'image/png' },
+      { url: '/favicon-32x32.png', sizes: '32x32', type: 'image/png' },
+      { url: '/favicon-192x192.png', sizes: '192x192', type: 'image/png' }
+    ],
+    apple: [
+      { url: '/favicon-192x192.png' }
+    ],
+    shortcut: ['/favicon-192x192.png'],
+  },
+  manifest: '/site.webmanifest',
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'default',
+    title: 'Extended Bandoneon'
+  },
 };
 
 export default function RootLayout({
