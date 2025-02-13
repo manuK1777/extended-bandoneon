@@ -13,7 +13,7 @@ export default {
         foreground: "var(--foreground)",
       },
       fontFamily: {
-        body: [
+        mono: [
           "ui-monospace", 
           "SFMono-Regular", 
           "Menlo", 
@@ -22,8 +22,35 @@ export default {
           "Liberation Mono", 
           "Courier New", 
           "monospace"
+        ],
+        heading: [
+          "Monaco",
+          "Consolas",
+          "monospace"
+        ],
+        body: [
+          "Menlo",
+          "Liberation Mono",
+          "monospace"
+        ],
+        display: [
+          "SFMono-Regular",
+          "Courier New",
+          "monospace"
         ]
       },
+      fontSize: {
+        'xs': '.75rem',
+        'sm': '.875rem',
+        'base': '1rem',
+        'lg': '1.125rem',
+        'xl': '1.25rem',
+        '2xl': '1.3rem',
+        '3xl': '1.4rem',
+        '4xl': '1.5rem',
+        '5xl': '1.75rem',
+        '6xl': '2rem',
+      }
     },
   },
   plugins: [require('daisyui')],

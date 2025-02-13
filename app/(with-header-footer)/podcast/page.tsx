@@ -16,7 +16,7 @@ interface Episode {
 
 const episodes: Episode[] = [
   {
-    title: "Episode 4",
+    title: "Episode",
     url: "https://player.simplecast.com/8ff796b2-1bf7-4e90-8954-0ad254cf808b?dark=true",
     episodeNumber: "4",
     publishDate: "2024-05-12T00:00:00.000Z",
@@ -27,16 +27,16 @@ const episodes: Episode[] = [
       "tango",
       "chamber music",
       "victorvillena",
-      "bandonoen contemporaneo",
-      "bandoneonperspectives",
+      "bandoneon contemporaneo",
+      "bandoneon perspectives",
       "musica de camara",
       "bandoneon",
-      "victorhugovillena",
+      "victor hugo villena",
       "musicos argentinos"
     ]
   },
   {
-    title: "Episode 3",
+    title: "Episode",
     url: "https://player.simplecast.com/2028d5cf-0a24-4bd8-bba2-b96af6cdd697?dark=true",
     episodeNumber: "3",
     publishDate: "2021-11-16T00:00:00.000Z",
@@ -58,7 +58,7 @@ const episodes: Episode[] = [
     ]
   },
   {
-    title: "Episode 2",
+    title: "Episode",
     url: "https://player.simplecast.com/8b7bf23d-29b2-466c-89a8-b484e7a38616?dark=true",
     episodeNumber: "2",
     publishDate: "2021-06-13T00:00:00.000Z",
@@ -78,7 +78,7 @@ const episodes: Episode[] = [
     ]
   },
   {
-    title: "Episode 1",
+    title: "Episode",
     url: "https://player.simplecast.com/c3775b72-a397-4e59-bf33-c5e5d3b76a8e?dark=true",
     episodeNumber: "1",
     publishDate: "2021-05-25T00:00:00.000Z",
@@ -243,31 +243,68 @@ export default function PodcastPage() {
 
       <main className="container mx-auto px-4 py-8">
         <header className="w-[70%] mx-auto">
-          <h1 className="text-4xl font-bold mb-8">Bandoneon Perspectives</h1>
-          <p className="text-xl text-justify font-semibold mb-[4rem] md:mb-[7rem]">
+          <h1 className="text-4xl font-bold mb-8 text-yellow-200 font-heading tracking-tight">Bandoneon Perspectives</h1>
+          <p className="text-lg text-justify mb-[4rem] md:mb-[7rem] font-body tracking-normal text-gray-300">
             A podcast to unfold contemporary bandoneon stories. This is a space to talk about things related to the bandoneon.
           </p>
         </header>
 
-        <FilterSection<SortOrder>
+        <FilterSection
           searchQuery={searchQuery}
           setSearchQuery={setSearchQuery}
           sortOrder={sortOrder}
           setSortOrder={setSortOrder}
           sortOptions={sortOptions}
-          placeholder="Search episodes, guests, or topics..."
+          containerClassName="mb-8 w-[70%] mx-auto font-body"
+          placeholder="Search episodes..."
           sortLabel="Sort by:"
         />
 
-        <section className="space-y-9 mt-[4rem]" aria-label="Podcast Episodes">
-          {filteredAndSortedEpisodes.length > 0 ? (
-            filteredAndSortedEpisodes.map((episode) => (
-              <EpisodePlayer key={episode.episodeNumber} episode={episode} />
-            ))
-          ) : (
-            <p className="text-center text-gray-600">No episodes found matching your search.</p>
-          )}
-        </section>
+        <div className="w-[70%] mx-auto space-y-8">
+          {filteredAndSortedEpisodes.map((episode) => (
+            <div
+              key={episode.episodeNumber}
+              className="bg-white/5 p-6 rounded-lg space-y-4 hover:bg-white/10 transition-colors duration-200"
+            >
+              <div className="flex justify-between items-start">
+                <h2 className="text-2xl font-heading tracking-tight">
+                  {episode.title}
+                  <span className="text-yellow-200 font-display ml-2">#{episode.episodeNumber}</span>
+                </h2>
+                <time className="text-sm text-gray-400 font-mono">
+                  {new Date(episode.publishDate).toLocaleDateString()}
+                </time>
+              </div>
+              
+              <div className="font-body">
+                <p className="text-gray-300">{episode.description}</p>
+                <p className="mt-2 text-yellow-200 font-display">Guest: {episode.guest}</p>
+              </div>
+
+              <div className="flex flex-wrap gap-2">
+                {episode.keywords.map((keyword, index) => (
+                  <span
+                    key={`${episode.episodeNumber}-${keyword}-${index}`}
+                    className="px-2 py-1 bg-white/10 rounded text-sm font-mono tracking-tight"
+                  >
+                    {keyword}
+                  </span>
+                ))}
+              </div>
+
+              <div className="mt-6">
+                <iframe
+                  src={episode.url}
+                  height="200px"
+                  width="100%"
+                  seamless
+                  className="w-full"
+                  title={`${episode.title} - Episode ${episode.episodeNumber}`}
+                ></iframe>
+              </div>
+            </div>
+          ))}
+        </div>
       </main>
     </>
   );
