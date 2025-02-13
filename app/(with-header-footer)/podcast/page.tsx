@@ -242,7 +242,7 @@ export default function PodcastPage() {
       </Head>
 
       <main className="container mx-auto px-4 py-8">
-        <header>
+        <header className="w-[70%] mx-auto">
           <h1 className="text-4xl font-bold mb-8">Bandoneon Perspectives</h1>
           <p className="text-xl text-justify font-semibold mb-[4rem] md:mb-[7rem]">
             A podcast to unfold contemporary bandoneon stories. This is a space to talk about things related to the bandoneon.

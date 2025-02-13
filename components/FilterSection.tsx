@@ -30,7 +30,7 @@ export function FilterSection<T extends string>({
             placeholder={placeholder}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-500"
+            className="w-full px-4 py-2 border-red-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-900 bg-cyan-900"
             aria-label="Search"
           />
         </div>
@@ -42,7 +42,7 @@ export function FilterSection<T extends string>({
             id="sort-order"
             value={sortOrder}
             onChange={(e) => setSortOrder(e.target.value as T)}
-            className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-500"
+            className="px-3 py-2 border-red-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-900 bg-cyan-900 text-yellow-300"
           >
             {sortOptions.map((option) => (
               <option key={option.value} value={option.value}>
