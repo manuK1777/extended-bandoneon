@@ -103,14 +103,18 @@ const episodes: Episode[] = [
 
 // Lazy loaded player component
 const PodcastPlayer = ({ episode, onLoad }: { episode: Episode; onLoad: () => void }) => {
+  // Add parameters to prevent automatic app opening while keeping dark theme and share button
+  const enhancedUrl = `${episode.url}&hide_redirect=1&dark=1`;
+  
   return (
     <iframe
       className="absolute top-0 left-0 w-full h-full border-0 overflow-hidden"
       seamless
-      src={episode.url}
+      src={enhancedUrl}
       title={`Bandoneon Perspectives with ${episode.guest}`}
       aria-label={`Podcast player for episode with ${episode.guest}`}
       onLoad={onLoad}
+      sandbox="allow-same-origin allow-scripts allow-popups"
     />
   );
 };
