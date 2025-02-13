@@ -153,11 +153,11 @@ const EpisodePlayer = ({ episode }: { episode: Episode }) => {
       itemScope 
       itemType="https://schema.org/PodcastEpisode"
     >
-      <div className="pl-[15%] mb-4">
+      <div className="w-[70%] mx-auto mb-4">
         <h2 className="text-2xl font-display mb-2" itemProp="name">
           {episode.title}
         </h2>
-        <p className="text-gray-600" itemProp="description">{episode.description}</p>
+        <p className="text-gray-600 text-justify" itemProp="description">{episode.description}</p>
       </div>
       <div className="relative w-[70%] h-52 md:h-64 mx-auto">
         {isVisible ? (
@@ -244,7 +244,7 @@ export default function PodcastPage() {
       <main className="container mx-auto px-4 py-8">
         <header>
           <h1 className="text-4xl font-bold mb-8">Bandoneon Perspectives</h1>
-          <p className="text-xl font-semibold mb-[7rem]">
+          <p className="text-xl font-semibold mb-[4rem] md:mb-[7rem]">
             A podcast to unfold contemporary bandoneon stories. This is a space to talk about things related to the bandoneon.
           </p>
         </header>
