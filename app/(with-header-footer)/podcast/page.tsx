@@ -102,78 +102,78 @@ const episodes: Episode[] = [
 ];
 
 // Lazy loaded player component
-const PodcastPlayer = ({ episode, onLoad }: { episode: Episode; onLoad: () => void }) => {
-  // Add parameters to prevent automatic app opening while keeping dark theme and share button
-  const enhancedUrl = `${episode.url}&hide_redirect=1&dark=1`;
+// const PodcastPlayer = ({ episode, onLoad }: { episode: Episode; onLoad: () => void }) => {
+//   // Add parameters to prevent automatic app opening while keeping dark theme and share button
+//   const enhancedUrl = `${episode.url}&hide_redirect=1&dark=1`;
   
-  return (
-    <iframe
-      className="absolute top-0 left-0 w-full h-full border-0 overflow-hidden"
-      seamless
-      src={enhancedUrl}
-      title={`Bandoneon Perspectives with ${episode.guest}`}
-      aria-label={`Podcast player for episode with ${episode.guest}`}
-      onLoad={onLoad}
-      sandbox="allow-same-origin allow-scripts allow-popups"
-    />
-  );
-};
+//   return (
+//     <iframe
+//       className="absolute top-0 left-0 w-full h-full border-0 overflow-hidden"
+//       seamless
+//       src={enhancedUrl}
+//       title={`Bandoneon Perspectives with ${episode.guest}`}
+//       aria-label={`Podcast player for episode with ${episode.guest}`}
+//       onLoad={onLoad}
+//       sandbox="allow-same-origin allow-scripts allow-popups"
+//     />
+//   );
+// };
 
-const LoadingSkeleton = () => (
-  <div className="animate-pulse bg-gray-200 w-full h-full rounded-md" />
-);
+// const LoadingSkeleton = () => (
+//   <div className="animate-pulse bg-gray-200 w-full h-full rounded-md" />
+// );
 
-const EpisodePlayer = ({ episode }: { episode: Episode }) => {
-  const [isVisible, setIsVisible] = useState(false);
-  const [isLoaded, setIsLoaded] = useState(false);
+// const EpisodePlayer = ({ episode }: { episode: Episode }) => {
+//   const [isVisible, setIsVisible] = useState(false);
+//   const [isLoaded, setIsLoaded] = useState(false);
 
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsVisible(true);
-          observer.disconnect();
-        }
-      },
-      { rootMargin: "200px" }
-    );
+//   useEffect(() => {
+//     const observer = new IntersectionObserver(
+//       ([entry]) => {
+//         if (entry.isIntersecting) {
+//           setIsVisible(true);
+//           observer.disconnect();
+//         }
+//       },
+//       { rootMargin: "200px" }
+//     );
 
-    const element = document.getElementById(`episode-${episode.episodeNumber}`);
-    if (element) {
-      observer.observe(element);
-    }
+//     const element = document.getElementById(`episode-${episode.episodeNumber}`);
+//     if (element) {
+//       observer.observe(element);
+//     }
 
-    return () => observer.disconnect();
-  }, [episode.episodeNumber]);
+//     return () => observer.disconnect();
+//   }, [episode.episodeNumber]);
 
-  return (
-    <article 
-      id={`episode-${episode.episodeNumber}`}
-      className="podcast-episode"
-      itemScope 
-      itemType="https://schema.org/PodcastEpisode"
-    >
-      <div className="w-[70%] mx-auto mb-4">
-        <h2 className="text-2xl font-display mb-2" itemProp="name">
-          {episode.title}
-        </h2>
-        <p className="text-gray-600 text-justify" itemProp="description">{episode.description}</p>
-      </div>
-      <div className="relative w-[70%] h-52 md:h-64 mx-auto">
-        {isVisible ? (
-          <>
-            <PodcastPlayer episode={episode} onLoad={() => setIsLoaded(true)} />
-            {!isLoaded && <LoadingSkeleton />}
-          </>
-        ) : (
-          <LoadingSkeleton />
-        )}
-        <meta itemProp="episodeNumber" content={episode.episodeNumber} />
-        <meta itemProp="datePublished" content={episode.publishDate} />
-      </div>
-    </article>
-  );
-};
+//   return (
+//     <article 
+//       id={`episode-${episode.episodeNumber}`}
+//       className="podcast-episode"
+//       itemScope 
+//       itemType="https://schema.org/PodcastEpisode"
+//     >
+//       <div className="w-[70%] mx-auto mb-4">
+//         <h2 className="text-2xl font-display mb-2" itemProp="name">
+//           {episode.title}
+//         </h2>
+//         <p className="text-gray-600 text-justify" itemProp="description">{episode.description}</p>
+//       </div>
+//       <div className="relative w-[70%] h-52 md:h-64 mx-auto">
+//         {isVisible ? (
+//           <>
+//             <PodcastPlayer episode={episode} onLoad={() => setIsLoaded(true)} />
+//             {!isLoaded && <LoadingSkeleton />}
+//           </>
+//         ) : (
+//           <LoadingSkeleton />
+//         )}
+//         <meta itemProp="episodeNumber" content={episode.episodeNumber} />
+//         <meta itemProp="datePublished" content={episode.publishDate} />
+//       </div>
+//     </article>
+//   );
+// };
 
 type SortOrder = 'newest' | 'oldest';
 
