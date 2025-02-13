@@ -4,7 +4,17 @@ import Head from "next/head";
 import { useState, useEffect } from "react";
 import { FilterSection } from "@/components/FilterSection";
 
-const episodes = [
+interface Episode {
+  title: string;
+  url: string;
+  episodeNumber: string;
+  publishDate: string;
+  guest: string;
+  description: string;
+  keywords: string[];
+}
+
+const episodes: Episode[] = [
   {
     title: "Episode 4",
     url: "https://player.simplecast.com/8ff796b2-1bf7-4e90-8954-0ad254cf808b?dark=true",
@@ -92,7 +102,7 @@ const episodes = [
 ];
 
 // Lazy loaded player component
-const PodcastPlayer = ({ episode, onLoad }: { episode: any; onLoad: () => void }) => {
+const PodcastPlayer = ({ episode, onLoad }: { episode: Episode; onLoad: () => void }) => {
   return (
     <iframe
       className="absolute top-0 left-0 w-full h-full border-0 overflow-hidden"
@@ -109,7 +119,7 @@ const LoadingSkeleton = () => (
   <div className="animate-pulse bg-gray-200 w-full h-full rounded-md" />
 );
 
-const EpisodePlayer = ({ episode }: { episode: any }) => {
+const EpisodePlayer = ({ episode }: { episode: Episode }) => {
   const [isVisible, setIsVisible] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
 
