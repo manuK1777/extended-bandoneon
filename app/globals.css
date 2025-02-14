@@ -19,7 +19,8 @@ body {
   background: var(--background);
   font-family: theme('fontFamily.body');
   min-height: 100vh;
-  background: linear-gradient(to bottom, rgb(17, 24, 39), rgb(0, 0, 0)) fixed;
+  /* Match Tailwind's from-gray-900 to-black exactly */
+  background: linear-gradient(180deg, rgb(17, 24, 39) 0%, rgb(0, 0, 0) 100%) fixed;
 }
 
 h1, h2, h3, h4, h5, h6 {
