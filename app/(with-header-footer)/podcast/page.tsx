@@ -198,7 +198,7 @@ export default function PodcastPage() {
           {filteredAndSortedEpisodes.map((episode) => (
             <div
               key={episode.episodeNumber}
-              className="bg-white/5 backdrop-blur-sm p-6 rounded-lg space-y-4 hover:bg-white/10 transition-colors duration-200"
+              className="relative bg-gradient-to-b from-white/5 to-white/10 backdrop-blur-sm p-6 rounded-lg space-y-4 transition-colors duration-200 hover:from-white/10 hover:to-white/15"
             >
               <div className="flex justify-between items-start">
                 <h2 className="text-xl md:text-2xl font-heading tracking-tight">
@@ -226,29 +226,34 @@ export default function PodcastPage() {
                 ))}
               </div>
 
-              <div className="mt-6 relative min-h-[200px] bg-white/5 backdrop-blur-sm rounded-lg">
-                {!loadedPlayers[episode.episodeNumber] && (
-                  <div className="absolute inset-0 bg-white/5 backdrop-blur-sm rounded-lg flex items-center justify-center">
-                    <div className="text-sm text-gray-400">Loading player...</div>
-                  </div>
-                )}
-                <iframe
-                  src={episode.url}
-                  height="200px"
-                  width="100%"
-                  seamless
-                  sandbox="allow-same-origin allow-scripts allow-popups"
-                  className={`w-full transition-opacity duration-500 ${
-                    loadedPlayers[episode.episodeNumber] ? 'opacity-100' : 'opacity-0'
-                  }`}
-                  title={`${episode.title} - Episode ${episode.episodeNumber}`}
-                  onLoad={() => handlePlayerLoad(episode.episodeNumber)}
-                  loading="lazy"
-                  referrerPolicy="origin"
-                  allow="web-share"
-                  data-podcast-player="true"
-                  data-prevent-app-launch="true"
-                ></iframe>
+              <div className="mt-6">
+                {/* Static background container - always visible */}
+                <div className="relative min-h-[200px] bg-gradient-to-b from-black/30 to-black/50 backdrop-blur-sm rounded-lg overflow-hidden">
+                  {/* Loading state container */}
+                  {!loadedPlayers[episode.episodeNumber] && (
+                    <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-b from-white/5 to-transparent backdrop-blur-sm">
+                      <div className="text-sm text-gray-400">Loading player...</div>
+                    </div>
+                  )}
+                  {/* Player iframe */}
+                  <iframe
+                    src={episode.url}
+                    height="200px"
+                    width="100%"
+                    seamless
+                    sandbox="allow-same-origin allow-scripts allow-popups"
+                    className={`w-full transition-opacity duration-300 ${
+                      loadedPlayers[episode.episodeNumber] ? 'opacity-100' : 'opacity-0'
+                    }`}
+                    title={`${episode.title} - Episode ${episode.episodeNumber}`}
+                    onLoad={() => handlePlayerLoad(episode.episodeNumber)}
+                    loading="lazy"
+                    referrerPolicy="origin"
+                    allow="web-share"
+                    data-podcast-player="true"
+                    data-prevent-app-launch="true"
+                  ></iframe>
+                </div>
               </div>
             </div>
           ))}

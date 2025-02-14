@@ -19,7 +19,7 @@ export default function Footer() {
         <div className="flex-shrink-0 z-20 order-first md:order-none mb-2 md:mb-0 md:-ml-[7rem]">
           <SocialMediaBar className="flex" />
         </div>
-        <div className='text-[0.8rem] mt-2 md:mt-0 font-display tracking-wide'>
+        <div className='text-[0.7rem] md:text-[0.8rem] mt-2 md:mt-0 font-display tracking-wide'>
           Site by{' '}
           <Link 
             href="/"
