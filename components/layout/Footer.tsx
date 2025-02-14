@@ -20,7 +20,7 @@ export default function Footer() {
           <SocialMediaBar className="flex" />
         </div>
         <div className='text-[0.8rem] mt-2 md:mt-0 font-display tracking-wide'>
-          Site <span className='text-red-300'>by</span>{' '}
+          Site by{' '}
           <Link 
             href="/"
             className="hover:text-red-600 transition-colors duration-200 font-heading tracking-tight"

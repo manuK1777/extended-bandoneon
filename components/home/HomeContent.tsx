@@ -40,7 +40,7 @@ export default function HomeContent() {
       >
         <h1
           className="text-[3.8rem] sm:text-[4.3rem] md:text-[4.5rem] lg:text-[6.5rem] font-[930] 
-           text-red-600 text-center px-4 leading-none font-[Arial_Black,Impact,sans-serif]"
+           text-red-600 text-center px-4 leading-none font-homeTitle"
         >
           <span className="block sm:inline">The </span>
           <span className="block sm:inline -mt-[1.2rem]">Extended</span>

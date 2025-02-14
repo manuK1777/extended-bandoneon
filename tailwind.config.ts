@@ -37,6 +37,11 @@ export default {
           "SFMono-Regular",
           "Courier New",
           "monospace"
+        ],
+        homeTitle: [
+          "Arial Black",
+          "Impact",
+          "sans-serif"
         ]
       },
       fontSize: {
