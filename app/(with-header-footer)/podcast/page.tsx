@@ -237,12 +237,17 @@ export default function PodcastPage() {
                   height="200px"
                   width="100%"
                   seamless
+                  sandbox="allow-same-origin allow-scripts allow-popups"
                   className={`w-full transition-opacity duration-500 ${
                     loadedPlayers[episode.episodeNumber] ? 'opacity-100' : 'opacity-0'
                   }`}
                   title={`${episode.title} - Episode ${episode.episodeNumber}`}
                   onLoad={() => handlePlayerLoad(episode.episodeNumber)}
                   loading="lazy"
+                  referrerPolicy="origin"
+                  allow="web-share"
+                  data-podcast-player="true"
+                  data-prevent-app-launch="true"
                 ></iframe>
               </div>
             </div>
