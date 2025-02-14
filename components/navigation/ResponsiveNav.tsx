@@ -45,14 +45,13 @@ export default function ResponsiveNav({
             tabIndex={0} 
             className="btn btn-ghost btn-circle"
             onClick={() => setIsOpen(!isOpen)}
-            onBlur={() => setIsOpen(false)}
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              className="h-10 w-10"
+              className="h-8 w-8"
               fill="none"
               viewBox="0 0 24 24"
-              stroke="currentColor"
+              stroke="#D1D5DB"
             >
               <path
                 strokeLinecap="round"
@@ -67,8 +66,10 @@ export default function ResponsiveNav({
             className="menu menu-sm dropdown-content mt-0 z-40 p-2 backdrop-blur-md w-22 sm:w-32 flex items-left"
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: isOpen ? 1 : 0, y: isOpen ? 0 : -10 }}
-            exit={{ opacity: 0, y: -10 }}
-            transition={{ duration: 0.2 }}
+            transition={{ 
+              duration: 0.15,
+              ease: "easeOut"
+            }}
             onMouseDown={(e) => e.preventDefault()}
           >
             {mobileNavItems.map((item) => {
