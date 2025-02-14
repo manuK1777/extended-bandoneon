@@ -71,7 +71,7 @@ export default function ResponsiveNav({
               ease: "easeOut"
             }}
           >
-            <ul className="menu menu-sm p-2 backdrop-blur-md flex items-left">
+            <ul className="menu menu-sm p-2 backdrop-blur-md bg-black/30 rounded-lg shadow-lg flex items-left">
               {mobileNavItems.map((item) => {
                 const isActive = pathname === item.href;
                 return (
@@ -80,7 +80,14 @@ export default function ResponsiveNav({
                       href={item.href}
                       className={`text-xs sm:text-sm md:text-base font-body transition-colors duration-200 py-2 px-1
                         ${isActive ? 'text-red-600 hover:text-red-600' : 'hover:text-red-500'}`}
-                      onClick={() => setIsOpen(false)}
+                      onClick={() => {
+                        // Close menu first
+                        setIsOpen(false);
+                        // Small delay to ensure smooth transition
+                        setTimeout(() => {
+                          window.scrollTo(0, 0);
+                        }, 100);
+                      }}
                     >
                       {item.name}
                     </Link>

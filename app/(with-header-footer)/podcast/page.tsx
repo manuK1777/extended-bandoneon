@@ -175,7 +175,7 @@ export default function PodcastPage() {
         <meta name="twitter:image" content="https://extendedbandoneon.com/images/podcast-cover.jpg" />
       </Head>
 
-      <main className="container mx-auto px-4 py-8">
+      <main className="container mx-auto px-4 py-8 min-h-screen">
         <header className="w-[90%] md:w-[70%] mx-auto">
           <h1 className="text-3xl md:text-4xl font-bold mb-8 text-yellow-200 font-heading tracking-tight">Bandoneon Perspectives</h1>
           <p className="text-[0.875rem] md:text-lg text-left mb-[3rem] md:mb-[6rem] font-body tracking-normal text-gray-300">
@@ -198,7 +198,7 @@ export default function PodcastPage() {
           {filteredAndSortedEpisodes.map((episode) => (
             <div
               key={episode.episodeNumber}
-              className="bg-white/5 p-6 rounded-lg space-y-4 hover:bg-white/10 transition-colors duration-200"
+              className="bg-white/5 backdrop-blur-sm p-6 rounded-lg space-y-4 hover:bg-white/10 transition-colors duration-200"
             >
               <div className="flex justify-between items-start">
                 <h2 className="text-xl md:text-2xl font-heading tracking-tight">
@@ -226,9 +226,9 @@ export default function PodcastPage() {
                 ))}
               </div>
 
-              <div className="mt-6 relative min-h-[200px]">
+              <div className="mt-6 relative min-h-[200px] bg-white/5 backdrop-blur-sm rounded-lg">
                 {!loadedPlayers[episode.episodeNumber] && (
-                  <div className="absolute inset-0 bg-white/5 animate-pulse rounded-lg flex items-center justify-center">
+                  <div className="absolute inset-0 bg-white/5 backdrop-blur-sm rounded-lg flex items-center justify-center">
                     <div className="text-sm text-gray-400">Loading player...</div>
                   </div>
                 )}
