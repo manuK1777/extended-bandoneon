@@ -1,7 +1,7 @@
 "use client";
 
 import Head from "next/head";
-import { useState} from "react";
+import { useState, useEffect } from "react";
 import { FilterSection } from "@/components/FilterSection";
 
 interface Episode {
@@ -101,80 +101,6 @@ const episodes: Episode[] = [
   },
 ];
 
-// Lazy loaded player component
-// const PodcastPlayer = ({ episode, onLoad }: { episode: Episode; onLoad: () => void }) => {
-//   // Add parameters to prevent automatic app opening while keeping dark theme and share button
-//   const enhancedUrl = `${episode.url}&hide_redirect=1&dark=1`;
-  
-//   return (
-//     <iframe
-//       className="absolute top-0 left-0 w-full h-full border-0 overflow-hidden"
-//       seamless
-//       src={enhancedUrl}
-//       title={`Bandoneon Perspectives with ${episode.guest}`}
-//       aria-label={`Podcast player for episode with ${episode.guest}`}
-//       onLoad={onLoad}
-//       sandbox="allow-same-origin allow-scripts allow-popups"
-//     />
-//   );
-// };
-
-// const LoadingSkeleton = () => (
-//   <div className="animate-pulse bg-gray-200 w-full h-full rounded-md" />
-// );
-
-// const EpisodePlayer = ({ episode }: { episode: Episode }) => {
-//   const [isVisible, setIsVisible] = useState(false);
-//   const [isLoaded, setIsLoaded] = useState(false);
-
-//   useEffect(() => {
-//     const observer = new IntersectionObserver(
-//       ([entry]) => {
-//         if (entry.isIntersecting) {
-//           setIsVisible(true);
-//           observer.disconnect();
-//         }
-//       },
-//       { rootMargin: "200px" }
-//     );
-
-//     const element = document.getElementById(`episode-${episode.episodeNumber}`);
-//     if (element) {
-//       observer.observe(element);
-//     }
-
-//     return () => observer.disconnect();
-//   }, [episode.episodeNumber]);
-
-//   return (
-//     <article 
-//       id={`episode-${episode.episodeNumber}`}
-//       className="podcast-episode"
-//       itemScope 
-//       itemType="https://schema.org/PodcastEpisode"
-//     >
-//       <div className="w-[70%] mx-auto mb-4">
-//         <h2 className="text-2xl font-display mb-2" itemProp="name">
-//           {episode.title}
-//         </h2>
-//         <p className="text-gray-600 text-justify" itemProp="description">{episode.description}</p>
-//       </div>
-//       <div className="relative w-[70%] h-52 md:h-64 mx-auto">
-//         {isVisible ? (
-//           <>
-//             <PodcastPlayer episode={episode} onLoad={() => setIsLoaded(true)} />
-//             {!isLoaded && <LoadingSkeleton />}
-//           </>
-//         ) : (
-//           <LoadingSkeleton />
-//         )}
-//         <meta itemProp="episodeNumber" content={episode.episodeNumber} />
-//         <meta itemProp="datePublished" content={episode.publishDate} />
-//       </div>
-//     </article>
-//   );
-// };
-
 type SortOrder = 'newest' | 'oldest';
 
 const sortOptions = [
@@ -185,8 +111,16 @@ const sortOptions = [
 export default function PodcastPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [sortOrder, setSortOrder] = useState<SortOrder>('newest');
+  const [loadedPlayers, setLoadedPlayers] = useState<Record<string, boolean>>({});
 
-  // Enhanced search functionality
+  // Handle iframe load events
+  const handlePlayerLoad = (episodeNumber: string) => {
+    setLoadedPlayers(prev => ({
+      ...prev,
+      [episodeNumber]: true
+    }));
+  };
+
   const filteredAndSortedEpisodes = episodes
     .filter(episode => {
       const searchLower = searchQuery.toLowerCase();
@@ -242,9 +176,9 @@ export default function PodcastPage() {
       </Head>
 
       <main className="container mx-auto px-4 py-8">
-        <header className="w-[70%] mx-auto">
-          <h1 className="text-4xl font-bold mb-8 text-yellow-200 font-heading tracking-tight">Bandoneon Perspectives</h1>
-          <p className="text-lg text-justify mb-[4rem] md:mb-[7rem] font-body tracking-normal text-gray-300">
+        <header className="w-[90%] md:w-[70%] mx-auto">
+          <h1 className="text-3xl md:text-4xl font-bold mb-8 text-yellow-200 font-heading tracking-tight">Bandoneon Perspectives</h1>
+          <p className="text-base md:text-lg text-justify mb-[3rem] md:mb-[6rem] font-body tracking-normal text-gray-300">
             A podcast to unfold contemporary bandoneon stories. This is a space to talk about things related to the bandoneon.
           </p>
         </header>
@@ -255,51 +189,60 @@ export default function PodcastPage() {
           sortOrder={sortOrder}
           setSortOrder={setSortOrder}
           sortOptions={sortOptions}
-          containerClassName="mb-8 w-[70%] mx-auto font-body"
+          containerClassName="mb-8 w-[70%] sm:w-[80%] md:w-[70%] mx-auto font-body"
           placeholder="Search episodes..."
           sortLabel="Sort by:"
         />
 
-        <div className="w-[70%] mx-auto space-y-8">
+        <div className="w-[90%] md:w-[70%] mx-auto space-y-8">
           {filteredAndSortedEpisodes.map((episode) => (
             <div
               key={episode.episodeNumber}
               className="bg-white/5 p-6 rounded-lg space-y-4 hover:bg-white/10 transition-colors duration-200"
             >
               <div className="flex justify-between items-start">
-                <h2 className="text-2xl font-heading tracking-tight">
+                <h2 className="text-xl md:text-2xl font-heading tracking-tight">
                   {episode.title}
                   <span className="text-yellow-200 font-display ml-2">#{episode.episodeNumber}</span>
                 </h2>
-                <time className="text-sm text-gray-400 font-mono">
+                <time className="text-xs md:text-sm text-gray-400 font-mono">
                   {new Date(episode.publishDate).toLocaleDateString()}
                 </time>
               </div>
               
               <div className="font-body">
-                <p className="text-gray-300">{episode.description}</p>
-                <p className="mt-2 text-yellow-200 font-display">Guest: {episode.guest}</p>
+                <p className="text-sm md:text-base text-gray-300">{episode.description}</p>
+                <p className="mt-2 text-sm md:text-base text-yellow-200 font-display">Guest: {episode.guest}</p>
               </div>
 
-              <div className="flex flex-wrap gap-2">
+              <div className="flex flex-wrap gap-1 md:gap-2">
                 {episode.keywords.map((keyword, index) => (
                   <span
                     key={`${episode.episodeNumber}-${keyword}-${index}`}
-                    className="px-2 py-1 bg-white/10 rounded text-sm font-mono tracking-tight"
+                    className="px-1.5 py-0.5 md:px-2 md:py-1 bg-white/10 rounded text-[10px] md:text-sm font-mono tracking-tight"
                   >
                     {keyword}
                   </span>
                 ))}
               </div>
 
-              <div className="mt-6">
+              <div className="mt-6 relative min-h-[200px]">
+                {!loadedPlayers[episode.episodeNumber] && (
+                  <div className="absolute inset-0 bg-white/5 animate-pulse rounded-lg flex items-center justify-center">
+                    <div className="text-sm text-gray-400">Loading player...</div>
+                  </div>
+                )}
                 <iframe
                   src={episode.url}
                   height="200px"
                   width="100%"
                   seamless
-                  className="w-full"
+                  className={`w-full transition-opacity duration-500 ${
+                    loadedPlayers[episode.episodeNumber] ? 'opacity-100' : 'opacity-0'
+                  }`}
                   title={`${episode.title} - Episode ${episode.episodeNumber}`}
+                  onLoad={() => handlePlayerLoad(episode.episodeNumber)}
+                  loading="lazy"
                 ></iframe>
               </div>
             </div>
