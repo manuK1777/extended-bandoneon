@@ -18,6 +18,8 @@ body {
   color: var(--foreground);
   background: var(--background);
   font-family: theme('fontFamily.body');
+  min-height: 100vh;
+  background: linear-gradient(to bottom, rgb(17, 24, 39), rgb(0, 0, 0)) fixed;
 }
 
 h1, h2, h3, h4, h5, h6 {
