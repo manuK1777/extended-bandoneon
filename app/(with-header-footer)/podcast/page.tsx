@@ -178,7 +178,7 @@ export default function PodcastPage() {
       <main className="container mx-auto px-4 py-8">
         <header className="w-[90%] md:w-[70%] mx-auto">
           <h1 className="text-3xl md:text-4xl font-bold mb-8 text-yellow-200 font-heading tracking-tight">Bandoneon Perspectives</h1>
-          <p className="text-[0.875rem] md:text-lg text-justify mb-[3rem] md:mb-[6rem] font-body tracking-normal text-gray-300">
+          <p className="text-[0.875rem] md:text-lg text-left mb-[3rem] md:mb-[6rem] font-body tracking-normal text-gray-300">
             A podcast to unfold contemporary bandoneon stories. This is a space to talk about things related to the bandoneon.
           </p>
         </header>
