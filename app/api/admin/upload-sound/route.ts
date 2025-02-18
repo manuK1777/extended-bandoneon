@@ -1,13 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { v2 as cloudinary } from 'cloudinary';
 import { createConnection } from '@/utils/db';
 import { verifyJWT } from '@/utils/serverAuth';
-
-cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-  api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET,
-});
 
 export async function POST(req: NextRequest) {
   const token = req.cookies.get('admin_token')?.value;
@@ -21,12 +14,24 @@ export async function POST(req: NextRequest) {
     const data = await req.json();
     console.log('Received data:', { ...data, filePath: 'REDACTED' });
     
-    const { title, description, soundpack_id, tags, filePath }: {
+    const { 
+      title, 
+      description, 
+      soundpack_id, 
+      tags, 
+      filePath, 
+      duration,
+      fileSize,
+      fileFormat 
+    }: {
       title: string;
       description: string;
       soundpack_id?: string;
       tags: string[];
       filePath: string;
+      duration: number;
+      fileSize: number;
+      fileFormat: string;
     } = data;
 
     // Validation
@@ -36,23 +41,6 @@ export async function POST(req: NextRequest) {
         { status: 400 }
       );
     }
-
-    // Upload to Cloudinary
-    console.log('Attempting to upload to Cloudinary...');
-    const uploadResponse = await cloudinary.uploader.upload(filePath, {
-      resource_type: 'video', // Cloudinary handles audio files as "video"
-      folder: 'soundbank',
-      allowed_formats: ['mp3', 'wav', 'ogg'], // Restrict to audio formats
-    }).catch(error => {
-      console.error('Cloudinary upload error:', error);
-      throw new Error(`Cloudinary upload failed: ${error.message}`);
-    });
-    
-    console.log('Cloudinary upload successful:', { 
-      public_id: uploadResponse.public_id,
-      url: uploadResponse.secure_url,
-      duration: uploadResponse.duration 
-    });
 
     // Connect to database
     const connection = await createConnection();
@@ -75,14 +63,24 @@ export async function POST(req: NextRequest) {
 
       // Insert sound
       const [result] = await connection.execute(
-        `INSERT INTO sounds (title, description, file_url, duration, soundpack_id, created_at) 
-         VALUES (?, ?, ?, ?, ?, NOW())`,
+        `INSERT INTO sounds (
+          title, 
+          description, 
+          file_url, 
+          duration, 
+          soundpack_id, 
+          file_size,
+          file_format,
+          created_at
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, NOW())`,
         [
           title,
           description,
-          uploadResponse.secure_url,
-          uploadResponse.duration,
-          soundpack_id || null, // Use null if soundpack_id is not provided
+          filePath,
+          duration,
+          soundpack_id || null,
+          fileSize,
+          fileFormat,
         ]
       );
 
@@ -118,7 +116,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({
         message: 'Sound uploaded successfully!',
         sound_id,
-        url: uploadResponse.secure_url,
+        url: filePath,
       });
     } catch (error) {
       // Rollback transaction on error

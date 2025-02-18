@@ -18,7 +18,7 @@ export default function AdminDashboard() {
     soundpack_id: '',
     tags: '',
   });
-  const [file, setFile] = useState<File | null>(null);
+  const [files, setFiles] = useState<File[]>([]);
   const [uploadState, setUploadState] = useState<UploadState>({
     isUploading: false,
     progress: 0,
@@ -34,27 +34,32 @@ export default function AdminDashboard() {
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      const selectedFile = e.target.files[0];
-      // Validate file type
-      if (!selectedFile.type.startsWith('audio/')) {
+    if (e.target.files) {
+      const selectedFiles = Array.from(e.target.files);
+      // Validate file types
+      const invalidFiles = selectedFiles.filter(
+        file => !file.type.startsWith('audio/')
+      );
+      
+      if (invalidFiles.length > 0) {
         setUploadState((prev) => ({
           ...prev,
-          error: 'Please select an audio file',
+          error: 'Please select only audio files',
         }));
         return;
       }
-      setFile(selectedFile);
+      
+      setFiles(selectedFiles);
       setUploadState((prev) => ({ ...prev, error: null }));
     }
   };
 
   const handleUpload = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!file) {
+    if (files.length === 0) {
       setUploadState((prev) => ({
         ...prev,
-        error: 'Please select a sound file',
+        error: 'Please select at least one sound file',
       }));
       return;
     }
@@ -67,36 +72,45 @@ export default function AdminDashboard() {
     });
 
     try {
-      // First, upload to temporary storage or get signed URL
-      const fileFormData = new FormData();
-      fileFormData.append('file', file);
-      setUploadState((prev) => ({ ...prev, progress: 30 }));
+      // Upload each file
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        const progress = Math.round((i / files.length) * 100);
+        setUploadState(prev => ({ ...prev, progress }));
 
-      // TODO: Replace with your file upload endpoint
-      const uploadRes = await fetch('/api/admin/upload-file', {
-        method: 'POST',
-        body: fileFormData,
-      });
+        // First, upload the file
+        const fileFormData = new FormData();
+        fileFormData.append('file', file);
 
-      if (!uploadRes.ok) throw new Error('File upload failed');
-      
-      const { url } = await uploadRes.json();
-      setUploadState((prev) => ({ ...prev, progress: 60 }));
+        const uploadRes = await fetch('/api/admin/upload-file', {
+          method: 'POST',
+          body: fileFormData,
+        });
 
-      // Then save metadata
-      const metadataRes = await fetch('/api/admin/upload-sound', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          title: formData.title,
-          description: formData.description,
-          soundpack_id: formData.soundpack_id,
-          tags: formData.tags.split(',').map((tag: string) => tag.trim()),
-          filePath: url,
-        }),
-      });
+        if (!uploadRes.ok) throw new Error('File upload failed');
+        
+        const { url, duration, bytes, format } = await uploadRes.json();
 
-      if (!metadataRes.ok) throw new Error('Failed to save sound metadata');
+        // Then save metadata
+        const metadataRes = await fetch('/api/admin/upload-sound', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            title: `${formData.title}${files.length > 1 ? ` (${i + 1})` : ''}`,
+            description: formData.description,
+            soundpack_id: formData.soundpack_id,
+            tags: formData.tags.split(',').map((tag: string) => tag.trim()),
+            filePath: url,
+            duration,
+            fileSize: bytes,
+            fileFormat: format,
+          }),
+        });
+
+        if (!metadataRes.ok) {
+          throw new Error('Failed to save sound metadata');
+        }
+      }
 
       setUploadState({
         isUploading: false,
@@ -105,24 +119,20 @@ export default function AdminDashboard() {
         success: true,
       });
 
-      // Reset form
+      // Reset form after successful upload
       setFormData({
         title: '',
         description: '',
         soundpack_id: '',
         tags: '',
       });
-      setFile(null);
-
-      // Refresh the page data
-      router.refresh();
+      setFiles([]);
     } catch (error: any) {
-      setUploadState({
+      setUploadState((prev) => ({
+        ...prev,
         isUploading: false,
-        progress: 0,
-        error: error.message || 'Upload failed',
-        success: false,
-      });
+        error: error.message,
+      }));
     }
   };
 
@@ -138,7 +148,7 @@ export default function AdminDashboard() {
           Upload New Sound
         </h1>
 
-        <form onSubmit={handleUpload} className="space-y-4">
+        <form onSubmit={handleUpload} className="space-y-6">
           <div>
             <label className="block text-sm font-medium text-gray-700">
               Title
@@ -209,8 +219,13 @@ export default function AdminDashboard() {
               accept="audio/*"
               onChange={handleFileChange}
               className="file-input file-input-bordered w-full text-black bg-white"
-              required
+              data-choose-text="Choose sound files"
+              data-no-file-text="No files selected"
+              multiple
             />
+            <p className="mt-1 text-sm text-gray-500">
+              Accepted formats: MP3, WAV, OGG. You can select multiple files.
+            </p>
           </div>
 
           {uploadState.error && (
@@ -219,17 +234,23 @@ export default function AdminDashboard() {
 
           {uploadState.success && (
             <div className="text-green-600 text-sm">
-              Sound uploaded successfully!
+              Upload successful!
             </div>
           )}
 
           {uploadState.isUploading && (
-            <div className="w-full bg-gray-200 rounded-full h-2.5">
-              <div
-                className="bg-indigo-600 h-2.5 rounded-full"
-                style={{ width: `${uploadState.progress}%` }}
-              ></div>
-            </div>
+            <>
+              <div className="text-sm mb-2">
+                Uploading... {uploadState.progress}%
+                {files.length > 1 && ` (File ${Math.floor(uploadState.progress / (100 / files.length)) + 1} of ${files.length})`}
+              </div>
+              <div className="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
+                <div
+                  className="bg-green-600 h-2.5 rounded-full transition-all duration-300"
+                  style={{ width: `${uploadState.progress}%` }}
+                ></div>
+              </div>
+            </>
           )}
 
           <button
