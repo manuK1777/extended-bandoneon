@@ -1,140 +1,17 @@
 'use client';
 
-import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import dynamic from 'next/dynamic';
+import { useState } from 'react';
 
-interface UploadState {
-  isUploading: boolean;
-  progress: number;
-  error: string | null;
-  success: boolean;
-}
+// Dynamically import the UploadSounds component
+const UploadSounds = dynamic(() => import('@/components/dashboard/upload-sounds'), {
+  loading: () => <p>Loading...</p>
+});
 
 export default function AdminDashboard() {
   const router = useRouter();
-  const [formData, setFormData] = useState({
-    title: '',
-    description: '',
-    soundpack_id: '',
-    tags: '',
-  });
-  const [files, setFiles] = useState<File[]>([]);
-  const [uploadState, setUploadState] = useState<UploadState>({
-    isUploading: false,
-    progress: 0,
-    error: null,
-    success: false,
-  });
-
-  const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files) {
-      const selectedFiles = Array.from(e.target.files);
-      // Validate file types
-      const invalidFiles = selectedFiles.filter(
-        file => !file.type.startsWith('audio/')
-      );
-      
-      if (invalidFiles.length > 0) {
-        setUploadState((prev) => ({
-          ...prev,
-          error: 'Please select only audio files',
-        }));
-        return;
-      }
-      
-      setFiles(selectedFiles);
-      setUploadState((prev) => ({ ...prev, error: null }));
-    }
-  };
-
-  const handleUpload = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (files.length === 0) {
-      setUploadState((prev) => ({
-        ...prev,
-        error: 'Please select at least one sound file',
-      }));
-      return;
-    }
-
-    setUploadState({
-      isUploading: true,
-      progress: 0,
-      error: null,
-      success: false,
-    });
-
-    try {
-      // Upload each file
-      for (let i = 0; i < files.length; i++) {
-        const file = files[i];
-        const progress = Math.round((i / files.length) * 100);
-        setUploadState(prev => ({ ...prev, progress }));
-
-        // First, upload the file
-        const fileFormData = new FormData();
-        fileFormData.append('file', file);
-
-        const uploadRes = await fetch('/api/admin/upload-file', {
-          method: 'POST',
-          body: fileFormData,
-        });
-
-        if (!uploadRes.ok) throw new Error('File upload failed');
-        
-        const { url, duration, bytes, format } = await uploadRes.json();
-
-        // Then save metadata
-        const metadataRes = await fetch('/api/admin/upload-sound', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            title: `${formData.title}${files.length > 1 ? ` (${i + 1})` : ''}`,
-            description: formData.description,
-            soundpack_id: formData.soundpack_id,
-            tags: formData.tags.split(',').map((tag: string) => tag.trim()),
-            filePath: url,
-            duration,
-            fileSize: bytes,
-            fileFormat: format,
-          }),
-        });
-
-        if (!metadataRes.ok) {
-          throw new Error('Failed to save sound metadata');
-        }
-      }
-
-      setUploadState({
-        isUploading: false,
-        progress: 100,
-        error: null,
-        success: true,
-      });
-
-      // Reset form after successful upload
-      setFormData({
-        title: '',
-        description: '',
-        soundpack_id: '',
-        tags: '',
-      });
-      setFiles([]);
-    } catch (error: any) {
-      setUploadState((prev) => ({
-        ...prev,
-        isUploading: false,
-        error: error.message,
-      }));
-    }
-  };
+  const [activeComponent, setActiveComponent] = useState<string | null>(null);
 
   const handleLogout = async () => {
     await fetch('/api/auth/logout', { method: 'POST' });
@@ -142,125 +19,41 @@ export default function AdminDashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 py-8 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-2xl mx-auto bg-white rounded-lg shadow-sm p-6">
-        <h1 className="text-2xl font-bold text-gray-900 mb-6">
-          Upload New Sound
-        </h1>
-
-        <form onSubmit={handleUpload} className="space-y-6">
-          <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Title
-            </label>
-            <input
-              type="text"
-              name="title"
-              value={formData.title}
-              onChange={handleInputChange}
-              className="input input-bordered w-full text-black bg-white"
-              required
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Description
-            </label>
-            <textarea
-              name="description"
-              value={formData.description}
-              onChange={handleInputChange}
-              rows={3}
-              className="textarea textarea-bordered w-full text-black bg-white"
-              required
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Soundpack ID (Optional)
-            </label>
-            <input
-              type="text"
-              name="soundpack_id"
-              value={formData.soundpack_id}
-              onChange={handleInputChange}
-              className="input input-bordered w-full text-black bg-white"
-            />
-            <p className="mt-1 text-sm text-gray-500">
-              Leave empty if the sound doesn't belong to a soundpack
-            </p>
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Tags
-            </label>
-            <input
-              type="text"
-              name="tags"
-              value={formData.tags}
-              onChange={handleInputChange}
-              placeholder="e.g., white noise, low frequency, piano"
-              className="input input-bordered w-full text-black bg-white"
-            />
-            <p className="mt-1 text-sm text-gray-500">
-              Separate tags with commas. Multi-word tags are supported (e.g., "white noise").
-            </p>
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Sound File
-            </label>
-            <input
-              type="file"
-              accept="audio/*"
-              onChange={handleFileChange}
-              className="file-input file-input-bordered w-full text-black bg-white"
-              data-choose-text="Choose sound files"
-              data-no-file-text="No files selected"
-              multiple
-            />
-            <p className="mt-1 text-sm text-gray-500">
-              Accepted formats: MP3, WAV, OGG. You can select multiple files.
-            </p>
-          </div>
-
-          {uploadState.error && (
-            <div className="text-red-600 text-sm">{uploadState.error}</div>
-          )}
-
-          {uploadState.success && (
-            <div className="text-green-600 text-sm">
-              Upload successful!
-            </div>
-          )}
-
-          {uploadState.isUploading && (
-            <>
-              <div className="text-sm mb-2">
-                Uploading... {uploadState.progress}%
-                {files.length > 1 && ` (File ${Math.floor(uploadState.progress / (100 / files.length)) + 1} of ${files.length})`}
-              </div>
-              <div className="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
-                <div
-                  className="bg-green-600 h-2.5 rounded-full transition-all duration-300"
-                  style={{ width: `${uploadState.progress}%` }}
-                ></div>
-              </div>
-            </>
-          )}
-
+    <div className="min-h-screen bg-gray-100 py-8 px-4 sm:px-6 lg:px-8 !pt-8">
+      <div className="max-w-7xl mx-auto">
+        <div className="flex justify-between items-center mb-8">
+          <h1 className="text-3xl font-bold text-gray-900">Admin Dashboard</h1>
           <button
-            type="submit"
-            disabled={uploadState.isUploading}
-            className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:bg-gray-400"
+            onClick={handleLogout}
+            className="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
           >
-            {uploadState.isUploading ? 'Uploading...' : 'Upload sound(s)'}
+            Logout
           </button>
-        </form>
+        </div>
+
+        {!activeComponent ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div 
+              onClick={() => setActiveComponent('upload-sounds')}
+              className="bg-white rounded-lg shadow-sm p-6 cursor-pointer hover:shadow-md transition-shadow"
+            >
+              <h2 className="text-xl font-semibold text-gray-900 mb-2">Upload Sounds</h2>
+              <p className="text-gray-600">Upload and manage sound files.</p>
+            </div>
+            {/* Add more cards here for other admin functionalities */}
+          </div>
+        ) : (
+          <div className="flex flex-col space-y-4">
+            <button
+              onClick={() => setActiveComponent(null)}
+              className="self-start px-4 py-2 text-sm font-medium text-gray-600 hover:text-gray-900"
+            >
+              ← Back to Dashboard
+            </button>
+            
+            {activeComponent === 'upload-sounds' && <UploadSounds />}
+          </div>
+        )}
       </div>
     </div>
   );
