@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import getConnection from '@/lib/mysql';
+import getConnection from '@/utils/mysql';
 
 export async function GET() {
   try {
