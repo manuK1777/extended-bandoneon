@@ -169,7 +169,7 @@ export default function AdminDashboard() {
 
           <div>
             <label className="block text-sm font-medium text-gray-700">
-              Soundpack ID
+              Soundpack ID (Optional)
             </label>
             <input
               type="text"
@@ -178,20 +178,26 @@ export default function AdminDashboard() {
               onChange={handleInputChange}
               className="input input-bordered w-full text-black bg-white"
             />
+            <p className="mt-1 text-sm text-gray-500">
+              Leave empty if the sound doesn't belong to a soundpack
+            </p>
           </div>
 
           <div>
             <label className="block text-sm font-medium text-gray-700">
-              Tags (comma separated)
+              Tags
             </label>
             <input
               type="text"
               name="tags"
               value={formData.tags}
               onChange={handleInputChange}
-              placeholder="e.g., piano, classical, soft"
+              placeholder="e.g., white noise, low frequency, piano"
               className="input input-bordered w-full text-black bg-white"
             />
+            <p className="mt-1 text-sm text-gray-500">
+              Separate tags with commas. Multi-word tags are supported (e.g., "white noise").
+            </p>
           </div>
 
           <div>
