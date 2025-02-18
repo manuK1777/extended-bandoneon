@@ -51,12 +51,12 @@ export async function POST(req: NextRequest) {
       format: uploadResponse.format,
       bytes: uploadResponse.bytes,
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('File upload error:', error);
     return NextResponse.json(
       {
         error: 'Failed to upload file',
-        details: error.message,
+        details: error instanceof Error ? error.message : 'Unknown error',
       },
       { status: 500 }
     );

@@ -2,6 +2,25 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createConnection } from '@/utils/db';
 import { verifyJWT } from '@/utils/serverAuth';
 
+interface SoundpackRow {
+  id: number;
+}
+
+interface DbResult {
+  insertId: number;
+}
+
+interface SoundData {
+  title: string;
+  description: string;
+  soundpack_id?: string;
+  tags: string[];
+  filePath: string;
+  duration: number;
+  fileSize: number;
+  fileFormat: string;
+}
+
 export async function POST(req: NextRequest) {
   const token = req.cookies.get('admin_token')?.value;
   const payload = verifyJWT(token || '');
@@ -11,31 +30,11 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    const data = await req.json();
+    const data: SoundData = await req.json();
     console.log('Received data:', { ...data, filePath: 'REDACTED' });
-    
-    const { 
-      title, 
-      description, 
-      soundpack_id, 
-      tags, 
-      filePath, 
-      duration,
-      fileSize,
-      fileFormat 
-    }: {
-      title: string;
-      description: string;
-      soundpack_id?: string;
-      tags: string[];
-      filePath: string;
-      duration: number;
-      fileSize: number;
-      fileFormat: string;
-    } = data;
 
     // Validation
-    if (!title || !description || !filePath) {
+    if (!data.title || !data.description || !data.filePath) {
       return NextResponse.json(
         { error: 'Missing required fields' },
         { status: 400 }
@@ -50,14 +49,14 @@ export async function POST(req: NextRequest) {
       await connection.beginTransaction();
 
       // Validate soundpack_id if provided
-      if (soundpack_id) {
+      if (data.soundpack_id) {
         const [soundpacks] = await connection.execute(
           'SELECT id FROM soundpacks WHERE id = ?',
-          [soundpack_id]
+          [data.soundpack_id]
         );
         
-        if (!(soundpacks as any[]).length) {
-          throw new Error(`Soundpack with ID ${soundpack_id} does not exist`);
+        if (!(soundpacks as SoundpackRow[]).length) {
+          throw new Error(`Soundpack with ID ${data.soundpack_id} does not exist`);
         }
       }
 
@@ -74,21 +73,21 @@ export async function POST(req: NextRequest) {
           created_at
         ) VALUES (?, ?, ?, ?, ?, ?, ?, NOW())`,
         [
-          title,
-          description,
-          filePath,
-          duration,
-          soundpack_id || null,
-          fileSize,
-          fileFormat,
+          data.title,
+          data.description,
+          data.filePath,
+          data.duration,
+          data.soundpack_id || null,
+          data.fileSize,
+          data.fileFormat,
         ]
       );
 
-      const sound_id = (result as any).insertId;
+      const sound_id = (result as DbResult).insertId;
 
       // Process and insert tags
-      if (tags && tags.length > 0) {
-        const normalizedTags: string[] = tags.map((tag: string) => {
+      if (data.tags && data.tags.length > 0) {
+        const normalizedTags: string[] = data.tags.map((tag: string) => {
           let normalizedTag = tag.toLowerCase().trim();
           normalizedTag = normalizedTag.replace(/\s+/g, ' ');
           normalizedTag = normalizedTag.replace(/[^a-z0-9\s-]/g, '');
@@ -116,7 +115,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({
         message: 'Sound uploaded successfully!',
         sound_id,
-        url: filePath,
+        url: data.filePath,
       });
     } catch (error) {
       // Rollback transaction on error
@@ -125,14 +124,14 @@ export async function POST(req: NextRequest) {
     } finally {
       await connection.end();
     }
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Upload error details:', {
-      message: error.message,
-      stack: error.stack,
-      name: error.name
+      message: error instanceof Error ? error.message : 'Unknown error',
+      stack: error instanceof Error ? error.stack : undefined,
+      name: error instanceof Error ? error.name : 'Unknown'
     });
     return NextResponse.json(
-      { error: 'Failed to upload sound', details: error.message },
+      { error: 'Failed to upload sound', details: error instanceof Error ? error.message : 'Unknown error' },
       { status: 500 }
     );
   }
