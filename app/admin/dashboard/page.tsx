@@ -148,7 +148,7 @@ export default function AdminDashboard() {
               name="title"
               value={formData.title}
               onChange={handleInputChange}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+              className="input input-bordered w-full text-black bg-white"
               required
             />
           </div>
@@ -162,7 +162,7 @@ export default function AdminDashboard() {
               value={formData.description}
               onChange={handleInputChange}
               rows={3}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+              className="textarea textarea-bordered w-full text-black bg-white"
               required
             />
           </div>
@@ -176,7 +176,7 @@ export default function AdminDashboard() {
               name="soundpack_id"
               value={formData.soundpack_id}
               onChange={handleInputChange}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+              className="input input-bordered w-full text-black bg-white"
             />
           </div>
 
@@ -190,7 +190,7 @@ export default function AdminDashboard() {
               value={formData.tags}
               onChange={handleInputChange}
               placeholder="e.g., piano, classical, soft"
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+              className="input input-bordered w-full text-black bg-white"
             />
           </div>
 
@@ -202,7 +202,7 @@ export default function AdminDashboard() {
               type="file"
               accept="audio/*"
               onChange={handleFileChange}
-              className="mt-1 block w-full"
+              className="file-input file-input-bordered w-full text-black bg-white"
               required
             />
           </div>
