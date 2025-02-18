@@ -1,9 +1,17 @@
 import { NextResponse } from 'next/server';
-import { cookies } from 'next/headers';
 
 export async function POST() {
-  // Remove the admin token cookie
-  cookies().delete('admin_token');
-  
-  return NextResponse.json({ success: true });
+  // Create a response
+  const response = NextResponse.json({ success: true });
+
+  // Set the admin token cookie with an expiration date in the past to delete it
+  response.cookies.set('admin_token', '', {
+    httpOnly: true,
+    secure: process.env.NODE_ENV !== 'development',
+    sameSite: 'strict',
+    path: '/',
+    expires: new Date(0), // Set expiration to a past date
+  });
+
+  return response;
 }

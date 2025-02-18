@@ -11,21 +11,24 @@ export interface JWTPayload {
 }
 
 export function generateToken(payload: Omit<JWTPayload, 'iat' | 'exp'>) {
-  return jwt.sign(payload, JWT_SECRET, { expiresIn: TOKEN_EXPIRY });
-}
-
-export function verifyToken(token: string): JWTPayload | null {
   try {
-    return jwt.verify(token, JWT_SECRET) as JWTPayload;
+    return jwt.sign(payload, JWT_SECRET, { 
+      expiresIn: TOKEN_EXPIRY,
+      algorithm: 'HS256'
+    });
   } catch (error) {
-    return null;
+    console.error('Error generating token:', error);
+    throw new Error('Failed to generate authentication token');
   }
 }
 
-export function decodeToken(token: string): JWTPayload | null {
-  try {
-    return jwt.decode(token) as JWTPayload;
-  } catch (error) {
-    return null;
+// Utility function to validate admin credentials
+export function validateAdminCredentials(username: string, password: string): boolean {
+  if (!process.env.ADMIN_USERNAME || !process.env.ADMIN_PASSWORD) {
+    console.error('Admin credentials not properly configured in environment variables');
+    return false;
   }
+  
+  return username === process.env.ADMIN_USERNAME && 
+         password === process.env.ADMIN_PASSWORD;
 }

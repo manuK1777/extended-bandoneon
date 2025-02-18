@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { v2 as cloudinary } from 'cloudinary';
 import { createConnection } from '@/utils/db';
+import { verifyJWT } from '@/utils/serverAuth';
 
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -9,12 +10,14 @@ cloudinary.config({
 });
 
 export async function POST(req: NextRequest) {
-  try {
-    // TODO: Add authentication check here
-    // if (!isAuthenticated(req)) {
-    //   return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    // }
+  const token = req.cookies.get('admin_token')?.value;
+  const payload = verifyJWT(token || '');
 
+  if (!payload || !payload.isAdmin) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
+  try {
     const data = await req.json();
     const { title, description, soundpack_id, tags, filePath } = data;
 
