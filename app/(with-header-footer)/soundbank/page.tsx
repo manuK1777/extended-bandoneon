@@ -47,20 +47,38 @@ function formatDuration(seconds: number | null): string {
 
 export default function SoundbankPage() {
   const [sounds, setSounds] = useState<Sound[]>([]);
+  const [error, setError] = useState<string | null>(null);
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [selectedSoundpack, setSelectedSoundpack] = useState("");
   const [currentSound, setCurrentSound] = useState<string | null>(null);
 
   useEffect(() => {
     fetch('/api/sounds')
-      .then((res) => res.json())
-      .then((data) => setSounds(data))
-      .catch((error) => console.error('Error fetching sounds:', error));
+      .then((res) => {
+        if (!res.ok) {
+          return res.json().then(err => {
+            throw new Error(err.error || 'Failed to fetch sounds');
+          });
+        }
+        return res.json();
+      })
+      .then((data) => {
+        if (!Array.isArray(data)) {
+          throw new Error('Invalid response format');
+        }
+        setSounds(data);
+        setError(null);
+      })
+      .catch((error) => {
+        console.error('Error fetching sounds:', error);
+        setError(error.message);
+        setSounds([]);
+      });
   }, []);
 
   // Get unique tags and soundpacks for filters
-  const allTags = Array.from(new Set(sounds.flatMap(s => s.tags).filter(Boolean)));
-  const allSoundpacks = Array.from(new Set(sounds.map(s => s.soundpackName).filter((name): name is string => name !== null)));
+  const allTags = Array.from(new Set(sounds?.flatMap(s => s.tags || []).filter(Boolean) || []));
+  const allSoundpacks = Array.from(new Set(sounds?.map(s => s.soundpackName).filter((name): name is string => name !== null) || []));
 
   // Filter sounds based on selected tags and soundpack
   const filteredSounds = sounds.filter(sound => {

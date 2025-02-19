@@ -1,14 +1,14 @@
 import { NextResponse } from 'next/server';
-import getConnection from '@/utils/mysql';
+import { createConnection, closeConnection } from '@/utils/db';
 
 interface Sound {
   id: number;
   title: string;
-  description: string;
+  description: string | null;
   file_url: string;
-  file_format: string;
-  duration: number;
-  file_size: number;
+  file_format: string | null;
+  duration: number | null;
+  file_size: number | null;
   created_at: string;
   soundpack_name: string | null;
   soundpack_description: string | null;
@@ -16,11 +16,12 @@ interface Sound {
 }
 
 export async function GET() {
+  let connection;
   try {
-    const connection = await getConnection();
+    connection = await createConnection();
 
     // Query to get sounds with their tags and soundpack information
-    const [sounds] = await connection.execute(`
+    const [rows] = await connection.execute(`
       SELECT 
         s.id,
         s.title,
@@ -41,22 +42,25 @@ export async function GET() {
       ORDER BY s.created_at DESC
     `);
 
+    if (!Array.isArray(rows)) {
+      throw new Error('Database query did not return an array');
+    }
+
     // Transform the data to match our frontend expectations
-    const transformedSounds = (sounds as Sound[]).map(sound => ({
-      id: sound.id.toString(),
-      title: sound.title,
-      description: sound.description,
-      fileUrl: sound.file_url,
-      fileFormat: sound.file_format,
-      duration: sound.duration,
-      fileSize: sound.file_size,
-      createdAt: sound.created_at,
-      soundpackName: sound.soundpack_name,
-      soundpackDescription: sound.soundpack_description,
-      tags: sound.tags ? sound.tags.split(',') : []
+    const transformedSounds = (rows as Sound[]).map(sound => ({
+      id: sound.id?.toString() || '',
+      title: sound.title || '',
+      description: sound.description || null,
+      fileUrl: sound.file_url || '',
+      fileFormat: sound.file_format || null,
+      duration: sound.duration || null,
+      fileSize: sound.file_size || null,
+      createdAt: sound.created_at?.toString() || '',
+      soundpackName: sound.soundpack_name || null,
+      soundpackDescription: sound.soundpack_description || null,
+      tags: sound.tags ? sound.tags.split(',').filter(Boolean) : []
     }));
 
-    await connection.end();
     return NextResponse.json(transformedSounds);
   } catch (error) {
     console.error('Error fetching sounds:', error);
@@ -64,5 +68,9 @@ export async function GET() {
       { error: 'Failed to fetch sounds' },
       { status: 500 }
     );
+  } finally {
+    if (connection) {
+      await closeConnection(connection);
+    }
   }
 }
