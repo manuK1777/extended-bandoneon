@@ -14,6 +14,7 @@ interface Soundpack {
   name: string;
   description: string;
   cover_image_url: string;
+  tags: string;
 }
 
 export default function UploadSounds() {
@@ -30,7 +31,9 @@ export default function UploadSounds() {
     name: '',
     description: '',
     cover_image_url: '',
+    tags: ''
   });
+  const [createError, setCreateError] = useState<string | null>(null);
   const [uploadState, setUploadState] = useState<UploadState>({
     isUploading: false,
     progress: 0,
@@ -84,22 +87,36 @@ export default function UploadSounds() {
 
   const handleCreateSoundpack = async (e: React.FormEvent) => {
     e.preventDefault();
+    setCreateError(null);
+    
     try {
+      // Normalize the data before sending
+      const normalizedData = {
+        name: newSoundpack.name.trim(),
+        description: newSoundpack.description.trim(),
+        cover_image_url: newSoundpack.cover_image_url.trim(),
+        tags: newSoundpack.tags.trim()
+      };
+
       const response = await fetch('/api/admin/soundpacks', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(newSoundpack),
+        body: JSON.stringify(normalizedData),
       });
 
-      if (!response.ok) throw new Error('Failed to create soundpack');
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to create soundpack');
+      }
       
-      const createdSoundpack = await response.json();
-      setSoundpacks(prev => [...prev, createdSoundpack]);
-      setFormData(prev => ({ ...prev, soundpack_id: createdSoundpack.id.toString() }));
+      setSoundpacks(prev => [...prev, data]);
+      setFormData(prev => ({ ...prev, soundpack_id: data.id.toString() }));
       setIsCreateModalOpen(false);
-      setNewSoundpack({ name: '', description: '', cover_image_url: '' });
+      setNewSoundpack({ name: '', description: '', cover_image_url: '', tags: '' });
     } catch (error) {
       console.error('Error creating soundpack:', error);
+      setCreateError(error instanceof Error ? error.message : 'Failed to create soundpack');
     }
   };
 
@@ -183,6 +200,21 @@ export default function UploadSounds() {
         error: error instanceof Error ? error.message : 'Upload failed'
       }));
     }
+  };
+
+  const resetSoundpackForm = () => {
+    setNewSoundpack({
+      name: '',
+      description: '',
+      cover_image_url: '',
+      tags: ''
+    });
+    setCreateError(null);
+  };
+
+  const handleCloseCreateModal = () => {
+    resetSoundpackForm();
+    setIsCreateModalOpen(false);
   };
 
   return (
@@ -323,8 +355,21 @@ export default function UploadSounds() {
       {/* Create Soundpack Modal */}
       {isCreateModalOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded-lg w-full max-w-md">
-            <h2 className="text-xl font-bold mb-4">Create New Soundpack</h2>
+          <div className="bg-white p-6 rounded-lg w-full max-w-md relative">
+            <button
+              onClick={handleCloseCreateModal}
+              className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
+            >
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+            <h2 className="text-xl font-bold mb-4 text-gray-900">Create New Soundpack</h2>
+            {createError && (
+              <div className="mb-4 p-3 bg-red-50 border border-red-200 text-red-700 rounded">
+                {createError}
+              </div>
+            )}
             <form onSubmit={handleCreateSoundpack} className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700">Name</label>
@@ -354,15 +399,28 @@ export default function UploadSounds() {
                   className="input input-bordered w-full text-black bg-white"
                 />
               </div>
-              <div className="flex justify-end gap-2">
+              <div>
+                <label className="block text-sm font-medium text-gray-700">Tags</label>
+                <input
+                  type="text"
+                  value={newSoundpack.tags}
+                  onChange={(e) => setNewSoundpack(prev => ({ ...prev, tags: e.target.value }))}
+                  placeholder="e.g., experimental, electronic, ambient (comma separated)"
+                  className="input input-bordered w-full text-black bg-white"
+                />
+                <p className="mt-1 text-sm text-gray-500">
+                  Separate tags with commas
+                </p>
+              </div>
+              <div className="flex justify-end gap-2 mt-6">
                 <button
                   type="button"
-                  onClick={() => setIsCreateModalOpen(false)}
-                  className="btn btn-ghost"
+                  onClick={handleCloseCreateModal}
+                  className="px-4 py-2 text-sm font-medium text-gray-700 hover:text-gray-500"
                 >
                   Cancel
                 </button>
-                <button type="submit" className="btn btn-primary">
+                <button type="submit" className="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-md">
                   Create
                 </button>
               </div>
