@@ -2,18 +2,28 @@ import mysql from 'mysql2/promise';
 
 export async function createConnection() {
   try {
-    const connectionUrl = process.env.MYSQL_URL || process.env.DATABASE_URL;
+    let connectionUrl = process.env.MYSQL_URL || process.env.DATABASE_URL;
     
     if (!connectionUrl) {
-      throw new Error('Neither MYSQL_URL nor DATABASE_URL environment variable is set');
+      throw new Error('Database URL not found in environment variables');
     }
 
+    // We need to use the public URL in both environments because:
+    // - Development: Running locally, outside Railway's network
+    // - Production: Running on Vercel, also outside Railway's network
+    console.log('Environment:', process.env.NODE_ENV);
     console.log('Attempting to parse connection URL...');
-    const url = new URL(connectionUrl);
-    console.log('Connection URL format valid');
-    console.log('Database host:', url.hostname);
-    console.log('Database port:', url.port);
-    console.log('Database name:', url.pathname.substring(1));
+    
+    try {
+      const url = new URL(connectionUrl);
+      console.log('Connection URL format valid');
+      console.log('Database host:', url.hostname);
+      console.log('Using port:', url.port || '3306');
+      console.log('Database name:', url.pathname.substring(1));
+    } catch (urlError) {
+      console.error('Failed to parse URL:', urlError);
+      throw urlError;
+    }
 
     console.log('Creating connection...');
     const connection = await mysql.createConnection(connectionUrl);
