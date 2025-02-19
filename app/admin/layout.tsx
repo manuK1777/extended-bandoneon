@@ -1,5 +1,7 @@
 'use client';
 
+import { Toaster } from 'react-hot-toast';
+
 export default function AdminLayout({
   children,
 }: Readonly<{
@@ -12,6 +14,7 @@ export default function AdminLayout({
           padding-top: 0 !important;
         }
       `}</style>
+      <Toaster position="top-right" />
       {children}
     </>
   );

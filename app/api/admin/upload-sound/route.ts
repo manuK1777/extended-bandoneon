@@ -31,7 +31,7 @@ export async function POST(req: NextRequest) {
     console.log('Received data:', { ...data, filePath: 'REDACTED' });
 
     // Validation
-    if (!data.title || !data.description || !data.filePath) {
+    if (!data.title || !data.filePath) {
       return NextResponse.json(
         { error: 'Missing required fields' },
         { status: 400 }
@@ -74,10 +74,13 @@ export async function POST(req: NextRequest) {
       // Insert tags
       if (data.tags && data.tags.length > 0) {
         for (const tag of data.tags) {
+          // Format tag to match the database constraint: lowercase, replace spaces with hyphens
+          const formattedTag = tag.toLowerCase().trim().replace(/\s+/g, '-');
+          
           // Insert or get hashtag
           const hashtagResult = await db.execute(
             'INSERT INTO hashtags (tag) VALUES (?) ON DUPLICATE KEY UPDATE id=LAST_INSERT_ID(id)',
-            [tag.toLowerCase()]
+            [formattedTag]
           );
 
           const hashtagId = hashtagResult.insertId;

@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { toast } from 'react-hot-toast';
 
 interface UploadState {
   isUploading: boolean;
@@ -27,6 +28,7 @@ export default function UploadSounds() {
   const [files, setFiles] = useState<File[]>([]);
   const [soundpacks, setSoundpacks] = useState<Soundpack[]>([]);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [isCreating, setIsCreating] = useState(false);
   const [newSoundpack, setNewSoundpack] = useState({
     name: '',
     description: '',
@@ -49,24 +51,63 @@ export default function UploadSounds() {
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files) {
-      const selectedFiles = Array.from(e.target.files);
-      // Validate file types
-      const invalidFiles = selectedFiles.filter(
-        file => !file.type.startsWith('audio/')
-      );
-      
-      if (invalidFiles.length > 0) {
-        setUploadState((prev) => ({
-          ...prev,
-          error: 'Please select only audio files',
-        }));
-        return;
-      }
-      
-      setFiles(selectedFiles);
-      setUploadState((prev) => ({ ...prev, error: null }));
+    const selectedFiles = e.target.files;
+    if (!selectedFiles?.length) return;
+
+    setFiles(Array.from(selectedFiles));
+
+    // Set the title to the first file's name without extension
+    if (selectedFiles[0]) {
+      const fileName = selectedFiles[0].name;
+      const titleWithoutExtension = fileName.substring(0, fileName.lastIndexOf('.'));
+      setFormData(prev => ({
+        ...prev,
+        title: titleWithoutExtension
+      }));
     }
+
+    // Validate file types
+    const invalidFiles = Array.from(selectedFiles).filter(
+      file => !file.type.startsWith('audio/')
+    );
+    
+    if (invalidFiles.length > 0) {
+      setUploadState((prev) => ({
+        ...prev,
+        error: 'Please select only audio files',
+      }));
+      return;
+    }
+    
+    setUploadState((prev) => ({ ...prev, error: null }));
+  };
+
+  const removeFile = (indexToRemove: number) => {
+    setFiles(prevFiles => {
+      const newFiles = prevFiles.filter((_, index) => index !== indexToRemove);
+      // If we removed the first file and there are other files, update the title to the new first file
+      if (indexToRemove === 0 && newFiles.length > 0) {
+        const newFirstFileName = newFiles[0].name;
+        const newTitleWithoutExtension = newFirstFileName.substring(0, newFirstFileName.lastIndexOf('.'));
+        setFormData(prev => ({
+          ...prev,
+          title: newTitleWithoutExtension
+        }));
+      }
+      // If we removed the last file, clear the title if it matches the removed file
+      if (newFiles.length === 0) {
+        setFormData(prev => ({
+          ...prev,
+          title: ''
+        }));
+        // Reset the file input
+        const fileInput = document.querySelector('input[type="file"]') as HTMLInputElement;
+        if (fileInput) {
+          fileInput.value = '';
+        }
+      }
+      return newFiles;
+    });
   };
 
   useEffect(() => {
@@ -85,11 +126,11 @@ export default function UploadSounds() {
     fetchSoundpacks();
   }, []);
 
-  const handleCreateSoundpack = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setCreateError(null);
-    
+  const handleCreateSoundpack = async () => {
     try {
+      setIsCreating(true);
+      setCreateError(null);
+      
       // Normalize the data before sending
       const normalizedData = {
         name: newSoundpack.name.trim(),
@@ -114,19 +155,19 @@ export default function UploadSounds() {
       setFormData(prev => ({ ...prev, soundpack_id: data.id.toString() }));
       setIsCreateModalOpen(false);
       setNewSoundpack({ name: '', description: '', cover_image_url: '', tags: '' });
+      toast.success('Soundpack created successfully!');
     } catch (error) {
       console.error('Error creating soundpack:', error);
       setCreateError(error instanceof Error ? error.message : 'Failed to create soundpack');
+    } finally {
+      setIsCreating(false);
     }
   };
 
   const handleUpload = async (e: React.FormEvent) => {
     e.preventDefault();
     if (files.length === 0) {
-      setUploadState((prev) => ({
-        ...prev,
-        error: 'Please select at least one sound file',
-      }));
+      toast.error('Please select at least one sound file');
       return;
     }
 
@@ -141,7 +182,9 @@ export default function UploadSounds() {
       // Upload each file
       for (let i = 0; i < files.length; i++) {
         const file = files[i];
-        const progress = Math.round((i / files.length) * 100);
+        
+        // Simple progress based on completed files
+        const progress = Math.round((i / files.length) * 90); // Leave 10% for final processing
         setUploadState(prev => ({ ...prev, progress }));
 
         // First, upload the file
@@ -193,13 +236,34 @@ export default function UploadSounds() {
         tags: '',
       });
       setFiles([]);
+      
+      // Show success toast
+      toast.success(`Successfully uploaded ${files.length} ${files.length === 1 ? 'file' : 'files'}!`);
     } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : 'Upload failed';
       setUploadState((prev) => ({
         ...prev,
         isUploading: false,
-        error: error instanceof Error ? error.message : 'Upload failed'
+        error: errorMessage
       }));
+      toast.error(errorMessage);
     }
+  };
+
+  const handleClearForm = () => {
+    setFormData({
+      title: '',
+      description: '',
+      soundpack_id: '',
+      tags: '',
+    });
+    setFiles([]);
+    setUploadState({
+      isUploading: false,
+      progress: 0,
+      error: null,
+      success: false,
+    });
   };
 
   const resetSoundpackForm = () => {
@@ -224,132 +288,185 @@ export default function UploadSounds() {
       </h1>
 
       <form onSubmit={handleUpload} className="space-y-6">
-        <div>
-          <label className="block text-sm font-medium text-gray-700">
-            Title
-          </label>
-          <input
-            type="text"
-            name="title"
-            value={formData.title}
-            onChange={handleInputChange}
-            className="input input-bordered w-full text-black bg-white"
-            required
-          />
-        </div>
+        <div className="space-y-6">
+          {/* File Upload Section */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700">
+              Sound Files
+            </label>
+            <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md relative">
+              <div className="space-y-1 text-center">
+                <input
+                  type="file"
+                  multiple
+                  onChange={handleFileChange}
+                  className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                  accept="audio/*"
+                  key={files.length}
+                />
+                <div className="flex text-sm text-gray-600">
+                  <p className="relative cursor-pointer rounded-md font-medium text-blue-600 hover:text-blue-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-blue-500">
+                    Upload a file
+                  </p>
+                  <p className="pl-1">or drag and drop</p>
+                </div>
+                <p className="text-xs text-gray-500">MP3, WAV up to 10MB</p>
+              </div>
+            </div>
+            {files.length > 0 && (
+              <div className="mt-2">
+                <p className="text-sm font-medium text-gray-700 mb-2">Selected files:</p>
+                <ul className="mt-2 divide-y divide-gray-100 bg-white rounded-lg border border-gray-200">
+                  {Array.from(files).map((file, index) => (
+                    <li key={index} className="px-4 py-3 flex items-center justify-between hover:bg-gray-50 transition-colors">
+                      <div className="flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-400 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" />
+                        </svg>
+                        <span className="text-sm text-gray-700">{file.name}</span>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => removeFile(index)}
+                        className="ml-2 p-1 rounded-full text-gray-400 hover:text-red-500 hover:bg-red-50 transition-all"
+                        title="Remove file"
+                      >
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                          <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+                        </svg>
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </div>
 
-        <div>
-          <label className="block text-sm font-medium text-gray-700">
-            Description
-          </label>
-          <textarea
-            name="description"
-            value={formData.description}
-            onChange={handleInputChange}
-            rows={3}
-            className="textarea textarea-bordered w-full text-black bg-white"
-            required
-          />
-        </div>
+          {/* Form Fields */}
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700">
+                Title
+              </label>
+              <input
+                type="text"
+                name="title"
+                value={formData.title}
+                onChange={handleInputChange}
+                className="input input-bordered w-full text-black bg-white"
+                required
+              />
+            </div>
 
-        <div>
-          <label className="block text-sm font-medium text-gray-700">
-            Soundpack
-          </label>
-          <div className="flex gap-2 items-center">
-            <select
-              name="soundpack_id"
-              value={formData.soundpack_id}
-              onChange={handleInputChange}
-              className="select select-bordered w-full text-black bg-white"
-            >
-              <option value="">No soundpack</option>
-              {soundpacks.map((pack) => (
-                <option key={pack.id} value={pack.id}>
-                  {pack.name}
-                </option>
-              ))}
-            </select>
+            <div>
+              <label className="block text-sm font-medium text-gray-700">
+                Description
+              </label>
+              <textarea
+                name="description"
+                value={formData.description}
+                onChange={handleInputChange}
+                rows={3}
+                className="textarea textarea-bordered w-full text-black bg-white"
+                placeholder="Description (optional)"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700">
+                Soundpack
+              </label>
+              <div className="flex gap-2 items-center">
+                <select
+                  name="soundpack_id"
+                  value={formData.soundpack_id}
+                  onChange={handleInputChange}
+                  className="select select-bordered w-full text-black bg-white"
+                >
+                  <option value="">No soundpack</option>
+                  {soundpacks.map((pack) => (
+                    <option key={pack.id} value={pack.id}>
+                      {pack.name}
+                    </option>
+                  ))}
+                </select>
+                <button
+                  type="button"
+                  onClick={() => setIsCreateModalOpen(true)}
+                  className="btn bg-blue-600 hover:bg-blue-800 text-white transition-transform active:scale-95"
+                >
+                  Create New
+                </button>
+              </div>
+              <p className="mt-1 text-sm text-gray-500">
+                Select an existing soundpack or create a new one
+              </p>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700">
+                Tags
+              </label>
+              <input
+                type="text"
+                name="tags"
+                value={formData.tags}
+                onChange={handleInputChange}
+                placeholder="Enter tags separated by commas (e.g., left-hand, improvisation)"
+                className="input input-bordered w-full text-black bg-white"
+              />
+              <p className="text-xs text-gray-500 mt-1">Tags will be formatted as lowercase with hyphens instead of spaces</p>
+            </div>
+          </div>
+
+          {/* Form Actions */}
+          <div className="flex items-center justify-between space-x-4 mt-6">
             <button
               type="button"
-              onClick={() => setIsCreateModalOpen(true)}
-              className="btn btn-primary"
+              onClick={handleClearForm}
+              className="px-4 py-2 text-sm font-medium text-gray-800 hover:text-gray-900 rounded-md border border-gray-300 bg-yellow-200 hover:bg-yellow-400 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 flex items-center"
             >
-              Create New
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+              </svg>
+              Clear Form
+            </button>
+            <button
+              type="submit"
+              disabled={uploadState.isUploading}
+              className="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-800 rounded-md transition-transform active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 flex items-center"
+              style={{
+                transform: uploadState.isUploading ? 'scale(0.98)' : 'scale(1)',
+                transition: 'transform 0.1s ease-in-out'
+              }}
+            >
+              {uploadState.isUploading ? (
+                <>
+                  <span className="loading loading-spinner loading-sm mr-2"></span>
+                  Uploading... {uploadState.progress}%
+                </>
+              ) : (
+                <>
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                  </svg>
+                  Upload Files
+                </>
+              )}
             </button>
           </div>
-          <p className="mt-1 text-sm text-gray-500">
-            Select an existing soundpack or create a new one
-          </p>
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium text-gray-700">
-            Tags
-          </label>
-          <input
-            type="text"
-            name="tags"
-            value={formData.tags}
-            onChange={handleInputChange}
-            placeholder="e.g., white noise, low frequency, piano"
-            className="input input-bordered w-full text-black bg-white"
-          />
-          <p className="mt-1 text-sm text-gray-500">
-            Separate tags with commas. Multi-word tags are supported (e.g., &quot;white noise&quot;).
-          </p>
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium text-gray-700">
-            Sound File
-          </label>
-          <input
-            type="file"
-            accept="audio/*"
-            onChange={handleFileChange}
-            className="file-input file-input-bordered w-full text-black bg-white"
-            data-choose-text="Choose sound files"
-            data-no-file-text="No files selected"
-            multiple
-          />
-          <p className="mt-1 text-sm text-gray-500">
-            Accepted formats: MP3, WAV, OGG. You can select multiple files.
-          </p>
         </div>
 
         {uploadState.error && (
           <div className="text-red-600 text-sm">{uploadState.error}</div>
         )}
 
-        {uploadState.success && (
-          <div className="text-green-600 text-sm">
-            Upload successful!
+        {uploadState.isUploading && (
+          <div className="text-sm mb-2">
+            Uploading... {uploadState.progress}%
+            {files.length > 1 && ` (File ${Math.floor(uploadState.progress / (100 / files.length)) + 1} of ${files.length})`}
           </div>
         )}
-
-        {uploadState.isUploading && (
-          <>
-            <div className="text-sm mb-2">
-              Uploading... {uploadState.progress}%
-              {files.length > 1 && ` (File ${Math.floor(uploadState.progress / (100 / files.length)) + 1} of ${files.length})`}
-            </div>
-            <div className="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
-              <div
-                className="bg-green-600 h-2.5 rounded-full transition-all duration-300"
-                style={{ width: `${uploadState.progress}%` }}
-              ></div>
-            </div>
-          </>
-        )}
-
-        <button
-          type="submit"
-          disabled={uploadState.isUploading}
-          className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:bg-gray-400"
-        >
-          {uploadState.isUploading ? 'Uploading...' : 'Upload sound(s)'}
-        </button>
       </form>
 
       {/* Create Soundpack Modal */}
@@ -370,7 +487,7 @@ export default function UploadSounds() {
                 {createError}
               </div>
             )}
-            <form onSubmit={handleCreateSoundpack} className="space-y-4">
+            <form onSubmit={(e) => e.preventDefault()} className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700">Name</label>
                 <input
@@ -420,8 +537,20 @@ export default function UploadSounds() {
                 >
                   Cancel
                 </button>
-                <button type="submit" className="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-md">
-                  Create
+                <button
+                  type="submit"
+                  onClick={handleCreateSoundpack}
+                  disabled={isCreating || !newSoundpack.name}
+                  className="w-full px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-md transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                >
+                  {isCreating ? (
+                    <>
+                      <span className="loading loading-spinner loading-sm text-yellow-500 mr-2"></span>
+                      <span className="text-black">Creating...</span>
+                    </>
+                  ) : (
+                    'Create Soundpack'
+                  )}
                 </button>
               </div>
             </form>
