@@ -18,10 +18,12 @@ interface Sound {
 export async function GET() {
   let connection;
   try {
-    // Create and test database connection
+    console.log('Attempting to create database connection...');
     connection = await createConnection();
+    console.log('Database connection successful');
 
     // Query to get sounds with their tags and soundpack information
+    console.log('Executing database query...');
     const [rows] = await connection.execute(`
       SELECT 
         s.id,
@@ -42,6 +44,7 @@ export async function GET() {
       GROUP BY s.id
       ORDER BY s.created_at DESC
     `);
+    console.log(`Query successful, retrieved ${Array.isArray(rows) ? rows.length : 0} sounds`);
 
     if (!Array.isArray(rows)) {
       console.error('Database query did not return an array:', {
@@ -86,7 +89,9 @@ export async function GET() {
     );
   } finally {
     if (connection) {
+      console.log('Closing database connection...');
       await closeConnection(connection);
+      console.log('Database connection closed');
     }
   }
 }
