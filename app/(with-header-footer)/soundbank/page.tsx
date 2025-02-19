@@ -108,7 +108,14 @@ export default function SoundbankPage() {
   };
 
   return (
-    <>
+    <div className="container mx-auto px-4 py-8">
+      {error && (
+        <div className="mb-4 p-4 text-red-700 bg-red-100 rounded-lg" role="alert">
+          <p className="font-medium">Error loading sounds:</p>
+          <p>{error}</p>
+        </div>
+      )}
+      
       <Head>
         <title>Extended Bandoneon Soundbank - Free Bandoneon Sound Samples</title>
         <meta name="description" content="Explore our collection of high-quality bandoneon sound samples. Download free sounds for music production, research, and creative projects." />
@@ -119,7 +126,7 @@ export default function SoundbankPage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
       />
       
-      <main className="container mx-auto px-4 py-8">
+      <main className="mb-8">
         <header className="mb-8">
         <h1 className="text-3xl md:text-4xl font-bold mb-8 text-yellow-200 font-heading tracking-tight">Bandoneon Soundbank</h1>
         </header>
@@ -240,6 +247,6 @@ export default function SoundbankPage() {
           ))}
         </section>
       </main>
-    </>
+    </div>
   );
 }
