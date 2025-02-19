@@ -1,13 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createConnection } from '@/utils/db';
+import { db } from '@/lib/db';
 import { verifyJWT } from '@/utils/serverAuth';
+import { RowDataPacket } from 'mysql2';
 
-interface SoundpackRow {
+interface SoundpackRow extends RowDataPacket {
   id: number;
-}
-
-interface DbResult {
-  insertId: number;
 }
 
 interface SoundData {
@@ -41,97 +38,74 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Connect to database
-    const connection = await createConnection();
-
     try {
-      // Start transaction
-      await connection.beginTransaction();
-
       // Validate soundpack_id if provided
       if (data.soundpack_id) {
-        const [soundpacks] = await connection.execute(
+        const soundpacks = await db.query<SoundpackRow>(
           'SELECT id FROM soundpacks WHERE id = ?',
           [data.soundpack_id]
         );
-        
-        if (!(soundpacks as SoundpackRow[]).length) {
-          throw new Error(`Soundpack with ID ${data.soundpack_id} does not exist`);
+
+        if (soundpacks.length === 0) {
+          return NextResponse.json(
+            { error: 'Invalid soundpack_id' },
+            { status: 400 }
+          );
         }
       }
 
       // Insert sound
-      const [result] = await connection.execute(
-        `INSERT INTO sounds (
-          title, 
-          description, 
-          file_url, 
-          duration, 
-          soundpack_id, 
-          file_size,
-          file_format,
-          created_at
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, NOW())`,
+      const result = await db.execute(
+        `INSERT INTO sounds (title, description, file_url, duration, file_size, file_format, soundpack_id, created_at)
+         VALUES (?, ?, ?, ?, ?, ?, ?, NOW())`,
         [
           data.title,
           data.description,
           data.filePath,
           data.duration,
-          data.soundpack_id || null,
           data.fileSize,
           data.fileFormat,
+          data.soundpack_id || null,
         ]
       );
 
-      const sound_id = (result as DbResult).insertId;
+      const soundId = result.insertId;
 
-      // Process and insert tags
+      // Insert tags
       if (data.tags && data.tags.length > 0) {
-        const normalizedTags: string[] = data.tags.map((tag: string) => {
-          let normalizedTag = tag.toLowerCase().trim();
-          normalizedTag = normalizedTag.replace(/\s+/g, ' ');
-          normalizedTag = normalizedTag.replace(/[^a-z0-9\s-]/g, '');
-          return normalizedTag;
-        }).filter(tag => tag.length > 0);
-
-        for (const tag of normalizedTags) {
-          await connection.execute(
-            `INSERT IGNORE INTO hashtags (tag, created_at) VALUES (?, NOW())`,
-            [tag]
+        for (const tag of data.tags) {
+          // Insert or get hashtag
+          const hashtagResult = await db.execute(
+            'INSERT INTO hashtags (tag) VALUES (?) ON DUPLICATE KEY UPDATE id=LAST_INSERT_ID(id)',
+            [tag.toLowerCase()]
           );
 
-          // Then link it to the sound
-          await connection.execute(
-            `INSERT INTO entity_hashtags (entity_id, entity_type, hashtag_id) 
-             SELECT ?, 'sound', id FROM hashtags WHERE tag = ?`,
-            [sound_id, tag]
+          const hashtagId = hashtagResult.insertId;
+
+          // Link hashtag to sound
+          await db.execute(
+            'INSERT INTO entity_hashtags (entity_id, entity_type, hashtag_id) VALUES (?, ?, ?)',
+            [soundId, 'sound', hashtagId]
           );
         }
       }
 
-      // Commit transaction
-      await connection.commit();
-
       return NextResponse.json({
         message: 'Sound uploaded successfully!',
-        sound_id,
+        sound_id: soundId,
         url: data.filePath,
       });
     } catch (error) {
-      // Rollback transaction on error
-      await connection.rollback();
-      throw error;
-    } finally {
-      await connection.end();
+      console.error('Database error:', error);
+      return NextResponse.json(
+        { error: 'Failed to save sound' },
+        { status: 500 }
+      );
     }
-  } catch (error: unknown) {
-    console.error('Upload error details:', {
-      message: error instanceof Error ? error.message : 'Unknown error',
-      stack: error instanceof Error ? error.stack : undefined,
-      name: error instanceof Error ? error.name : 'Unknown'
-    });
+  } catch (error) {
+    console.error('Error processing request:', error);
     return NextResponse.json(
-      { error: 'Failed to upload sound', details: error instanceof Error ? error.message : 'Unknown error' },
+      { error: 'Internal server error' },
       { status: 500 }
     );
   }

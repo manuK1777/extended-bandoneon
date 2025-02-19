@@ -1,7 +1,8 @@
 import { NextResponse } from 'next/server';
-import { createConnection, closeConnection } from '@/utils/db';
+import { db } from '@/lib/db';
+import { RowDataPacket } from 'mysql2';
 
-interface Sound {
+interface Sound extends RowDataPacket {
   id: number;
   title: string;
   description: string | null;
@@ -16,15 +17,9 @@ interface Sound {
 }
 
 export async function GET() {
-  let connection;
   try {
-    console.log('Attempting to create database connection...');
-    connection = await createConnection();
-    console.log('Database connection successful');
-
-    // Query to get sounds with their tags and soundpack information
     console.log('Executing database query...');
-    const [rows] = await connection.execute(`
+    const rows = await db.query<Sound>(`
       SELECT 
         s.id,
         s.title,
@@ -44,18 +39,10 @@ export async function GET() {
       GROUP BY s.id
       ORDER BY s.created_at DESC
     `);
-    console.log(`Query successful, retrieved ${Array.isArray(rows) ? rows.length : 0} sounds`);
-
-    if (!Array.isArray(rows)) {
-      console.error('Database query did not return an array:', {
-        type: typeof rows,
-        value: rows
-      });
-      throw new Error('Invalid database response format');
-    }
+    console.log(`Query successful, retrieved ${rows.length} sounds`);
 
     // Transform the data to match our frontend expectations
-    const transformedSounds = (rows as Sound[]).map(sound => ({
+    const transformedSounds = rows.map(sound => ({
       id: sound.id?.toString() || '',
       title: sound.title || '',
       description: sound.description || null,
@@ -76,8 +63,7 @@ export async function GET() {
         message: error.message,
         stack: error.stack
       } : 'Unknown error',
-      env: process.env.NODE_ENV,
-      hasConnection: !!connection
+      env: process.env.NODE_ENV
     });
 
     return NextResponse.json(
@@ -87,11 +73,5 @@ export async function GET() {
       },
       { status: 500 }
     );
-  } finally {
-    if (connection) {
-      console.log('Closing database connection...');
-      await closeConnection(connection);
-      console.log('Database connection closed');
-    }
   }
 }

@@ -51,6 +51,6 @@ export async function closeConnection(connection: mysql.Connection) {
   try {
     await connection.end();
   } catch (error) {
-    console.error('Error closing database connection:', error);
+    console.error('Error closing connection:', error);
   }
 }
