@@ -1,6 +1,20 @@
 import { NextResponse } from 'next/server';
 import getConnection from '@/utils/mysql';
 
+interface Sound {
+  id: number;
+  title: string;
+  description: string;
+  file_url: string;
+  file_format: string;
+  duration: number;
+  file_size: number;
+  created_at: string;
+  soundpack_name: string | null;
+  soundpack_description: string | null;
+  tags: string | null;
+}
+
 export async function GET() {
   try {
     const connection = await getConnection();
@@ -28,7 +42,7 @@ export async function GET() {
     `);
 
     // Transform the data to match our frontend expectations
-    const transformedSounds = (sounds as any[]).map(sound => ({
+    const transformedSounds = (sounds as Sound[]).map(sound => ({
       id: sound.id.toString(),
       title: sound.title,
       description: sound.description,

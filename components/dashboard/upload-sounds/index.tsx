@@ -125,11 +125,11 @@ export default function UploadSounds() {
         tags: '',
       });
       setFiles([]);
-    } catch (error: any) {
+    } catch (error: unknown) {
       setUploadState((prev) => ({
         ...prev,
         isUploading: false,
-        error: error.message,
+        error: error instanceof Error ? error.message : 'Upload failed'
       }));
     }
   };
@@ -181,7 +181,7 @@ export default function UploadSounds() {
             className="input input-bordered w-full text-black bg-white"
           />
           <p className="mt-1 text-sm text-gray-500">
-            Leave empty if the sound doesn't belong to a soundpack
+            Leave empty if the sound doesn&apos;t belong to a soundpack
           </p>
         </div>
 
@@ -198,7 +198,7 @@ export default function UploadSounds() {
             className="input input-bordered w-full text-black bg-white"
           />
           <p className="mt-1 text-sm text-gray-500">
-            Separate tags with commas. Multi-word tags are supported (e.g., "white noise").
+            Separate tags with commas. Multi-word tags are supported (e.g., &quot;white noise&quot;).
           </p>
         </div>
 

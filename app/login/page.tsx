@@ -36,9 +36,9 @@ export default function LoginPage() {
       // On successful login, redirect to admin dashboard
       console.log('Login successful, redirecting...'); 
       router.push('/admin/dashboard');
-    } catch (err: any) {
-      console.error('Login error:', err); 
-      setError(err.message || 'An error occurred during login');
+    } catch (error: unknown) {
+      console.error('Login error:', error); 
+      setError(error instanceof Error ? error.message : 'An error occurred during login');
     } finally {
       setIsLoading(false);
     }

@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { cookies } from 'next/headers';
 import { generateToken, validateAdminCredentials } from '@/utils/auth';
 
 export async function POST(req: NextRequest) {
@@ -54,12 +53,12 @@ export async function POST(req: NextRequest) {
       { error: 'Invalid credentials' },
       { status: 401 }
     );
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Login error:', error);
     return NextResponse.json(
       { 
         error: 'Internal server error',
-        message: error.message 
+        details: error instanceof Error ? error.message : 'Unknown error'
       },
       { status: 500 }
     );
