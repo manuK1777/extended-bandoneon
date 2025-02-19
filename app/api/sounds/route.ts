@@ -18,6 +18,7 @@ interface Sound {
 export async function GET() {
   let connection;
   try {
+    // Create and test database connection
     connection = await createConnection();
 
     // Query to get sounds with their tags and soundpack information
@@ -43,7 +44,11 @@ export async function GET() {
     `);
 
     if (!Array.isArray(rows)) {
-      throw new Error('Database query did not return an array');
+      console.error('Database query did not return an array:', {
+        type: typeof rows,
+        value: rows
+      });
+      throw new Error('Invalid database response format');
     }
 
     // Transform the data to match our frontend expectations
@@ -63,9 +68,20 @@ export async function GET() {
 
     return NextResponse.json(transformedSounds);
   } catch (error) {
-    console.error('Error fetching sounds:', error);
+    console.error('Error in /api/sounds:', {
+      error: error instanceof Error ? {
+        message: error.message,
+        stack: error.stack
+      } : 'Unknown error',
+      env: process.env.NODE_ENV,
+      hasConnection: !!connection
+    });
+
     return NextResponse.json(
-      { error: 'Failed to fetch sounds' },
+      { 
+        error: 'Failed to fetch sounds',
+        details: error instanceof Error ? error.message : 'Unknown error'
+      },
       { status: 500 }
     );
   } finally {
