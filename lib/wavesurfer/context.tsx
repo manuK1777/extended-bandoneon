@@ -68,7 +68,7 @@ export function WaveSurferProvider({ children }: { children: React.ReactNode }) 
     options: WaveSurferOptions
   ): Promise<WaveSurfer | null> => {
     console.log(`[WaveSurfer] Creating instance for ${containerId}`, options);
-    let instance = instancesRef.current.get(containerId);
+    const instance = instancesRef.current.get(containerId);
 
     // If there's an existing creation in progress, wait for it
     if (instance?.state === 'creating' && instance.promise) {
@@ -96,6 +96,8 @@ export function WaveSurferProvider({ children }: { children: React.ReactNode }) 
       state: 'creating',
       refCount: 1,
     };
+    
+    instancesRef.current.set(containerId, newInstance);
 
     // Create a promise for the instance creation
     const creationPromise = (async () => {
@@ -163,7 +165,6 @@ export function WaveSurferProvider({ children }: { children: React.ReactNode }) 
 
     // Store the instance with its creation promise
     newInstance.promise = creationPromise;
-    instancesRef.current.set(containerId, newInstance);
 
     return creationPromise;
   }, []);
