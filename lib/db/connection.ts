@@ -2,7 +2,7 @@ import mysql from 'mysql2/promise';
 
 export async function createConnection() {
   try {
-    let connectionUrl = process.env.MYSQL_URL || process.env.DATABASE_URL;
+    const connectionUrl = process.env.MYSQL_URL || process.env.DATABASE_URL;
     
     if (!connectionUrl) {
       throw new Error('Database URL not found in environment variables');
