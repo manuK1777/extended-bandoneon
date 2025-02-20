@@ -33,24 +33,31 @@ interface Soundpack {
 
 export async function GET() {
   try {
-    const rows = await db.query<SoundpackRow>(`
-      SELECT 
-        s.id,
-        s.name,
-        s.description,
-        s.cover_image_url,
-        GROUP_CONCAT(h.tag) as tags
-      FROM soundpacks s
-      LEFT JOIN entity_hashtags eh ON s.id = eh.entity_id AND eh.entity_type = 'soundpack'
-      LEFT JOIN hashtags h ON eh.hashtag_id = h.id
-      GROUP BY s.id
-      ORDER BY s.name ASC
-    `);
-    
-    const transformedSoundpacks: Soundpack[] = rows.map(pack => ({
-      ...pack,
-      tags: pack.tags ? pack.tags.split(',') : []
-    }));
+    const [rows] = await db.query<SoundpackRow[]>(
+      `
+        SELECT 
+          s.id,
+          s.name,
+          s.description,
+          s.cover_image_url,
+          GROUP_CONCAT(h.tag) as tags
+        FROM soundpacks s
+        LEFT JOIN entity_hashtags eh ON s.id = eh.entity_id AND eh.entity_type = 'soundpack'
+        LEFT JOIN hashtags h ON eh.hashtag_id = h.id
+        GROUP BY s.id
+        ORDER BY s.name ASC
+      `
+    );
+
+    const transformedSoundpacks: Soundpack[] = (Array.isArray(rows) ? rows : []).map(
+      (pack) => ({
+        id: pack.id,
+        name: pack.name,
+        description: pack.description,
+        cover_image_url: pack.cover_image_url,
+        tags: pack.tags ? pack.tags.split(',').filter(Boolean) : [],
+      })
+    );
 
     return NextResponse.json(transformedSoundpacks);
   } catch (error) {
@@ -95,7 +102,7 @@ export async function POST(request: NextRequest) {
       [
         data.name.trim(),
         data.description?.trim() || null,
-        data.cover_image_url?.trim() || null
+        data.cover_image_url?.trim() || null,
       ]
     );
 
@@ -105,20 +112,20 @@ export async function POST(request: NextRequest) {
     const tagArray = data.tags
       ? data.tags
           .split(',')
-          .map(tag => tag.trim().toLowerCase())
-          .filter(tag => tag.length > 0 && tag !== ',')
+          .map((tag) => tag.trim().toLowerCase())
+          .filter((tag) => tag.length > 0 && tag !== ',')
       : [];
 
-    console.log('Processing tags:', { 
+    console.log('Processing tags:', {
       originalTags: data.tags,
-      processedTags: tagArray 
+      processedTags: tagArray,
     });
 
     if (tagArray.length > 0) {
       for (const tag of tagArray) {
         try {
           console.log('Processing tag:', tag);
-          
+
           // Insert or get hashtag
           const insertResult = await db.execute(
             'INSERT INTO hashtags (tag) VALUES (?) ON DUPLICATE KEY UPDATE id=LAST_INSERT_ID(id)',
@@ -132,7 +139,7 @@ export async function POST(request: NextRequest) {
             [tag]
           );
           console.log('Hashtag query result:', hashtagRows);
-          
+
           if (hashtagRows.length === 0) {
             throw new Error(`Failed to get hashtag ID for tag: ${tag}`);
           }
@@ -154,19 +161,22 @@ export async function POST(request: NextRequest) {
     }
 
     // Fetch the created soundpack with its tags
-    const soundpacks = await db.query<SoundpackRow>(`
-      SELECT 
-        s.id,
-        s.name,
-        s.description,
-        s.cover_image_url,
-        GROUP_CONCAT(h.tag) as tags
-      FROM soundpacks s
-      LEFT JOIN entity_hashtags eh ON s.id = eh.entity_id AND eh.entity_type = 'soundpack'
-      LEFT JOIN hashtags h ON eh.hashtag_id = h.id
-      WHERE s.id = ?
-      GROUP BY s.id
-    `, [soundpackId]);
+    const soundpacks = await db.query<SoundpackRow>(
+      `
+        SELECT 
+          s.id,
+          s.name,
+          s.description,
+          s.cover_image_url,
+          GROUP_CONCAT(h.tag) as tags
+        FROM soundpacks s
+        LEFT JOIN entity_hashtags eh ON s.id = eh.entity_id AND eh.entity_type = 'soundpack'
+        LEFT JOIN hashtags h ON eh.hashtag_id = h.id
+        WHERE s.id = ?
+        GROUP BY s.id
+      `,
+      [soundpackId]
+    );
 
     if (soundpacks.length === 0) {
       throw new Error('Failed to fetch created soundpack');
@@ -174,7 +184,7 @@ export async function POST(request: NextRequest) {
 
     const transformedSoundpack: Soundpack = {
       ...soundpacks[0],
-      tags: soundpacks[0].tags ? soundpacks[0].tags.split(',') : []
+      tags: soundpacks[0].tags ? soundpacks[0].tags.split(',').filter(Boolean) : [],
     };
 
     return NextResponse.json(transformedSoundpack, { status: 201 });
