@@ -1,12 +1,10 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import dynamic from 'next/dynamic';
 import Head from "next/head";
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { useInView } from 'react-intersection-observer';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPlay } from '@fortawesome/free-solid-svg-icons';
 
 // Lazy load the SoundPlayer component
 const SoundPlayer = dynamic(() => import('@/components/SoundPlayer'), {
@@ -94,6 +92,13 @@ export default function SoundbankPage() {
 
   // Intersection observer for infinite scroll
   const { ref, inView } = useInView();
+
+  // Use inView to trigger fetchNextPage
+  useEffect(() => {
+    if (inView && hasNextPage && !isFetchingNextPage) {
+      fetchNextPage();
+    }
+  }, [inView, hasNextPage, isFetchingNextPage, fetchNextPage]);
 
   // Flatten and filter sounds
   const sounds = data?.pages.flatMap(page => page.sounds) ?? [];

@@ -116,7 +116,7 @@ export function WaveSurferProvider({ children }: { children: React.ReactNode }) 
         });
 
         // Wait for the instance to be ready
-        await new Promise((resolve, reject) => {
+        await new Promise<void>((resolve, reject) => {
           let isResolved = false;
 
           const handleReady = () => {
@@ -125,7 +125,7 @@ export function WaveSurferProvider({ children }: { children: React.ReactNode }) 
               instance.un('ready', handleReady);
               instance.un('error', handleError);
               console.log(`[WaveSurfer] Instance ${containerId} is ready`);
-              resolve(null);
+              resolve();
             }
           };
 
