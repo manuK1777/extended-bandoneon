@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
-import { RowDataPacket } from 'mysql2';
 
 interface SoundpackRow {
   id: number;
