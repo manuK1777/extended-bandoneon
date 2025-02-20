@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import dynamic from 'next/dynamic';
 import Head from "next/head";
 import { useInfiniteQuery } from '@tanstack/react-query';
@@ -76,7 +76,6 @@ function formatDuration(seconds: number | null): string {
 export default function SoundbankPage() {
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [selectedSoundpack, setSelectedSoundpack] = useState("");
-  const [currentSound, setCurrentSound] = useState<string | null>(null);
   
   // Infinite query for sounds
   const {
@@ -95,12 +94,6 @@ export default function SoundbankPage() {
 
   // Intersection observer for infinite scroll
   const { ref, inView } = useInView();
-
-  useEffect(() => {
-    if (inView && hasNextPage && !isFetchingNextPage) {
-      fetchNextPage();
-    }
-  }, [inView, hasNextPage, isFetchingNextPage, fetchNextPage]);
 
   // Flatten and filter sounds
   const sounds = data?.pages.flatMap(page => page.sounds) ?? [];

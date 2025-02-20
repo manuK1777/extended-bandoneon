@@ -1,7 +1,7 @@
 'use client';
 
 import { createContext, useContext, useRef, useCallback } from 'react';
-import WaveSurfer from 'wavesurfer.js';
+import WaveSurfer, { WaveSurferOptions } from 'wavesurfer.js';
 
 type WaveSurferInstance = {
   instance: WaveSurfer | null;
@@ -11,7 +11,7 @@ type WaveSurferInstance = {
 };
 
 interface WaveSurferContextType {
-  createInstance: (containerId: string, container: HTMLElement, options: any) => Promise<WaveSurfer | null>;
+  createInstance: (containerId: string, container: HTMLElement, options: WaveSurferOptions) => Promise<WaveSurfer | null>;
   releaseInstance: (containerId: string) => void;
 }
 
@@ -65,7 +65,7 @@ export function WaveSurferProvider({ children }: { children: React.ReactNode }) 
   const createInstance = useCallback(async (
     containerId: string,
     container: HTMLElement,
-    options: any
+    options: WaveSurferOptions
   ): Promise<WaveSurfer | null> => {
     console.log(`[WaveSurfer] Creating instance for ${containerId}`, options);
     let instance = instancesRef.current.get(containerId);
@@ -100,8 +100,7 @@ export function WaveSurferProvider({ children }: { children: React.ReactNode }) 
     // Create a promise for the instance creation
     const creationPromise = (async () => {
       try {
-        console.log(`[WaveSurfer] Creating new WaveSurfer instance for ${containerId}`);
-        const wavesurfer = WaveSurfer.create({
+        const instance = WaveSurfer.create({
           ...options,
           container,
           backend: 'MediaElement',
@@ -112,7 +111,7 @@ export function WaveSurferProvider({ children }: { children: React.ReactNode }) 
         });
 
         // Set up error handler first
-        wavesurfer.on('error', (err) => {
+        instance.on('error', (err) => {
           console.error(`[WaveSurfer] Error in instance ${containerId}:`, err);
         });
 
@@ -123,8 +122,8 @@ export function WaveSurferProvider({ children }: { children: React.ReactNode }) 
           const handleReady = () => {
             if (!isResolved) {
               isResolved = true;
-              wavesurfer.un('ready', handleReady);
-              wavesurfer.un('error', handleError);
+              instance.un('ready', handleReady);
+              instance.un('error', handleError);
               console.log(`[WaveSurfer] Instance ${containerId} is ready`);
               resolve(null);
             }
@@ -133,26 +132,26 @@ export function WaveSurferProvider({ children }: { children: React.ReactNode }) 
           const handleError = (err: Error) => {
             if (!isResolved) {
               isResolved = true;
-              wavesurfer.un('ready', handleReady);
-              wavesurfer.un('error', handleError);
+              instance.un('ready', handleReady);
+              instance.un('error', handleError);
               console.error(`[WaveSurfer] Instance ${containerId} error:`, err);
               reject(err);
             }
           };
 
-          wavesurfer.on('ready', handleReady);
-          wavesurfer.on('error', handleError);
+          instance.on('ready', handleReady);
+          instance.on('error', handleError);
         });
 
         // Update the instance state
         const currentInstance = instancesRef.current.get(containerId);
         if (currentInstance && currentInstance.state === 'creating') {
-          currentInstance.instance = wavesurfer;
+          currentInstance.instance = instance;
           currentInstance.state = 'ready';
-          return wavesurfer;
+          return instance;
         } else {
           // Instance was cleaned up while we were creating it
-          wavesurfer.destroy();
+          instance.destroy();
           return null;
         }
       } catch (error) {

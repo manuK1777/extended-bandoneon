@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
-import { RowDataPacket } from 'mysql2';
 
 interface Sound {
   id: number;
@@ -46,7 +45,7 @@ export async function GET(
       LEFT JOIN hashtags h ON eh.hashtag_id = h.id
     `;
 
-    const queryParams: any[] = [];
+    const queryParams: (string | number)[] = [];
     
     if (cursor) {
       query += ' WHERE s.id < ?';
