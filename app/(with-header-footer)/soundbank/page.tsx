@@ -3,6 +3,10 @@
 import { useEffect, useState } from 'react';
 import dynamic from 'next/dynamic';
 import Head from "next/head";
+import { useInfiniteQuery } from '@tanstack/react-query';
+import { useInView } from 'react-intersection-observer';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faPlay } from '@fortawesome/free-solid-svg-icons';
 
 // Lazy load the SoundPlayer component
 const SoundPlayer = dynamic(() => import('@/components/SoundPlayer'), {
@@ -26,6 +30,30 @@ interface Sound {
   downloadCount?: number;
 }
 
+interface SoundResponse {
+  sounds: Sound[];
+  nextCursor: string | null;
+  hasMore: boolean;
+}
+
+interface FetchSoundsParams {
+  pageParam?: string | null;
+  limit?: number;
+}
+
+async function fetchSounds({ pageParam, limit = 12 }: FetchSoundsParams): Promise<SoundResponse> {
+  const params = new URLSearchParams();
+  if (pageParam) params.append('cursor', pageParam);
+  params.append('limit', limit.toString());
+  
+  const response = await fetch(`/api/sounds?${params.toString()}`);
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.error || 'Failed to fetch sounds');
+  }
+  return response.json();
+}
+
 function formatFileSize(bytes: number | null): string {
   if (!bytes) return 'N/A';
   const units = ['B', 'KB', 'MB', 'GB'];
@@ -46,36 +74,37 @@ function formatDuration(seconds: number | null): string {
 }
 
 export default function SoundbankPage() {
-  const [sounds, setSounds] = useState<Sound[]>([]);
-  const [error, setError] = useState<string | null>(null);
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [selectedSoundpack, setSelectedSoundpack] = useState("");
   const [currentSound, setCurrentSound] = useState<string | null>(null);
+  
+  // Infinite query for sounds
+  const {
+    data,
+    error,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    status
+  } = useInfiniteQuery({
+    queryKey: ['sounds'],
+    queryFn: ({ pageParam = null }) => fetchSounds({ pageParam }),
+    getNextPageParam: (lastPage) => lastPage.nextCursor,
+    initialPageParam: null as string | null
+  });
+
+  // Intersection observer for infinite scroll
+  const { ref, inView } = useInView();
 
   useEffect(() => {
-    fetch('/api/sounds')
-      .then((res) => {
-        if (!res.ok) {
-          return res.json().then(err => {
-            throw new Error(err.error || 'Failed to fetch sounds');
-          });
-        }
-        return res.json();
-      })
-      .then((data) => {
-        if (!Array.isArray(data)) {
-          throw new Error('Invalid response format');
-        }
-        setSounds(data);
-        setError(null);
-      })
-      .catch((error) => {
-        console.error('Error fetching sounds:', error);
-        setError(error.message);
-        setSounds([]);
-      });
-  }, []);
+    if (inView && hasNextPage && !isFetchingNextPage) {
+      fetchNextPage();
+    }
+  }, [inView, hasNextPage, isFetchingNextPage, fetchNextPage]);
 
+  // Flatten and filter sounds
+  const sounds = data?.pages.flatMap(page => page.sounds) ?? [];
+  
   // Get unique tags and soundpacks for filters
   const allTags = Array.from(new Set(sounds?.flatMap(s => s.tags || []).filter(Boolean) || []));
   const allSoundpacks = Array.from(new Set(sounds?.map(s => s.soundpackName).filter((name): name is string => name !== null) || []));
@@ -109,10 +138,10 @@ export default function SoundbankPage() {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      {error && (
+      {status === 'error' && (
         <div className="mb-4 p-4 text-red-700" role="alert">
           <p className="font-medium">Error loading sounds:</p>
-          <p>{error}</p>
+          <p>{error instanceof Error ? error.message : 'An error occurred'}</p>
         </div>
       )}
       
@@ -121,6 +150,7 @@ export default function SoundbankPage() {
         <meta name="description" content="Explore our collection of high-quality bandoneon sound samples. Download free sounds for music production, research, and creative projects." />
         <meta name="keywords" content="bandoneon sounds, bandoneon samples, free bandoneon sounds, music production, sound library" />
       </Head>
+      
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
@@ -128,7 +158,9 @@ export default function SoundbankPage() {
       
       <main className="mb-8">
         <header className="mb-8">
-        <h1 className="text-3xl md:text-4xl font-bold mb-8 text-yellow-200 font-heading tracking-tight">Bandoneon Soundbank</h1>
+          <h1 className="text-3xl md:text-4xl font-bold mb-8 text-yellow-200 font-heading tracking-tight">
+            Bandoneon Soundbank
+          </h1>
         </header>
 
         {/* Filters */}
@@ -151,12 +183,12 @@ export default function SoundbankPage() {
                         : [...prev, tag]
                     );
                   }}
+                  className={`px-3 py-1 rounded-full text-sm font-medium transition-colors
+                    ${selectedTags.includes(tag)
+                      ? 'bg-red-500 text-white'
+                      : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                    }`}
                   aria-pressed={selectedTags.includes(tag)}
-                  className={`px-3 py-1 rounded-full text-sm transition-all duration-200 ${
-                    selectedTags.includes(tag)
-                      ? 'bg-yellow-300 text-cyan-900 border-2 border-red-300 font-medium shadow-lg scale-105'
-                      : 'bg-cyan-900 text-yellow-300 border border-red-300 hover:bg-cyan-800 hover:scale-102'
-                  }`}
                 >
                   {tag}
                 </button>
@@ -170,82 +202,71 @@ export default function SoundbankPage() {
               <select
                 value={selectedSoundpack}
                 onChange={(e) => setSelectedSoundpack(e.target.value)}
-                className="w-full max-w-xs px-3 py-2 rounded border border-gray-300"
+                className="w-full md:w-auto px-4 py-2 bg-gray-700 rounded-md text-white border-gray-600 focus:border-red-500 focus:ring-red-500"
                 aria-label="Select soundpack"
               >
                 <option value="">All Soundpacks</option>
                 {allSoundpacks.map((pack) => (
-                  <option key={pack} value={pack || ""}>{pack}</option>
+                  <option key={pack} value={pack}>
+                    {pack}
+                  </option>
                 ))}
               </select>
             </div>
           )}
         </section>
 
-        {/* Sound List */}
-        <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" aria-label="Sound samples">
+        {/* Sound Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredSounds.map((sound) => (
-            <article
+            <div
               key={sound.id}
-              className={`p-6 rounded-lg space-y-4 transition-colors duration-200 ${
-                currentSound === sound.id
-                  ? 'bg-gradient-to-b from-white/10 to-white/15 backdrop-blur-sm'
-                  : 'bg-gradient-to-b from-white/5 to-white/10 backdrop-blur-sm hover:from-white/10 hover:to-white/15'
-              }`}
+              className="bg-gray-800 rounded-lg p-4 hover:bg-gray-700 transition-colors"
             >
-              <div className="space-y-3">
-                <h3 className="font-heading tracking-tight text-xl">{sound.title}</h3>
-                {sound.description && (
-                  <p className="text-gray-300 text-sm">{sound.description}</p>
-                )}
-              </div>
-
-              <div className="bg-gradient-to-b from-black/30 to-black/50 backdrop-blur-sm rounded-lg p-4">
-                <SoundPlayer 
-                  fileUrl={sound.fileUrl} 
-                  onReady={() => setCurrentSound(sound.id)}
-                />
-              </div>
-
-              <div className="space-y-3">
-                <div className="flex justify-between text-sm text-gray-400">
-                  <span>Duration: {formatDuration(sound.duration)}</span>
-                  <span>Size: {formatFileSize(sound.fileSize)}</span>
-                </div>
-
-                {sound.tags.length > 0 && (
-                  <div className="flex flex-wrap gap-1">
-                    {sound.tags.map((tag) => (
-                      <span
-                        key={tag}
-                        className="text-xs px-2 py-1 rounded-full bg-cyan-900 text-yellow-300 border border-red-300"
-                      >
-                        {tag}
-                      </span>
-                    ))}
-                  </div>
-                )}
-
+              <div className="mb-4">
+                <h3 className="text-lg font-medium text-white mb-1">{sound.title}</h3>
                 {sound.soundpackName && (
-                  <div className="text-sm">
-                    <p className="text-yellow-200 font-display">
-                      Pack: {sound.soundpackName}
-                    </p>
-                    {sound.soundpackDescription && (
-                      <p className="text-gray-400 text-xs mt-1">
-                        {sound.soundpackDescription}
-                      </p>
-                    )}
-                  </div>
+                  <p className="text-sm text-gray-400 mb-2">
+                    From: {sound.soundpackName}
+                  </p>
                 )}
-
-                <p className="text-xs text-gray-400 font-mono">
-                  Added: {new Date(sound.createdAt).toLocaleDateString()}
-                </p>
+                <div className="flex flex-wrap gap-1 mb-2">
+                  {sound.tags.map((tag) => (
+                    <span
+                      key={tag}
+                      className="px-2 py-0.5 bg-gray-700 rounded-full text-xs text-gray-300"
+                    >
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+                <div className="text-sm text-gray-400 space-y-1">
+                  <p>Duration: {formatDuration(sound.duration)}</p>
+                  <p>Format: {sound.fileFormat || 'Unknown'}</p>
+                  <p>Size: {formatFileSize(sound.fileSize)}</p>
+                </div>
               </div>
-            </article>
+
+              <SoundPlayer
+                fileUrl={sound.fileUrl}
+                onReady={() => {
+                  // Handle player ready
+                }}
+              />
+            </div>
           ))}
-        </section>
+        </div>
+
+        {/* Infinite Scroll Trigger */}
+        <div ref={ref} className="mt-8 text-center">
+          {isFetchingNextPage ? (
+            <p className="text-gray-400">Loading more sounds...</p>
+          ) : hasNextPage ? (
+            <p className="text-gray-400">Load more sounds as you scroll</p>
+          ) : (
+            <p className="text-gray-400">No more sounds to load</p>
+          )}
+        </div>
       </main>
     </div>
   );

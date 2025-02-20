@@ -2,10 +2,11 @@ import { createConnection, closeConnection } from './connection';
 import { RowDataPacket, ResultSetHeader } from 'mysql2';
 
 export const db = {
-  async query<T extends RowDataPacket>(sql: string, values?: (string | number | boolean | null)[]): Promise<T[]> {
+  async query<T>(sql: string, values?: (string | number | boolean | null)[]): Promise<T & RowDataPacket[]> {
     const connection = await createConnection();
     try {
-      const [rows] = await connection.execute<T[]>(sql, values);
+      // Use query for SELECT statements instead of execute
+      const [rows] = await connection.query<(T & RowDataPacket)[]>(sql, values);
       return rows;
     } finally {
       await closeConnection(connection);
