@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { RowDataPacket } from 'mysql2';
 
-interface SoundpackRow extends RowDataPacket {
+interface SoundpackRow {
   id: number;
   name: string;
   description: string | null;
@@ -10,7 +10,7 @@ interface SoundpackRow extends RowDataPacket {
   tags: string | null;
 }
 
-interface HashtagRow extends RowDataPacket {
+interface HashtagRow {
   id: number;
   tag: string;
   created_at: Date;
@@ -33,21 +33,19 @@ interface Soundpack {
 
 export async function GET() {
   try {
-    const [rows] = await db.query<SoundpackRow[]>(
-      `
-        SELECT 
-          s.id,
-          s.name,
-          s.description,
-          s.cover_image_url,
-          GROUP_CONCAT(h.tag) as tags
-        FROM soundpacks s
-        LEFT JOIN entity_hashtags eh ON s.id = eh.entity_id AND eh.entity_type = 'soundpack'
-        LEFT JOIN hashtags h ON eh.hashtag_id = h.id
-        GROUP BY s.id
-        ORDER BY s.name ASC
-      `
-    );
+    const rows = await db.query<SoundpackRow & { tags: string }>(`
+      SELECT 
+        s.id,
+        s.name,
+        s.description,
+        s.cover_image_url,
+        GROUP_CONCAT(h.tag) as tags
+      FROM soundpacks s
+      LEFT JOIN entity_hashtags eh ON s.id = eh.entity_id AND eh.entity_type = 'soundpack'
+      LEFT JOIN hashtags h ON eh.hashtag_id = h.id
+      GROUP BY s.id
+      ORDER BY s.name ASC
+    `);
 
     const transformedSoundpacks: Soundpack[] = (Array.isArray(rows) ? rows : []).map(
       (pack) => ({
@@ -134,7 +132,7 @@ export async function POST(request: NextRequest) {
           console.log('Hashtag insert result:', insertResult);
 
           // Get the hashtag ID (either newly inserted or existing)
-          const hashtagRows = await db.query<HashtagRow>(
+          const hashtagRows = await db.query<HashtagRow & { id: number }>(
             'SELECT id FROM hashtags WHERE tag = ?',
             [tag]
           );
@@ -161,7 +159,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Fetch the created soundpack with its tags
-    const soundpacks = await db.query<SoundpackRow>(
+    const soundpacks = await db.query<SoundpackRow & { tags: string }>(
       `
         SELECT 
           s.id,
