@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { verifyJWT } from '@/utils/serverAuth';
 import { RowDataPacket } from 'mysql2';
+import { sanitizeTag } from '@/utils/tag-utils';
 
 interface SoundpackRow extends RowDataPacket {
   id: number;
@@ -16,6 +17,23 @@ interface SoundData {
   duration: number;
   fileSize: number;
   fileFormat: string;
+}
+
+async function getSoundpackTags(soundpackId: string) {
+  const soundpackTags = await db.query<RowDataPacket>(
+    `SELECT T2.tag 
+     FROM soundpacks T1 
+     INNER JOIN entity_hashtags T3 ON T1.id = T3.entity_id 
+     INNER JOIN hashtags T2 ON T3.hashtag_id = T2.id 
+     WHERE T1.id = ? AND T3.entity_type = 'soundpack'`,
+    [soundpackId]
+  );
+
+  return soundpackTags.map((tag) => tag.tag);
+}
+
+function processTags(tags: string[]) {
+  return tags.map((tag) => sanitizeTag(tag, true)).filter(Boolean);
 }
 
 export async function POST(req: NextRequest) {
@@ -70,26 +88,42 @@ export async function POST(req: NextRequest) {
       );
 
       const soundId = result.insertId;
+      let tagErrors: string[] = [];
 
-      // Insert tags
-      if (data.tags && data.tags.length > 0) {
-        for (const tag of data.tags) {
-          // Format tag to match the database constraint: lowercase, replace spaces with hyphens
-          const formattedTag = tag.toLowerCase().trim().replace(/\s+/g, '-');
-          
+      // If soundpack_id is provided, get its tags
+      let soundpackTags: string[] = [];
+      if (data.soundpack_id) {
+        soundpackTags = await getSoundpackTags(data.soundpack_id);
+        console.log('Soundpack tags:', soundpackTags);
+      }
+
+      // Combine soundpack tags with sound's own tags
+      const allTags = [...new Set([
+        ...(data.tags ? processTags(data.tags) : []),
+        ...soundpackTags
+      ])];
+
+      console.log('All tags to process:', allTags);
+
+      // Process tags
+      for (const tag of allTags) {
+        try {
           // Insert or get hashtag
-          const hashtagResult = await db.execute(
+          const result = await db.execute(
             'INSERT INTO hashtags (tag) VALUES (?) ON DUPLICATE KEY UPDATE id=LAST_INSERT_ID(id)',
-            [formattedTag]
+            [tag]
           );
 
-          const hashtagId = hashtagResult.insertId;
+          const hashtagId = result.insertId;
 
           // Link hashtag to sound
           await db.execute(
             'INSERT INTO entity_hashtags (entity_id, entity_type, hashtag_id) VALUES (?, ?, ?)',
             [soundId, 'sound', hashtagId]
           );
+        } catch (error) {
+          console.error('Error processing tag:', tag, error);
+          tagErrors.push(`Failed to process tag: ${tag}`);
         }
       }
 
@@ -97,6 +131,7 @@ export async function POST(req: NextRequest) {
         message: 'Sound uploaded successfully!',
         sound_id: soundId,
         url: data.filePath,
+        tagErrors: tagErrors.length > 0 ? tagErrors : undefined
       });
     } catch (error) {
       console.error('Database error:', error);

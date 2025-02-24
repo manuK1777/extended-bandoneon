@@ -147,18 +147,35 @@ export default function UploadSounds() {
 
       const data = await response.json();
 
-      if (!response.ok) {
+      // Handle client-side validation errors (400)
+      if (response.status === 400) {
+        throw new Error(data.error || 'Invalid input data');
+      }
+
+      // Handle server errors (500) that don't include a soundpack
+      if (response.status === 500 || !data.soundpack) {
         throw new Error(data.error || 'Failed to create soundpack');
       }
-      
-      setSoundpacks(prev => [...prev, data]);
-      setFormData(prev => ({ ...prev, soundpack_id: data.id.toString() }));
+
+      // Success case - soundpack was created
+      setSoundpacks(prev => [...prev, data.soundpack]);
+      setFormData(prev => ({ ...prev, soundpack_id: data.soundpack.id.toString() }));
       setIsCreateModalOpen(false);
       setNewSoundpack({ name: '', description: '', cover_image_url: '', tags: '' });
-      toast.success('Soundpack created successfully!');
+
+      // Show appropriate success message - only show tag errors if they exist
+      if (data.tagErrors?.length > 0) {
+        console.warn('Tag processing errors:', data.tagErrors);
+        toast.success('Soundpack created successfully!', {
+          duration: 5000,
+        });
+      } else {
+        toast.success('Soundpack created successfully!');
+      }
     } catch (error) {
       console.error('Error creating soundpack:', error);
       setCreateError(error instanceof Error ? error.message : 'Failed to create soundpack');
+      toast.error(error instanceof Error ? error.message : 'Failed to create soundpack');
     } finally {
       setIsCreating(false);
     }
@@ -373,19 +390,21 @@ export default function UploadSounds() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700">
+              <label htmlFor="soundpack" className="block text-sm font-medium text-gray-700">
                 Soundpack
               </label>
               <div className="flex gap-2 items-center">
                 <select
+                  id="soundpack"
                   name="soundpack_id"
                   value={formData.soundpack_id}
                   onChange={handleInputChange}
+                  required
                   className="select select-bordered w-full text-black bg-white"
                 >
-                  <option value="">No soundpack</option>
+                  <option value="" disabled>Select a soundpack</option>
                   {soundpacks.map((pack) => (
-                    <option key={pack.id} value={pack.id}>
+                    <option key={`soundpack-${pack.id}`} value={pack.id}>
                       {pack.name}
                     </option>
                   ))}
@@ -393,14 +412,11 @@ export default function UploadSounds() {
                 <button
                   type="button"
                   onClick={() => setIsCreateModalOpen(true)}
-                  className="btn bg-blue-600 hover:bg-blue-800 text-white transition-transform active:scale-95"
+                  className="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-md transition-all active:scale-95"
                 >
-                  Create New
+                  New
                 </button>
               </div>
-              <p className="mt-1 text-sm text-gray-500">
-                Select an existing soundpack or create a new one
-              </p>
             </div>
 
             <div>
@@ -426,7 +442,7 @@ export default function UploadSounds() {
               onClick={handleClearForm}
               className="px-4 py-2 text-sm font-medium text-gray-800 hover:text-gray-900 rounded-md border border-gray-300 bg-yellow-200 hover:bg-yellow-400 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 flex items-center"
             >
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2" fill="none" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
               </svg>
               Clear Form
@@ -477,7 +493,7 @@ export default function UploadSounds() {
               onClick={handleCloseCreateModal}
               className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
             >
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-6 h-6" fill="none" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
               </svg>
             </button>

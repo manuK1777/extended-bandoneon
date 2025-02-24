@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
+import { processTags } from '@/utils/tag-utils';
 
 interface SoundpackRow {
   id: number;
@@ -104,16 +105,13 @@ export async function POST(request: NextRequest) {
     );
 
     const soundpackId = result.insertId;
+    let tagErrors: string[] = [];
+    let processedTags: string[] = [];
 
-    // Process tags if provided
-    const tagArray = data.tags
-      ? data.tags
-          .split(',')
-          .map((tag) => tag.trim().toLowerCase())
-          .filter((tag) => tag.length > 0 && tag !== ',')
-      : [];
+    // Process tags using the utility function
+    const tagArray = processTags(data.tags);
 
-    console.log('Processing tags:', {
+    console.log('Starting tag processing:', {
       originalTags: data.tags,
       processedTags: tagArray,
     });
@@ -123,39 +121,51 @@ export async function POST(request: NextRequest) {
         try {
           console.log('Processing tag:', tag);
 
-          // Insert or get hashtag
-          const insertResult = await db.execute(
-            'INSERT INTO hashtags (tag) VALUES (?) ON DUPLICATE KEY UPDATE id=LAST_INSERT_ID(id)',
-            [tag]
-          );
-          console.log('Hashtag insert result:', insertResult);
-
-          // Get the hashtag ID (either newly inserted or existing)
-          const hashtagRows = await db.query<HashtagRow & { id: number }>(
+          // First try to find if the tag already exists
+          const existingTags = await db.query<{ id: number }>(
             'SELECT id FROM hashtags WHERE tag = ?',
             [tag]
           );
-          console.log('Hashtag query result:', hashtagRows);
 
-          if (hashtagRows.length === 0) {
-            throw new Error(`Failed to get hashtag ID for tag: ${tag}`);
+          let hashtagId: number;
+
+          if (existingTags.length > 0) {
+            // Use existing tag
+            hashtagId = existingTags[0].id;
+            console.log('Using existing tag:', { tag, hashtagId });
+          } else {
+            // Create new tag
+            const result = await db.execute(
+              'INSERT INTO hashtags (tag) VALUES (?)',
+              [tag]
+            );
+            hashtagId = result.insertId;
+            console.log('Created new tag:', { tag, hashtagId });
           }
-
-          const hashtagId = hashtagRows[0].id;
-          console.log('Using hashtag ID:', hashtagId);
 
           // Link hashtag to soundpack
           await db.execute(
             'INSERT INTO entity_hashtags (entity_id, entity_type, hashtag_id) VALUES (?, ?, ?)',
             [soundpackId, 'soundpack', hashtagId]
           );
-          console.log('Successfully linked hashtag to soundpack');
+          
+          // Track successfully processed tag
+          processedTags.push(tag);
+          console.log('Successfully linked hashtag to soundpack:', { tag, hashtagId });
         } catch (error) {
-          console.error('Error processing tag:', tag, error);
-          throw error;
+          console.error('Error processing tag:', { tag, error });
+          tagErrors.push(`Failed to process tag: ${tag}`);
         }
       }
     }
+
+    console.log('Tag processing summary:', {
+      total: tagArray.length,
+      processed: processedTags.length,
+      errors: tagErrors.length,
+      processedTags,
+      tagErrors
+    });
 
     // Fetch the created soundpack with its tags
     const soundpacks = await db.query<SoundpackRow & { tags: string }>(
@@ -175,16 +185,32 @@ export async function POST(request: NextRequest) {
       [soundpackId]
     );
 
-    if (soundpacks.length === 0) {
-      throw new Error('Failed to fetch created soundpack');
-    }
-
-    const transformedSoundpack: Soundpack = {
-      ...soundpacks[0],
-      tags: soundpacks[0].tags ? soundpacks[0].tags.split(',').filter(Boolean) : [],
+    // Always return the soundpack data in a consistent format
+    const soundpack = soundpacks[0] || {
+      id: soundpackId,
+      name: data.name.trim(),
+      description: data.description?.trim() || null,
+      cover_image_url: data.cover_image_url?.trim() || null,
+      tags: ''
     };
 
-    return NextResponse.json(transformedSoundpack, { status: 201 });
+    const transformedSoundpack: Soundpack = {
+      ...soundpack,
+      tags: soundpack.tags ? soundpack.tags.split(',').filter(Boolean) : []
+    };
+
+    console.log('Final response:', {
+      soundpack: transformedSoundpack,
+      tagErrors: tagErrors.length > 0 ? tagErrors : undefined
+    });
+
+    // Return success response with soundpack data and any tag errors
+    return NextResponse.json({
+      soundpack: transformedSoundpack,
+      tagErrors: tagErrors.length > 0 && processedTags.length !== tagArray.length ? tagErrors : undefined
+    }, { 
+      status: 201 // Always return 201 if soundpack was created
+    });
   } catch (error) {
     console.error('Error creating soundpack:', error);
     return NextResponse.json(
