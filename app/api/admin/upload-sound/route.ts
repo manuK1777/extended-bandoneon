@@ -3,6 +3,8 @@ import { db } from '@/lib/db';
 import { verifyJWT } from '@/utils/serverAuth';
 import { RowDataPacket } from 'mysql2';
 import { sanitizeTag } from '@/utils/tag-utils';
+import { convertWavToMp3 } from '@/utils/audio-utils';
+import cloudinary, { uploadToCloudinary } from '@/utils/cloudinary';
 
 interface SoundpackRow extends RowDataPacket {
   id: number;
@@ -14,6 +16,7 @@ interface SoundData {
   soundpack_id?: string;
   tags: string[];
   filePath: string;
+  mp3Path?: string;
   duration: number;
   fileSize: number;
   fileFormat: string;
@@ -80,15 +83,58 @@ export async function POST(req: NextRequest) {
         }
       }
 
-      // Insert sound
+      // Process the audio file based on format
+      let mp3Url: string | null = null;
+      let wavUrl: string | null = null;
+      let duration: number | null = null;
+
+      if (data.fileFormat === 'wav') {
+        // For WAV files, store original and create MP3 version
+        const wavBuffer = Buffer.from(await fetch(data.filePath).then(res => res.arrayBuffer()));
+        
+        // Upload original WAV file
+        const wavUpload = await uploadToCloudinary(wavBuffer, {
+          folder: 'extended-bandoneon/soundbank/wav',
+          resource_type: 'video'
+        });
+        wavUrl = wavUpload.secure_url;
+        
+        // Convert to MP3 and upload
+        const mp3Buffer = await convertWavToMp3(wavBuffer);
+        const mp3Upload = await uploadToCloudinary(mp3Buffer, {
+          folder: 'extended-bandoneon/soundbank/mp3',
+          resource_type: 'video'
+        });
+        mp3Url = mp3Upload.secure_url;
+        
+        // Use MP3 metadata for storage
+        duration = mp3Upload.duration || null;
+        data.fileSize = mp3Upload.bytes || data.fileSize;
+        data.fileFormat = 'mp3';  // Always store as MP3 since that's what we'll serve
+      } else if (data.fileFormat === 'mp3') {
+        // For MP3 files, just store as MP3
+        const mp3Buffer = Buffer.from(await fetch(data.filePath).then(res => res.arrayBuffer()));
+        const mp3Upload = await uploadToCloudinary(mp3Buffer, {
+          folder: 'soundbank/mp3',
+          resource_type: 'video'
+        });
+        mp3Url = mp3Upload.secure_url;
+        duration = mp3Upload.duration || null;
+        data.fileSize = mp3Upload.bytes || data.fileSize;
+      }
+
+      // Insert sound with both URLs
       const result = await db.execute(
-        `INSERT INTO sounds (title, description, file_url, duration, file_size, file_format, soundpack_id, created_at)
-         VALUES (?, ?, ?, ?, ?, ?, ?, NOW())`,
+        `INSERT INTO sounds (
+          title, description, mp3_url, wav_url, 
+          duration, file_size, file_format, soundpack_id, created_at
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW())`,
         [
           data.title,
           data.description,
-          data.filePath,
-          data.duration,
+          mp3Url,
+          wavUrl,
+          duration,
           data.fileSize,
           data.fileFormat,
           data.soundpack_id || null,

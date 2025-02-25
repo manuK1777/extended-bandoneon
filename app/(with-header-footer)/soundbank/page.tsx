@@ -49,7 +49,9 @@ async function fetchSounds({ pageParam, limit = 12 }: FetchSoundsParams): Promis
     const error = await response.json();
     throw new Error(error.error || 'Failed to fetch sounds');
   }
-  return response.json();
+  const data = await response.json();
+  console.log('Fetched sounds:', data);
+  return data;
 }
 
 function formatFileSize(bytes: number | null): string {
@@ -111,9 +113,13 @@ export default function SoundbankPage() {
   const filteredSounds = sounds.filter(sound => {
     const matchesTags = selectedTags.length === 0 || 
       selectedTags.every(tag => sound.tags.includes(tag));
+  
     const matchesSoundpack = !selectedSoundpack || 
       sound.soundpackName === selectedSoundpack;
-    return matchesTags && matchesSoundpack;
+  
+    const isMp3 = sound.fileUrl?.includes('/soundbank/mp3/');
+  
+    return matchesTags && matchesSoundpack && isMp3;
   });
 
   // Generate JSON-LD structured data

@@ -1,5 +1,6 @@
 import { v2 as cloudinary } from 'cloudinary';
 import { NextResponse } from 'next/server';
+import { db } from '@/lib/db';
 
 console.log('Cloudinary Config:', {
   cloud_name: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
@@ -15,14 +16,28 @@ cloudinary.config({
 
 export async function GET() {
   try {
-    const result = await cloudinary.search
-      .expression('resource_type:audio')
-      .sort_by('created_at', 'desc')
-      .max_results(100)
-      .execute();
+    // Base query with cursor-based pagination
+    let query = `
+      SELECT 
+        s.id,
+        s.title,
+        s.description,
+        s.mp3_url,
+        s.duration,
+        s.file_size,
+        s.file_format,
+        s.created_at,
+        sp.name as soundpack_name,
+        sp.description as soundpack_description,
+        GROUP_CONCAT(h.tag) as tags
+      FROM sounds s
+      LEFT JOIN soundpacks sp ON s.soundpack_id = sp.id
+      LEFT JOIN entity_hashtags eh ON s.id = eh.entity_id AND eh.entity_type = 'sound'
+      LEFT JOIN hashtags h ON eh.hashtag_id = h.id
+    `;
 
-    const mp3Files = result.resources.filter((file: { format: string }) => file.format === 'mp3');
-    return NextResponse.json(mp3Files);
+    const result = await db.query(query);
+    return NextResponse.json(result);
   } catch (error) {
     console.error('Error fetching audio files:', error);
     return NextResponse.json({ 

@@ -5,10 +5,10 @@ interface Sound {
   id: number;
   title: string;
   description: string | null;
-  file_url: string;
-  file_format: string | null;
+  mp3_url: string;
   duration: number | null;
   file_size: number | null;
+  file_format: string | null;
   created_at: string;
   soundpack_name: string | null;
   soundpack_description: string | null;
@@ -31,10 +31,10 @@ export async function GET(
         s.id,
         s.title,
         s.description,
-        s.file_url,
-        s.file_format,
+        s.mp3_url,
         s.duration,
         s.file_size,
+        s.file_format,
         s.created_at,
         sp.name as soundpack_name,
         sp.description as soundpack_description,
@@ -43,12 +43,13 @@ export async function GET(
       LEFT JOIN soundpacks sp ON s.soundpack_id = sp.id
       LEFT JOIN entity_hashtags eh ON s.id = eh.entity_id AND eh.entity_type = 'sound'
       LEFT JOIN hashtags h ON eh.hashtag_id = h.id
+      WHERE s.mp3_url LIKE '%/extended-bandoneon/soundbank/mp3/%'
     `;
 
     const queryParams: (string | number)[] = [];
     
     if (cursor) {
-      query += ' WHERE s.id < ?';
+      query += ' AND s.id < ?';
       queryParams.push(parseInt(cursor));
     }
     
@@ -70,7 +71,6 @@ export async function GET(
 
     // Get the next cursor
     const lastItem = rows[rows.length - 1];
-    // Only set nextCursor if we got a full page of results AND the last item's ID is greater than 1
     const nextCursor = rows.length === limit && lastItem.id > 1 ? lastItem.id.toString() : null;
 
     // Transform the data to match our frontend expectations
@@ -78,7 +78,7 @@ export async function GET(
       id: sound.id?.toString() || '',
       title: sound.title || '',
       description: sound.description || null,
-      fileUrl: sound.file_url || '',
+      fileUrl: sound.mp3_url || '',
       fileFormat: sound.file_format || null,
       duration: sound.duration || null,
       fileSize: sound.file_size || null,
@@ -91,7 +91,6 @@ export async function GET(
     return NextResponse.json({
       sounds: transformedSounds,
       nextCursor,
-      // Only indicate hasMore if we have a nextCursor
       hasMore: nextCursor !== null
     });
 
