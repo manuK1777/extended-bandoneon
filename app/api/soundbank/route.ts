@@ -21,7 +21,8 @@ export async function GET() {
       .max_results(100)
       .execute();
 
-    return NextResponse.json(result.resources);
+    const mp3Files = result.resources.filter((file: { format: string }) => file.format === 'mp3');
+    return NextResponse.json(mp3Files);
   } catch (error) {
     console.error('Error fetching audio files:', error);
     return NextResponse.json({ 
