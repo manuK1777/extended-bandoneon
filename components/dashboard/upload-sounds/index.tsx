@@ -43,11 +43,12 @@ export default function UploadSounds() {
     success: false,
   });
 
-  const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
-  ) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -224,7 +225,7 @@ export default function UploadSounds() {
           body: JSON.stringify({
             title: `${formData.title}${files.length > 1 ? ` (${i + 1})` : ''}`,
             description: formData.description,
-            soundpack_id: formData.soundpack_id,
+            soundpack_id: formData.soundpack_id === '' ? null : formData.soundpack_id,
             tags: formData.tags.split(',').map((tag: string) => tag.trim()),
             filePath: url,
             duration,
@@ -397,12 +398,12 @@ export default function UploadSounds() {
                 <select
                   id="soundpack"
                   name="soundpack_id"
-                  value={formData.soundpack_id}
+                  value={formData.soundpack_id || ''}
                   onChange={handleInputChange}
-                  required
                   className="select select-bordered w-full text-black bg-white"
                 >
                   <option value="" disabled>Select a soundpack</option>
+                  <option value="">No Soundpack</option>
                   {soundpacks.map((pack) => (
                     <option key={`soundpack-${pack.id}`} value={pack.id}>
                       {pack.name}
