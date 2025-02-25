@@ -225,7 +225,7 @@ export default function SoundbankPage() {
                 <h3 className="text-lg font-medium text-white mb-1">{sound.title}</h3>
                 {sound.soundpackName && (
                   <p className="text-sm text-gray-400 mb-2">
-                    From: {sound.soundpackName}
+                    Soundpack: {sound.soundpackName}
                   </p>
                 )}
                 <div className="flex flex-wrap gap-1 mb-2">

@@ -19,9 +19,14 @@ interface SoundData {
   fileFormat: string;
 }
 
-async function getSoundpackTags(soundpackId: string) {
+interface TagInfo {
+  id: number;
+  tag: string;
+}
+
+async function getSoundpackTags(soundpackId: string): Promise<TagInfo[]> {
   const soundpackTags = await db.query<RowDataPacket>(
-    `SELECT T2.tag 
+    `SELECT T2.id, T2.tag 
      FROM soundpacks T1 
      INNER JOIN entity_hashtags T3 ON T1.id = T3.entity_id 
      INNER JOIN hashtags T2 ON T3.hashtag_id = T2.id 
@@ -29,11 +34,14 @@ async function getSoundpackTags(soundpackId: string) {
     [soundpackId]
   );
 
-  return soundpackTags.map((tag) => tag.tag);
+  return soundpackTags.map((row) => ({
+    id: row.id,
+    tag: row.tag
+  }));
 }
 
 function processTags(tags: string[]) {
-  return tags.map((tag) => sanitizeTag(tag, true)).filter(Boolean);
+  return tags.map((tag) => sanitizeTag(tag)).filter(Boolean);
 }
 
 export async function POST(req: NextRequest) {
@@ -91,39 +99,56 @@ export async function POST(req: NextRequest) {
       let tagErrors: string[] = [];
 
       // If soundpack_id is provided, get its tags
-      let soundpackTags: string[] = [];
+      let soundpackTagInfos: TagInfo[] = [];
       if (data.soundpack_id) {
-        soundpackTags = await getSoundpackTags(data.soundpack_id);
-        console.log('Soundpack tags:', soundpackTags);
+        soundpackTagInfos = await getSoundpackTags(data.soundpack_id);
+        console.log('Soundpack tags:', soundpackTagInfos);
       }
 
-      // Combine soundpack tags with sound's own tags
-      const allTags = [...new Set([
-        ...(data.tags ? processTags(data.tags) : []),
-        ...soundpackTags
-      ])];
+      // Process new tags from the sound
+      const newTags = data.tags ? processTags(data.tags) : [];
+      
+      // Keep track of processed tags and their IDs
+      const processedTagIds = new Map<string, number>();
+      
+      // First, add all soundpack tags to the map
+      for (const tagInfo of soundpackTagInfos) {
+        processedTagIds.set(tagInfo.tag, tagInfo.id);
+      }
 
-      console.log('All tags to process:', allTags);
+      // Process only new tags that aren't from the soundpack
+      for (const tag of newTags) {
+        if (!processedTagIds.has(tag)) {
+          try {
+            // Insert new tag
+            const result = await db.execute(
+              `INSERT INTO hashtags (tag) 
+               VALUES (?) 
+               ON DUPLICATE KEY UPDATE id = LAST_INSERT_ID(id)`,
+              [tag]
+            );
+            
+            const hashtagId = result.insertId;
+            processedTagIds.set(tag, hashtagId);
+            console.log('New tag processed:', { tag, hashtagId });
+          } catch (error) {
+            console.error('Error processing tag:', tag, error);
+            tagErrors.push(`Failed to process tag: ${tag}`);
+          }
+        }
+      }
 
-      // Process tags
-      for (const tag of allTags) {
+      // Link all tags to the sound
+      for (const [tag, hashtagId] of processedTagIds) {
         try {
-          // Insert or get hashtag
-          const result = await db.execute(
-            'INSERT INTO hashtags (tag) VALUES (?) ON DUPLICATE KEY UPDATE id=LAST_INSERT_ID(id)',
-            [tag]
-          );
-
-          const hashtagId = result.insertId;
-
-          // Link hashtag to sound
           await db.execute(
             'INSERT INTO entity_hashtags (entity_id, entity_type, hashtag_id) VALUES (?, ?, ?)',
             [soundId, 'sound', hashtagId]
           );
+          console.log('Linked tag to sound:', { tag, hashtagId });
         } catch (error) {
-          console.error('Error processing tag:', tag, error);
-          tagErrors.push(`Failed to process tag: ${tag}`);
+          console.error('Error linking tag:', tag, error);
+          tagErrors.push(`Failed to link tag: ${tag}`);
         }
       }
 

@@ -121,27 +121,16 @@ export async function POST(request: NextRequest) {
         try {
           console.log('Processing tag:', tag);
 
-          // First try to find if the tag already exists
-          const existingTags = await db.query<{ id: number }>(
-            'SELECT id FROM hashtags WHERE tag = ?',
+          // Use INSERT ... ON DUPLICATE KEY UPDATE to handle race conditions
+          const result = await db.execute(
+            `INSERT INTO hashtags (tag) 
+             VALUES (?) 
+             ON DUPLICATE KEY UPDATE id = LAST_INSERT_ID(id)`,
             [tag]
           );
-
-          let hashtagId: number;
-
-          if (existingTags.length > 0) {
-            // Use existing tag
-            hashtagId = existingTags[0].id;
-            console.log('Using existing tag:', { tag, hashtagId });
-          } else {
-            // Create new tag
-            const result = await db.execute(
-              'INSERT INTO hashtags (tag) VALUES (?)',
-              [tag]
-            );
-            hashtagId = result.insertId;
-            console.log('Created new tag:', { tag, hashtagId });
-          }
+          
+          const hashtagId = result.insertId;
+          console.log('Tag processed:', { tag, hashtagId });
 
           // Link hashtag to soundpack
           await db.execute(
