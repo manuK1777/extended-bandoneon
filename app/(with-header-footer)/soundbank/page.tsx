@@ -5,6 +5,8 @@ import dynamic from 'next/dynamic';
 import Head from "next/head";
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { useInView } from 'react-intersection-observer';
+import { Download } from 'lucide-react';
+import toast from 'react-hot-toast';
 
 // Lazy load the SoundPlayer component
 const SoundPlayer = dynamic(() => import('@/components/SoundPlayer'), {
@@ -16,6 +18,7 @@ interface Sound {
   title: string;
   description: string | null;
   fileUrl: string;
+  wavUrl: string;
   fileFormat: 'mp3' | 'wav' | 'flac' | 'ogg' | 'aac' | 'aiff' | null;
   duration: number | null;
   fileSize: number | null;
@@ -228,7 +231,33 @@ export default function SoundbankPage() {
               className="bg-gray-800 rounded-lg p-4 hover:bg-gray-700 transition-colors"
             >
               <div className="mb-4">
-                <h3 className="text-lg font-medium text-white mb-1">{sound.title}</h3>
+                <div className="flex justify-between items-start mb-1">
+                  <h3 className="text-lg font-medium text-white">{sound.title}</h3>
+                  <button
+                    onClick={async () => {
+                      try {
+                        const response = await fetch(sound.wavUrl);
+                        const blob = await response.blob();
+                        const url = window.URL.createObjectURL(blob);
+                        const a = document.createElement('a');
+                        a.href = url;
+                        a.download = `${sound.title}.wav`; // Set filename
+                        document.body.appendChild(a);
+                        a.click();
+                        window.URL.revokeObjectURL(url);
+                        document.body.removeChild(a);
+                        toast.success(`Downloading ${sound.title}.wav`);
+                      } catch (error) {
+                        console.error('Error downloading file:', error);
+                        toast.error('Error downloading file');
+                      }
+                    }}
+                    className="p-1.5 text-gray-400 hover:text-white hover:bg-gray-700 rounded-full transition-colors"
+                    title="Download WAV"
+                  >
+                    <Download size={18} />
+                  </button>
+                </div>
                 {sound.soundpackName && (
                   <p className="text-sm text-gray-400 mb-2">
                     Soundpack: {sound.soundpackName}

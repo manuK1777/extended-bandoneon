@@ -6,6 +6,7 @@ interface Sound {
   title: string;
   description: string | null;
   mp3_url: string;
+  wav_url: string;
   duration: number | null;
   file_size: number | null;
   file_format: string | null;
@@ -32,6 +33,7 @@ export async function GET(
         s.title,
         s.description,
         s.mp3_url,
+        s.wav_url,
         s.duration,
         s.file_size,
         s.file_format,
@@ -79,6 +81,7 @@ export async function GET(
       title: sound.title || '',
       description: sound.description || null,
       fileUrl: sound.mp3_url || '',
+      wavUrl: sound.wav_url || '',
       fileFormat: sound.file_format || null,
       duration: sound.duration || null,
       fileSize: sound.file_size || null,
