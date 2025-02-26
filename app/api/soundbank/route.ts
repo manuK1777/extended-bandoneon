@@ -17,7 +17,7 @@ cloudinary.config({
 export async function GET() {
   try {
     // Base query with cursor-based pagination
-    let query = `
+    const query = `
       SELECT 
         s.id,
         s.title,

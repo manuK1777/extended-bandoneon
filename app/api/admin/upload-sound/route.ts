@@ -4,7 +4,7 @@ import { verifyJWT } from '@/utils/serverAuth';
 import { RowDataPacket } from 'mysql2';
 import { sanitizeTag } from '@/utils/tag-utils';
 import { convertWavToMp3 } from '@/utils/audio-utils';
-import cloudinary, { uploadToCloudinary } from '@/utils/cloudinary';
+import { uploadToCloudinary } from '@/utils/cloudinary';
 
 interface SoundpackRow extends RowDataPacket {
   id: number;
@@ -142,7 +142,7 @@ export async function POST(req: NextRequest) {
       );
 
       const soundId = result.insertId;
-      let tagErrors: string[] = [];
+      const tagErrors: string[] = [];
 
       // If soundpack_id is provided, get its tags
       let soundpackTagInfos: TagInfo[] = [];

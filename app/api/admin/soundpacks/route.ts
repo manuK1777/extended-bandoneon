@@ -10,12 +10,6 @@ interface SoundpackRow {
   tags: string | null;
 }
 
-interface HashtagRow {
-  id: number;
-  tag: string;
-  created_at: Date;
-}
-
 interface NewSoundpack {
   name: string;
   description: string;
@@ -105,8 +99,8 @@ export async function POST(request: NextRequest) {
     );
 
     const soundpackId = result.insertId;
-    let tagErrors: string[] = [];
-    let processedTags: string[] = [];
+    const tagErrors: string[] = [];
+    const processedTags: string[] = [];
 
     // Process tags using the utility function
     const tagArray = processTags(data.tags);
