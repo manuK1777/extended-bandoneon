@@ -200,7 +200,7 @@ export default function SoundbankPage() {
                 <div className="w-full md:w-64">
                   <h3 className="text-base font-medium mb-2">Filter by Soundpack</h3>
                   <Listbox value={selectedSoundpack} onChange={setSelectedSoundpack}>
-                    {({ open }) => (
+                    {() => (
                       <div className="relative">
                         <ListboxButton className="w-full cursor-pointer bg-gray-700 py-2 pl-3 pr-10 text-left text-white rounded-md border border-gray-600 focus:border-red-500 focus:outline-none focus:ring-1 focus:ring-red-500">
                           <span className="block truncate">
@@ -275,7 +275,7 @@ export default function SoundbankPage() {
                 <h3 className="text-base font-medium mb-2">Filter by Tags</h3>
                 <div className="relative">
                   <Listbox value={selectedTags} onChange={setSelectedTags} multiple>
-                    {({ open }) => (
+                    {() => (
                       <div className="relative">
                         <ListboxButton className="w-full cursor-pointer bg-gray-700 py-2 pl-3 pr-10 text-left text-white rounded-md border border-gray-600 focus:border-red-500 focus:outline-none focus:ring-1 focus:ring-red-500">
                           <span className="block truncate">
