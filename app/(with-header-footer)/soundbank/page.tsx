@@ -1,12 +1,14 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import React, { useState, useEffect, Fragment } from 'react';
 import dynamic from 'next/dynamic';
 import Head from "next/head";
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { useInView } from 'react-intersection-observer';
 import { Download } from 'lucide-react';
 import toast from 'react-hot-toast';
+import { Listbox, Transition, ListboxOption, ListboxButton, ListboxOptions } from '@headlessui/react';
+import { ChevronUpDownIcon, CheckIcon } from '@heroicons/react/20/solid';
 
 // Lazy load the SoundPlayer component
 const SoundPlayer = dynamic(() => import('@/components/SoundPlayer'), {
@@ -79,6 +81,7 @@ function formatDuration(seconds: number | null): string {
 export default function SoundbankPage() {
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [selectedSoundpack, setSelectedSoundpack] = useState("");
+  const [tagSearch, setTagSearch] = useState<string | null>(null);
   
   const downloadFile = async (url: string, filename: string) => {
     try {
@@ -190,56 +193,165 @@ export default function SoundbankPage() {
         </header>
 
         {/* Filters */}
-        <section className="mb-8 space-y-4" aria-label="Sound filters">
-          <div>
-            <div className="flex items-center justify-between mb-2">
-              <h2 className="text-lg font-medium">Filter by Tags</h2>
-              <span className="text-sm text-gray-400" role="status" aria-live="polite">
-                {filteredSounds.length} {filteredSounds.length === 1 ? 'sound' : 'sounds'} found
-              </span>
-            </div>
-            <div className="flex flex-wrap gap-2" role="group" aria-label="Tag filters">
-              {allTags.map((tag) => (
-                <button
-                  key={tag}
-                  onClick={() => {
-                    setSelectedTags(prev =>
-                      prev.includes(tag)
-                        ? prev.filter(t => t !== tag)
-                        : [...prev, tag]
-                    );
-                  }}
-                  className={`px-3 py-1 rounded-full text-sm font-medium transition-colors
-                    ${selectedTags.includes(tag)
-                      ? 'bg-red-500 text-white'
-                      : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
-                    }`}
-                  aria-pressed={selectedTags.includes(tag)}
-                >
-                  {tag}
-                </button>
-              ))}
-            </div>
-          </div>
+        <section className="mb-8" aria-label="Sound filters">
+          <div className="flex flex-col md:flex-row items-start gap-4 justify-between">
+            <div className="flex flex-col md:flex-row gap-4">
+              {allSoundpacks.length > 0 && (
+                <div className="w-full md:w-64">
+                  <h3 className="text-base font-medium mb-2">Filter by Soundpack</h3>
+                  <Listbox value={selectedSoundpack} onChange={setSelectedSoundpack}>
+                    {({ open }) => (
+                      <div className="relative">
+                        <ListboxButton className="w-full cursor-pointer bg-gray-700 py-2 pl-3 pr-10 text-left text-white rounded-md border border-gray-600 focus:border-red-500 focus:outline-none focus:ring-1 focus:ring-red-500">
+                          <span className="block truncate">
+                            {selectedSoundpack || 'All Soundpacks'}
+                          </span>
+                          <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
+                            <ChevronUpDownIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
+                          </span>
+                        </ListboxButton>
 
-          {allSoundpacks.length > 0 && (
-            <div>
-              <h2 className="text-lg font-medium mb-2">Filter by Soundpack</h2>
-              <select
-                value={selectedSoundpack}
-                onChange={(e) => setSelectedSoundpack(e.target.value)}
-                className="w-full md:w-auto px-4 py-2 bg-gray-700 rounded-md text-white border-gray-600 focus:border-red-500 focus:ring-red-500"
-                aria-label="Select soundpack"
-              >
-                <option value="">All Soundpacks</option>
-                {allSoundpacks.map((pack) => (
-                  <option key={pack} value={pack}>
-                    {pack}
-                  </option>
-                ))}
-              </select>
+                        <Transition
+                          as={Fragment}
+                          leave="transition ease-in duration-100"
+                          leaveFrom="opacity-100"
+                          leaveTo="opacity-0"
+                        >
+                          <ListboxOptions className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-gray-700 py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                            <ListboxOption
+                              value=""
+                              className={({ selected }) =>
+                                `relative cursor-pointer select-none py-2 pl-10 pr-4 ${
+                                  selected ? 'bg-red-500 text-white' : 'text-white'
+                                }`
+                              }
+                            >
+                              {({ selected }) => (
+                                <>
+                                  <span className={`block truncate ${selected ? 'font-medium' : 'font-normal'}`}>
+                                    All Soundpacks
+                                  </span>
+                                  {selected && (
+                                    <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-white">
+                                      <CheckIcon className="h-5 w-5" aria-hidden="true" />
+                                    </span>
+                                  )}
+                                </>
+                              )}
+                            </ListboxOption>
+                            {allSoundpacks.map((pack) => (
+                              <ListboxOption
+                                key={pack}
+                                value={pack}
+                                className={({ selected }) =>
+                                  `relative cursor-pointer select-none py-2 pl-10 pr-4 ${
+                                    selected ? 'bg-red-500 text-white' : 'text-white'
+                                  }`
+                                }
+                              >
+                                {({ selected }) => (
+                                  <>
+                                    <span className={`block truncate ${selected ? 'font-medium' : 'font-normal'}`}>
+                                      {pack}
+                                    </span>
+                                    {selected && (
+                                      <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-white">
+                                        <CheckIcon className="h-5 w-5" aria-hidden="true" />
+                                      </span>
+                                    )}
+                                  </>
+                                )}
+                              </ListboxOption>
+                            ))}
+                          </ListboxOptions>
+                        </Transition>
+                      </div>
+                    )}
+                  </Listbox>
+                </div>
+              )}
+
+              <div className="w-full md:w-64">
+                <h3 className="text-base font-medium mb-2">Filter by Tags</h3>
+                <div className="relative">
+                  <Listbox value={selectedTags} onChange={setSelectedTags} multiple>
+                    {({ open }) => (
+                      <div className="relative">
+                        <ListboxButton className="w-full cursor-pointer bg-gray-700 py-2 pl-3 pr-10 text-left text-white rounded-md border border-gray-600 focus:border-red-500 focus:outline-none focus:ring-1 focus:ring-red-500">
+                          <span className="block truncate">
+                            {selectedTags.length === 0
+                              ? 'Select tags...'
+                              : `${selectedTags.length} tag(s) selected`}
+                          </span>
+                          <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
+                            <ChevronUpDownIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
+                          </span>
+                        </ListboxButton>
+
+                        <Transition
+                          as={Fragment}
+                          leave="transition ease-in duration-100"
+                          leaveFrom="opacity-100"
+                          leaveTo="opacity-0"
+                          afterLeave={() => setTagSearch(null)}
+                        >
+                          <ListboxOptions className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-gray-700 py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                            <div className="px-3 py-2 bg-gray-700 border-b border-gray-600">
+                              <input
+                                type="text"
+                                className="w-full bg-gray-600 text-white rounded-md px-3 py-1 text-sm focus:outline-none focus:ring-1 focus:ring-red-500"
+                                placeholder="Search tags..."
+                                onChange={(e) => setTagSearch(e.target.value)}
+                                onClick={(e) => e.stopPropagation()}
+                              />
+                            </div>
+                            {allTags
+                              .filter((tag) => tag.toLowerCase().includes(tagSearch?.toLowerCase() || ''))
+                              .map((tag) => (
+                                <ListboxOption
+                                  key={tag}
+                                  value={tag}
+                                  className={({ selected }) =>
+                                    `relative cursor-pointer select-none py-2 pl-10 pr-4 ${
+                                      selected ? 'bg-red-500 text-white' : 'text-white hover:bg-red-500'
+                                    }`
+                                  }
+                                >
+                                  {({ selected }) => (
+                                    <>
+                                      <span className={`block truncate ${selected ? 'font-medium' : 'font-normal'}`}>
+                                        {tag}
+                                      </span>
+                                      {selected && (
+                                        <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-white">
+                                          <CheckIcon className="h-5 w-5" aria-hidden="true" />
+                                        </span>
+                                      )}
+                                    </>
+                                  )}
+                                </ListboxOption>
+                              ))}
+                          </ListboxOptions>
+                        </Transition>
+                      </div>
+                    )}
+                  </Listbox>
+                  {selectedTags.length > 0 && (
+                    <button
+                      onClick={() => setSelectedTags([])}
+                      className="absolute -right-20 top-0 px-3 py-2 bg-gray-700 text-white rounded-md border border-gray-600 hover:bg-gray-600 focus:outline-none focus:ring-1 focus:ring-red-500"
+                      aria-label="Clear selected tags"
+                    >
+                      Clear
+                    </button>
+                  )}
+                </div>
+              </div>
             </div>
-          )}
+            <span className="text-sm text-gray-400" role="status" aria-live="polite">
+              {filteredSounds.length} {filteredSounds.length === 1 ? 'sound' : 'sounds'} found
+            </span>
+          </div>
         </section>
 
         {/* Sound Grid */}
