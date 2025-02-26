@@ -80,6 +80,25 @@ export default function SoundbankPage() {
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [selectedSoundpack, setSelectedSoundpack] = useState("");
   
+  const downloadFile = async (url: string, filename: string) => {
+    try {
+      const response = await fetch(url);
+      const blob = await response.blob();
+      const objectUrl = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = objectUrl;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(objectUrl);
+      document.body.removeChild(a);
+      toast.success(`Downloading ${filename}`);
+    } catch (error) {
+      console.error('Error downloading file:', error);
+      toast.error('Error downloading file');
+    }
+  };
+
   // Infinite query for sounds
   const {
     data,
@@ -233,30 +252,38 @@ export default function SoundbankPage() {
               <div className="mb-4">
                 <div className="flex justify-between items-start mb-1">
                   <h3 className="text-lg font-medium text-white">{sound.title}</h3>
-                  <button
-                    onClick={async () => {
-                      try {
-                        const response = await fetch(sound.wavUrl);
-                        const blob = await response.blob();
-                        const url = window.URL.createObjectURL(blob);
-                        const a = document.createElement('a');
-                        a.href = url;
-                        a.download = `${sound.title}.wav`; // Set filename
-                        document.body.appendChild(a);
-                        a.click();
-                        window.URL.revokeObjectURL(url);
-                        document.body.removeChild(a);
-                        toast.success(`Downloading ${sound.title}.wav`);
-                      } catch (error) {
-                        console.error('Error downloading file:', error);
-                        toast.error('Error downloading file');
-                      }
-                    }}
-                    className="p-1.5 text-gray-400 hover:text-white hover:bg-gray-700 rounded-full transition-colors"
-                    title="Download WAV"
-                  >
-                    <Download size={18} />
-                  </button>
+                  <details className="dropdown dropdown-end">
+                    <summary 
+                      className="p-1.5 text-gray-400 hover:text-white hover:bg-gray-700 rounded-full transition-colors list-none cursor-pointer"
+                      title="Download options"
+                    >
+                      <Download size={18} />
+                    </summary>
+                    <ul className="dropdown-content z-[1] menu p-2 shadow bg-gray-800 rounded-box w-40">
+                      <li>
+                        <button
+                          onClick={(e) => {
+                            (e.target as HTMLElement).closest('details')?.removeAttribute('open');
+                            downloadFile(sound.wavUrl, `${sound.title}.wav`);
+                          }}
+                          className="text-sm"
+                        >
+                          Download WAV
+                        </button>
+                      </li>
+                      <li>
+                        <button
+                          onClick={(e) => {
+                            (e.target as HTMLElement).closest('details')?.removeAttribute('open');
+                            downloadFile(sound.fileUrl, `${sound.title}.mp3`);
+                          }}
+                          className="text-sm"
+                        >
+                          Download MP3
+                        </button>
+                      </li>
+                    </ul>
+                  </details>
                 </div>
                 {sound.soundpackName && (
                   <p className="text-sm text-gray-400 mb-2">
