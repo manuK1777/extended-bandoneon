@@ -166,7 +166,7 @@ export default function SoundbankPage() {
   };
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="container w-[90%] mx-auto px-4 py-8">
       {status === 'error' && (
         <div className="mb-4 p-4 text-red-700" role="alert">
           <p className="font-medium">Error loading sounds:</p>

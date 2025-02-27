@@ -189,12 +189,12 @@ export default function PodcastPage() {
           sortOrder={sortOrder}
           setSortOrder={setSortOrder}
           sortOptions={sortOptions}
-          containerClassName="mb-8 w-[70%] sm:w-[80%] md:w-[70%] mx-auto font-body"
+          containerClassName="mb-8 w-[90%] md:w-[70%] mx-auto font-body"
           placeholder="Search episodes..."
           sortLabel="Sort by:"
         />
 
-        <div className="w-[90%] md:w-[70%] mx-auto space-y-8">
+        <div className="w-[90%] lg:w-[80%] mx-auto space-y-8">
           {filteredAndSortedEpisodes.map((episode) => (
             <div
               key={episode.episodeNumber}
