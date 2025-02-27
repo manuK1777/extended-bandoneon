@@ -239,7 +239,7 @@ export default function SoundbankPage() {
                                 </>
                               )}
                             </ListboxOption>
-                            {allSoundpacks.map((pack) => (
+                            {allSoundpacks.sort().map((pack) => (
                               <ListboxOption
                                 key={pack}
                                 value={pack}
@@ -306,6 +306,7 @@ export default function SoundbankPage() {
                               />
                             </div>
                             {allTags
+                              .sort()
                               .filter((tag) => tag.toLowerCase().includes(tagSearch?.toLowerCase() || ''))
                               .map((tag) => (
                                 <ListboxOption
