@@ -348,7 +348,7 @@ export default function SoundbankPage() {
                 </div>
               </div>
             </div>
-            <span className="text-sm text-gray-400" role="status" aria-live="polite">
+            <span className="text-sm text-gray-400 md:mt-12 mr-4 block" role="status" aria-live="polite">
               {filteredSounds.length} {filteredSounds.length === 1 ? 'sound' : 'sounds'} found
             </span>
           </div>

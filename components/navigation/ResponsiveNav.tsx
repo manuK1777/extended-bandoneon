@@ -3,7 +3,7 @@
 import { motion } from "framer-motion";
 import NavButtons from "../buttons/NavButtons";
 import { navItems } from "@/constants/navigation";
-import { useState, useEffect, useRef } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -18,25 +18,6 @@ export default function ResponsiveNav({
 }: ResponsiveNavProps) {
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
-  const menuRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent | TouchEvent) => {
-      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
-        setIsOpen(false);
-      }
-    };
-
-    if (isOpen) {
-      document.addEventListener('mousedown', handleClickOutside);
-      document.addEventListener('touchstart', handleClickOutside);
-    }
-
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-      document.removeEventListener('touchstart', handleClickOutside);
-    };
-  }, [isOpen]);
 
   const mobileNavItems = [
     { name: "Home", href: "/" },
@@ -58,7 +39,7 @@ export default function ResponsiveNav({
       </div>
 
       {/* Mobile Navigation */}
-      <div className={`md:hidden absolute z-20 ${pathname === '/' ? 'top-4 left-4' : 'top-4 right-4'}`} ref={menuRef}>
+      <div className={`md:hidden absolute z-20 ${pathname === '/' ? 'top-4 left-4' : 'top-4 right-4'}`}>
         <button 
           className="btn btn-ghost btn-circle"
           onClick={() => setIsOpen(!isOpen)}
