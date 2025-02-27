@@ -39,7 +39,7 @@ export default function ResponsiveNav({
       </div>
 
       {/* Mobile Navigation */}
-      <div className="md:hidden absolute z-20 top-4 left-4">
+      <div className={`md:hidden absolute z-20 ${pathname === '/' ? 'top-4 left-4' : 'top-4 right-4'}`}>
         <button 
           className="btn btn-ghost btn-circle"
           onClick={() => setIsOpen(!isOpen)}
@@ -63,7 +63,7 @@ export default function ResponsiveNav({
         </button>
         {isOpen && (
           <motion.div
-            className="absolute left-0 mt-2 w-22 sm:w-32"
+            className={`absolute mt-2 w-22 sm:w-32 ${pathname === '/' ? 'left-0' : 'right-0'}`}
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ 
@@ -78,7 +78,7 @@ export default function ResponsiveNav({
                   <li key={item.name} className={`hover:bg-yellow-200 ${isActive ? 'bg-transparent' : ''}`}>
                     <Link 
                       href={item.href}
-                      className={`text-xs sm:text-sm md:text-base font-body transition-colors duration-200 py-2 px-1
+                      className={`text-sm font-body transition-colors duration-200 py-2 px-1
                         ${isActive ? 'text-red-600 hover:text-red-600' : 'hover:text-red-500'}`}
                       onClick={() => {
                         // Close menu first
