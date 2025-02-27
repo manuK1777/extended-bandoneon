@@ -194,7 +194,7 @@ export default function PodcastPage() {
           sortLabel="Sort by:"
         />
 
-        <div className="w-[90%] lg:w-[80%] mx-auto space-y-8">
+        <div className="w-[90%] lg:w-[70%] mx-auto space-y-8">
           {filteredAndSortedEpisodes.map((episode) => (
             <div
               key={episode.episodeNumber}
