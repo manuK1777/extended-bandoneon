@@ -202,7 +202,7 @@ export default function SoundbankPage() {
                   <Listbox value={selectedSoundpack} onChange={setSelectedSoundpack}>
                     {() => (
                       <div className="relative">
-                        <ListboxButton className="w-full cursor-pointer bg-gray-700 py-2 pl-3 pr-10 text-left text-white rounded-md border border-gray-600 focus:border-red-500 focus:outline-none focus:ring-1 focus:ring-red-500">
+                        <ListboxButton className="text-sm w-full cursor-pointer bg-gray-700 py-2 pl-3 pr-10 text-left text-white rounded-md border border-gray-600 focus:border-red-500 focus:outline-none focus:ring-1 focus:ring-red-500">
                           <span className="block truncate">
                             {selectedSoundpack || 'All Soundpacks'}
                           </span>
@@ -217,7 +217,7 @@ export default function SoundbankPage() {
                           leaveFrom="opacity-100"
                           leaveTo="opacity-0"
                         >
-                          <ListboxOptions className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-gray-700 py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                          <ListboxOptions className="text-sm absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-gray-700 py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
                             <ListboxOption
                               value=""
                               className={({ selected }) =>
@@ -277,7 +277,7 @@ export default function SoundbankPage() {
                   <Listbox value={selectedTags} onChange={setSelectedTags} multiple>
                     {() => (
                       <div className="relative">
-                        <ListboxButton className="w-full cursor-pointer bg-gray-700 py-2 pl-3 pr-10 text-left text-white rounded-md border border-gray-600 focus:border-red-500 focus:outline-none focus:ring-1 focus:ring-red-500">
+                        <ListboxButton className="text-sm w-full cursor-pointer bg-gray-700 py-2 pl-3 pr-10 text-left text-white rounded-md border border-gray-600 focus:border-red-500 focus:outline-none focus:ring-1 focus:ring-red-500">
                           <span className="block truncate">
                             {selectedTags.length === 0
                               ? 'Select tags...'
@@ -295,7 +295,7 @@ export default function SoundbankPage() {
                           leaveTo="opacity-0"
                           afterLeave={() => setTagSearch(null)}
                         >
-                          <ListboxOptions className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-gray-700 py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                          <ListboxOptions className="text-sm absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-gray-700 py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
                             <div className="px-3 py-2 bg-gray-700 border-b border-gray-600">
                               <input
                                 type="text"
