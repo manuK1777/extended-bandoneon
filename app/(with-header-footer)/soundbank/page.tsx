@@ -245,7 +245,7 @@ export default function SoundbankPage() {
                                 value={pack}
                                 className={({ selected }) =>
                                   `relative cursor-pointer select-none py-2 pl-10 pr-4 ${
-                                    selected ? 'bg-red-500 text-white' : 'text-white'
+                                    selected ? 'bg-red-500 text-white' : 'text-white hover:bg-red-400'
                                   }`
                                 }
                               >
@@ -314,7 +314,7 @@ export default function SoundbankPage() {
                                   value={tag}
                                   className={({ selected }) =>
                                     `relative cursor-pointer select-none py-2 pl-10 pr-4 ${
-                                      selected ? 'bg-red-500 text-white' : 'text-white hover:bg-red-500'
+                                      selected ? 'bg-red-500 text-white' : 'text-white hover:bg-red-400'
                                     }`
                                   }
                                 >
