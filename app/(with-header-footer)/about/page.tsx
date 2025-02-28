@@ -9,7 +9,7 @@ export default function AboutPage() {
             Welcome! I am Mercedes Krapovickas, a bandoneonist, pianist, composer, and sound artist from Argentina, based in Finland. My work explores the bandoneon&apos;s movement, textures, and expanded possibilities through extended techniques, sound design, and electronics.
           </p>
           <p className="mb-4">
-            This platform is dedicated to sharing resources sound banks, extended techniques, and, in the future, a software tool for bandoneon augmentation. My goal is to inspire musicians and sound artists to reimagine the instrument beyond its traditional role.
+            This platform is dedicated to sharing resources, sound banks, extended techniques, and, in the future, a software tool for bandoneon augmentation. My goal is to inspire musicians and sound artists to reimagine the instrument beyond its traditional role.
           </p>
         </div>
       </section>
