@@ -7,12 +7,12 @@ export default function WithHeaderFooterLayout({
   children: React.ReactNode;
 }) {
   return (
-    <>
+    <div className="min-h-screen flex flex-col">
       <Header />
-      <main className="pt-18 md:pt-24">
+      <main className="pt-18 md:pt-24 flex-grow">
         {children}
       </main>
       <Footer />
-    </>
+    </div>
   );
 }
