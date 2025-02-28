@@ -17,7 +17,7 @@ export default function AboutPage() {
       {/* Main content sections */}
       <div className="space-y-12">
         <section>
-          <h2 className="text-2xl font-display mb-4 text-fuchsia-500">Research & Background</h2>
+          <h2 className="text-2xl font-display mb-4 text-fuchsia-300">Research & Background</h2>
           <div className="text-gray-300 font-body space-y-4 leading-relaxed">
             <p>
               I am currently pursuing a doctorate at the Sibelius Academy&apos;s Music and Technology Department, where my research, Bandoneon Resonances, examines movement, interaction, and augmentation. I also study avant-garde bandoneon compositions from the 1960s.
@@ -29,7 +29,7 @@ export default function AboutPage() {
         </section>
 
         <section>
-          <h2 className="text-2xl font-display mb-4 text-fuchsia-500">Vision</h2>
+          <h2 className="text-2xl font-display mb-4 text-fuchsia-300">Vision</h2>
           <div className="text-gray-300 font-body space-y-4 leading-relaxed">
             <p>
               This website is a space for experimentation and exploration for those curious about reimagining the bandoneon!
@@ -38,7 +38,7 @@ export default function AboutPage() {
         </section>
 
         <section>
-          <h2 className="text-2xl font-display mb-4 text-fuchsia-500">Acknowledgments</h2>
+          <h2 className="text-2xl font-display mb-4 text-fuchsia-300">Acknowledgments</h2>
           <div className="text-gray-300 font-body space-y-4 leading-relaxed">
             <p>
               I would like to express my gratitude to those who have supported and contributed to this project:
