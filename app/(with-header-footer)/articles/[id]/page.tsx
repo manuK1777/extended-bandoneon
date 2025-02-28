@@ -1,6 +1,8 @@
 import Link from 'next/link';
 
 export default function ArticlePage({ params }: { params: { id: string } }) {
+  const { id } = params;
+
   const articles = [
     {
       id: 'organografia-bandoneon',
@@ -8,7 +10,7 @@ export default function ArticlePage({ params }: { params: { id: string } }) {
     }
   ];
 
-  const article = articles.find(article => article.id === params.id);
+  const article = articles.find(article => article.id === id);
 
   if (!article) {
     return (
