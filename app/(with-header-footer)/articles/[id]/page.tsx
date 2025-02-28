@@ -1,7 +1,7 @@
 import Link from 'next/link';
 
-export default function ArticlePage({ params }: { params: { id: string } }) {
-  const { id } = params;
+export default async function ArticlePage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
 
   const articles = [
     {
