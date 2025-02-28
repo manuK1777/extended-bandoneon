@@ -432,7 +432,9 @@ export default function SoundbankPage() {
 
         {/* Infinite Scroll Trigger */}
         <div ref={ref} className="mt-8 text-center">
-          {isFetchingNextPage ? (
+          {status === 'pending' ? (
+            <p className="text-gray-400">Loading sounds...</p>
+          ) : isFetchingNextPage ? (
             <p className="text-gray-400">Loading more sounds...</p>
           ) : hasNextPage ? (
             <p className="text-gray-400">Load more sounds as you scroll</p>
