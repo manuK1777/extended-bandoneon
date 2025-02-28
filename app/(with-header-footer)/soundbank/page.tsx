@@ -187,7 +187,7 @@ export default function SoundbankPage() {
       
       <main className="mb-8">
         <header className="mb-8">
-          <h1 className="text-3xl md:text-4xl font-bold mb-8 text-yellow-200 font-heading tracking-tight">
+          <h1 className="text-3xl md:text-4xl font-bold mb-8 text-yellow-200 font-heading">
             Bandoneon Soundbank
           </h1>
         </header>
@@ -399,7 +399,7 @@ export default function SoundbankPage() {
                   </details>
                 </div>
                 {sound.soundpackName && (
-                  <p className="text-sm text-gray-400 mb-2">
+                  <p className="text-sm text-fuchsia-200 mb-2">
                     Soundpack: {sound.soundpackName}
                   </p>
                 )}

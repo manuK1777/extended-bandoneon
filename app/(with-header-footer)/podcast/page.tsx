@@ -177,7 +177,7 @@ export default function PodcastPage() {
 
       <main className="container mx-auto px-4 py-8 min-h-screen">
         <header className="w-[90%] md:w-[70%] mx-auto">
-          <h1 className="text-3xl md:text-4xl font-bold mb-8 text-yellow-200 font-heading tracking-tight">Bandoneon Perspectives</h1>
+          <h1 className="text-3xl md:text-4xl font-bold mb-8 text-yellow-200 font-heading">Bandoneon Perspectives</h1>
           <p className="text-[0.875rem] md:text-lg text-left mb-[3rem] md:mb-[6rem] font-body tracking-normal text-gray-300">
             A podcast to unfold contemporary bandoneon stories. This is a space to talk about things related to the bandoneon.
           </p>
@@ -203,7 +203,7 @@ export default function PodcastPage() {
               <div className="flex justify-between items-start">
                 <h2 className="text-xl md:text-2xl font-heading tracking-tight">
                   {episode.title}
-                  <span className="text-yellow-200 font-display ml-2">#{episode.episodeNumber}</span>
+                  <span className="text-yellow-400 font-display ml-2">#{episode.episodeNumber}</span>
                 </h2>
                 <time className="text-xs md:text-sm text-gray-400 font-mono">
                   {new Date(episode.publishDate).toLocaleDateString()}
@@ -212,7 +212,7 @@ export default function PodcastPage() {
               
               <div className="font-body">
                 <p className="text-sm md:text-base text-gray-300">{episode.description}</p>
-                <p className="mt-2 text-sm md:text-base text-yellow-200 font-display">Guest: {episode.guest}</p>
+                <p className="mt-2 text-sm md:text-base text-fuchsia-500 font-display">Guest: {episode.guest}</p>
               </div>
 
               <div className="flex flex-wrap gap-1 md:gap-2">

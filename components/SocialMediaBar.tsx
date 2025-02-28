@@ -13,7 +13,7 @@ interface SocialMediaBarProps {
 }
 
 const SocialMediaBar = ({ className = "" }: SocialMediaBarProps) => {
-  const iconClass = "w-5 h-5 md:w-6 md:h-6 text-white hover:text-red-500 transition-colors duration-300 mt-4 md:mt-0";
+  const iconClass = "w-5 h-5 md:w-6 md:h-6 text-fuchsia-200 hover:text-red-500 transition-colors duration-300 mt-4 md:mt-0";
 
   return (
     <div className={`flex gap-4 md:gap-6 ${className}`}>

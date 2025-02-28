@@ -81,7 +81,7 @@ export default function SoundPlayer({ fileUrl, onReady }: SoundPlayerProps) {
       ) : (
         <div>
           <div ref={containerRef} className="w-full rounded-lg" />
-          <div className="flex items-center justify-between text-sm text-yellow-300">
+          <div className="flex items-center justify-between text-sm text-fuchsia-500">
             <button
               onClick={togglePlayPause}
               className="flex items-center space-x-2 hover:text-yellow-200 transition-colors"

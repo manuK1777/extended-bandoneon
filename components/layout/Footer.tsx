@@ -4,7 +4,7 @@ import SocialMediaBar from '../SocialMediaBar';
 export default function Footer() {
   return (
     <footer className="w-full py-4 px-4 mt-12 bg-white/5 backdrop-blur-sm">
-      <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center text-sm font-mono tracking-tight text-gray-300">
+      <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center text-sm font-mono tracking-tight text-fuchsia-200">
         <div className="mb-0 md:mb-0 flex">
         &copy; {new Date().getFullYear()}&nbsp;
           <div className="mb-0 md:mb-0">

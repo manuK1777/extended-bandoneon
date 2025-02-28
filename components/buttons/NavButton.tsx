@@ -24,8 +24,8 @@ export default function NavButton({
   
   const baseClasses = `btn font-body px-2 transition-colors duration-200 text-sm sm:text-base rounded-none w-full ${isHome ? 'bg-white/5' : ''}`;
   const colorClasses = isActive 
-    ? "text-red-600 bg-white/5 border-white/5 hover:bg-transparent hover:border-transparent" 
-    : "text-white bg-transparent border-transparent hover:bg-yellow-200 hover:text-red-500";
+    ? "text-red-500 bg-white/5 border-white/5 hover:bg-transparent hover:border-transparent" 
+    : "text-fuchsia-200 bg-transparent border-transparent hover:bg-yellow-200 hover:text-red-500";
   
   return (
     <Link href={href}>
