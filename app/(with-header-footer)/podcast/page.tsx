@@ -212,7 +212,7 @@ export default function PodcastPage() {
               
               <div className="font-body">
                 <p className="text-sm md:text-base text-gray-300">{episode.description}</p>
-                <p className="mt-2 text-sm md:text-base text-fuchsia-500 font-display">Guest: {episode.guest}</p>
+                <p className="mt-2 text-sm md:text-base text-fuchsia-300 font-display">Guest: {episode.guest}</p>
               </div>
 
               <div className="flex flex-wrap gap-1 md:gap-2">
