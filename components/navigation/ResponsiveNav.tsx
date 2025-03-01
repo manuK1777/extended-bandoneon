@@ -53,7 +53,7 @@ export default function ResponsiveNav({
       </div>
 
       {/* Mobile Navigation */}
-      <div className={`md:hidden absolute z-20 ${pathname === '/' ? 'top-4 left-4' : 'top-4 right-4'}`} ref={menuRef}>
+      <div className="md:hidden absolute z-20 top-4 right-4" ref={menuRef}>
         <button 
           className="btn btn-ghost btn-circle"
           onClick={() => setIsOpen(!isOpen)}
@@ -77,7 +77,7 @@ export default function ResponsiveNav({
         </button>
         {isOpen && (
           <motion.div
-            className={`absolute mt-2 w-22 sm:w-32 ${pathname === '/' ? 'left-0' : 'right-0'}`}
+            className="absolute mt-2 w-22 sm:w-32 right-0"
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ 
