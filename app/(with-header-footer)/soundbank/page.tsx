@@ -202,7 +202,7 @@ export default function SoundbankPage() {
                   <Listbox value={selectedSoundpack} onChange={setSelectedSoundpack}>
                     {() => (
                       <div className="relative">
-                        <ListboxButton className="text-sm w-full cursor-pointer bg-gray-700 py-2 pl-3 pr-10 text-left text-white rounded-md border border-gray-600 focus:border-red-500 focus:outline-none focus:ring-1 focus:ring-red-500">
+                        <ListboxButton className="text-sm w-full cursor-pointer py-2 pl-3 pr-10 text-left rounded-md focus:outline-none focus:ring-2 focus:ring-blue-900 bg-cyan-900 text-white">
                           <span className="block truncate">
                             {selectedSoundpack || 'All Soundpacks'}
                           </span>
@@ -217,18 +217,18 @@ export default function SoundbankPage() {
                           leaveFrom="opacity-100"
                           leaveTo="opacity-0"
                         >
-                          <ListboxOptions className="text-sm absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-gray-700 py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                          <ListboxOptions className="text-sm absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-cyan-900 py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
                             <ListboxOption
                               value=""
                               className={({ selected }) =>
                                 `relative cursor-pointer select-none py-2 pl-10 pr-4 ${
-                                  selected ? 'bg-red-500 text-white' : 'text-white'
+                                  selected ? 'bg-red-500 text-white' : 'text-white bg-cyan-900'
                                 }`
                               }
                             >
                               {({ selected }) => (
                                 <>
-                                  <span className={`block truncate ${selected ? 'font-medium' : 'font-normal'}`}>
+                                  <span className={`block truncate ${selected ? 'font-medium' : 'font-normal bg-cyan-900'}`}>
                                     All Soundpacks
                                   </span>
                                   {selected && (
@@ -244,7 +244,7 @@ export default function SoundbankPage() {
                                 key={pack}
                                 value={pack}
                                 className={({ selected }) =>
-                                  `relative cursor-pointer select-none py-2 pl-10 pr-4 ${
+                                  `relative cursor-pointer select-none py-2 pl-10 pr-4 bg-cyan-900 ${
                                     selected ? 'bg-red-500 text-white' : 'text-white hover:bg-red-400'
                                   }`
                                 }
@@ -277,7 +277,7 @@ export default function SoundbankPage() {
                   <Listbox value={selectedTags} onChange={setSelectedTags} multiple>
                     {() => (
                       <div className="relative">
-                        <ListboxButton className="text-sm w-full cursor-pointer bg-gray-700 py-2 pl-3 pr-10 text-left text-white rounded-md border border-gray-600 focus:border-red-500 focus:outline-none focus:ring-1 focus:ring-red-500">
+                        <ListboxButton className="text-sm w-full cursor-pointer py-2 pl-3 pr-10 text-left rounded-md focus:outline-none focus:ring-2 focus:ring-blue-900 bg-cyan-900 text-white">
                           <span className="block truncate">
                             {selectedTags.length === 0
                               ? 'Select tags...'
@@ -295,7 +295,7 @@ export default function SoundbankPage() {
                           leaveTo="opacity-0"
                           afterLeave={() => setTagSearch(null)}
                         >
-                          <ListboxOptions className="text-sm absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-gray-700 py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                          <ListboxOptions className="text-sm absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-cyan-900 py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
                             <div className="px-3 py-2 bg-gray-700 border-b border-gray-600">
                               <input
                                 type="text"
@@ -340,7 +340,7 @@ export default function SoundbankPage() {
                   {selectedTags.length > 0 && (
                     <button
                       onClick={() => setSelectedTags([])}
-                      className="absolute -right-20 top-0 px-3 py-2 bg-gray-700 text-white rounded-md border border-gray-600 hover:bg-gray-600 focus:outline-none focus:ring-1 focus:ring-red-500"
+                      className="absolute -right-20 top-0 px-3 py-2 bg-cyan-900 text-yellow-200 rounded-md border border-gray-600 hover:bg-cyan-700 focus:outline-none focus:ring-1 focus:ring-red-500"
                       aria-label="Clear selected tags"
                     >
                       Clear
