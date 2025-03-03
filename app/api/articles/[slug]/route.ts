@@ -12,7 +12,7 @@ interface Article {
 
 export async function GET(
   request: Request,
-  { params }: { params: { slug: string } }
+  params: { slug: string }
 ) {
   try {
     const query = `
