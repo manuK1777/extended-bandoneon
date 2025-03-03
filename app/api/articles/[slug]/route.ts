@@ -12,7 +12,7 @@ interface Article {
 
 export async function GET(
   request: Request,
-  { params }: { params: { slug: string } }
+  context: { params: { slug: string } }
 ) {
   try {
     const query = `
@@ -27,7 +27,7 @@ export async function GET(
       WHERE slug = ?
     `;
 
-    const articles = await db.query<Article>(query, [params.slug]);
+    const articles = await db.query<Article>(query, [context.params.slug]);
     
     if (!articles || articles.length === 0) {
       return NextResponse.json(
