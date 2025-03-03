@@ -1,30 +1,31 @@
 import Link from 'next/link';
-import { headers } from 'next/headers';
+import { db } from '@/lib/db';
 
 interface Article {
   id: number;
   title: string;
   abstract: string | null;
   author: string | null;
-  pdf_url: string | null;
+  slug: string;
+  publisher: string | null;
+  publication_info: string | null;
 }
 
 async function getArticles(): Promise<Article[]> {
-  const headersList = await headers();
-  const host = headersList.get('host');
-  const protocol = process.env.NODE_ENV === 'development' ? 'http' : 'https';
+  const query = `
+    SELECT 
+      id,
+      title,
+      abstract,
+      author,
+      slug,
+      publisher,
+      publication_info
+    FROM articles 
+    ORDER BY id DESC
+  `;
   
-  const response = await fetch(`${protocol}://${host}/api/articles`, {
-    next: {
-      revalidate: 3600 // Cache for 1 hour
-    }
-  });
-
-  if (!response.ok) {
-    throw new Error('Failed to fetch articles');
-  }
-
-  return response.json();
+  return await db.query<Article>(query);
 }
 
 export default async function ArticlesPage() {
@@ -40,16 +41,26 @@ export default async function ArticlesPage() {
           {articles.map((article) => (
             <li key={article.id} className="relative pl-8 before:content-['→'] before:absolute before:left-2 before:top-1/2 before:-translate-y-1/2 before:text-fuchsia-200 before:font-bold">
               <Link
-                href={`/articles/${article.id}`}
-                className="block p-6 rounded-lg bg-white/5 hover:bg-white/10 transition-colors duration-20"
+                href={`/articles/${article.slug}`}
+                className="block p-6 rounded-lg bg-white/5 hover:bg-white/10 transition-colors duration-200"
               >
-                <h2 className="font-heading text-sm md:text-base text-gray-900 dark:text-white hover:text-fuchsia-200 transition-colors duration-20">
+                <h2 className="font-heading text-sm md:text-base text-gray-900 dark:text-white hover:text-fuchsia-200 transition-colors duration-200">
                   {article.title}
                 </h2>
                 {article.author && (
                   <p className="text-sm text-gray-400 mt-2">
                     By {article.author}
                   </p>
+                )}
+                {(article.publication_info || article.publisher) && (
+                  <div className="text-sm text-gray-400 mt-1">
+                    {article.publication_info && (
+                      <p>{article.publication_info}</p>
+                    )}
+                    {article.publisher && (
+                      <p className='mt-1'>Published by {article.publisher}</p>
+                    )}
+                  </div>
                 )}
               </Link>
             </li>

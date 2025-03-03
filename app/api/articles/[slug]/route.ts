@@ -7,11 +7,12 @@ interface Article {
   abstract: string | null;
   author: string | null;
   pdf_url: string | null;
+  slug: string;
 }
 
 export async function GET(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: { slug: string } }
 ) {
   try {
     const query = `
@@ -20,22 +21,24 @@ export async function GET(
         title,
         abstract,
         author,
-        pdf_url
-      FROM articles
-      WHERE id = ?
+        pdf_url,
+        slug
+      FROM articles 
+      WHERE slug = ?
     `;
 
-    const rows = await db.query<Article>(query, [params.id]);
-
-    if (!rows || rows.length === 0) {
+    const articles = await db.query<Article>(query, [params.slug]);
+    
+    if (!articles || articles.length === 0) {
       return NextResponse.json(
         { error: 'Article not found' },
         { status: 404 }
       );
     }
 
-    return NextResponse.json(rows[0]);
+    return NextResponse.json(articles[0]);
   } catch (error) {
+    console.error('Error fetching article:', error);
     return NextResponse.json(
       { error: 'Failed to fetch article' },
       { status: 500 }

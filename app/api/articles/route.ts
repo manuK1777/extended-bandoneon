@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
+import { generateSlug } from '@/lib/utils';
 
 interface Article {
   id: number;
@@ -7,6 +8,7 @@ interface Article {
   abstract: string | null;
   author: string | null;
   pdf_url: string | null;
+  slug: string;
 }
 
 export async function GET(
@@ -22,7 +24,8 @@ export async function GET(
         title,
         abstract,
         author,
-        pdf_url
+        pdf_url,
+        slug
       FROM articles
     `;
 
@@ -35,9 +38,9 @@ export async function GET(
 
     query += ` ORDER BY created_at DESC`;
 
-    const rows = await db.query<Article>(query, queryParams);
+    const articles = await db.query<Article>(query, queryParams);
 
-    if (!rows || rows.length === 0) {
+    if (!articles || articles.length === 0) {
       return NextResponse.json(
         { error: 'No articles found' },
         { 
@@ -50,7 +53,7 @@ export async function GET(
     }
 
     return NextResponse.json(
-      articleId ? rows[0] : rows,
+      articleId ? articles[0] : articles,
       { 
         status: 200,
         headers: {
@@ -65,5 +68,44 @@ export async function GET(
       { error: 'Internal Server Error' },
       { status: 500 }
     );
+  }
+}
+
+export async function POST(
+  request: Request,
+) {
+  try {
+    const body = await request.json();
+    const { title, abstract, author, pdf_url } = body;
+    
+    // Generate slug from title
+    const baseSlug = generateSlug(title);
+    
+    // Check if slug exists and add number if needed
+    let slug = baseSlug;
+    let counter = 1;
+    while (true) {
+      const existing = await db.query(
+        'SELECT id FROM articles WHERE slug = ?',
+        [slug]
+      );
+      if (existing.length === 0) break;
+      slug = `${baseSlug}-${counter}`;
+      counter++;
+    }
+
+    const query = `
+      INSERT INTO articles (title, abstract, author, pdf_url, slug)
+      VALUES (?, ?, ?, ?, ?)
+      RETURNING id, title, abstract, author, pdf_url, slug
+    `;
+    
+    const values = [title, abstract, author, pdf_url, slug];
+    const result = await db.query<Article>(query, values);
+    
+    return NextResponse.json(result[0]);
+  } catch (error) {
+    console.error('Error creating article:', error);
+    return NextResponse.json({ error: 'Failed to create article' }, { status: 500 });
   }
 }
