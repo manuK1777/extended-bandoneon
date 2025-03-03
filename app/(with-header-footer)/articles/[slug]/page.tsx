@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { db } from '@/lib/db';
-import PdfViewer from '@/components/PdfViewer';
+import { Download } from 'lucide-react';
 
 interface Article {
   id: number;
@@ -67,19 +67,19 @@ export default async function ArticlePage({ params }: Props) {
         <span className="ml-2">Back to Articles</span>
       </Link>
       <article className="mt-4">
-        <h1 className="text-2xl font-bold mb-3 text-yellow-200">{article.title}</h1>
+        <h1 className="text-2xl font-bold mb-2 text-yellow-200">{article.title}</h1>
         {article.author && (
           <p className="text-md text-gray-400">
             By {article.author}
           </p>
         )}
         {(article.publication_info || article.publisher) && (
-          <div className="text-sm text-gray-400 mb-8">
+          <div className="text-sm text-gray-400 mb-8 mt-2 space-y-1">
             {article.publication_info && (
-              <p className="mt-1">{article.publication_info}</p>
+              <p>• {article.publication_info}</p>
             )}
             {article.publisher && (
-              <p className="mt-1">Published by {article.publisher}</p>
+              <p>• Published by {article.publisher}</p>
             )}
           </div>
         )}
@@ -90,7 +90,17 @@ export default async function ArticlePage({ params }: Props) {
           </div>
         )}
         {article.pdf_url && (
-          <PdfViewer pdfUrl={article.pdf_url} />
+          <div className="mt-8 flex justify-center md:justify-end">
+            <a 
+              href={article.pdf_url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center px-2 py-3 bg-white/5 text-red-200 hover:bg-white/10 rounded-lg hover:text-fuchsia-500 transition-colors duration-200"
+            >
+              <Download size={18} className="mr-2" />
+              Full pdf article
+            </a>
+          </div>
         )}
       </article>
     </div>

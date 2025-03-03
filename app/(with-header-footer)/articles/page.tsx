@@ -4,11 +4,8 @@ import { db } from '@/lib/db';
 interface Article {
   id: number;
   title: string;
-  abstract: string | null;
   author: string | null;
   slug: string;
-  publisher: string | null;
-  publication_info: string | null;
 }
 
 async function getArticles(): Promise<Article[]> {
@@ -16,11 +13,8 @@ async function getArticles(): Promise<Article[]> {
     SELECT 
       id,
       title,
-      abstract,
       author,
-      slug,
-      publisher,
-      publication_info
+      slug
     FROM articles 
     ORDER BY id DESC
   `;
@@ -51,16 +45,6 @@ export default async function ArticlesPage() {
                   <p className="text-sm text-gray-400 mt-2">
                     By {article.author}
                   </p>
-                )}
-                {(article.publication_info || article.publisher) && (
-                  <div className="text-sm text-gray-400 mt-1">
-                    {article.publication_info && (
-                      <p>{article.publication_info}</p>
-                    )}
-                    {article.publisher && (
-                      <p className='mt-1'>Published by {article.publisher}</p>
-                    )}
-                  </div>
                 )}
               </Link>
             </li>
