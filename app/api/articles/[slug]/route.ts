@@ -1,5 +1,4 @@
 import { NextResponse } from 'next/server';
-import type { NextRequest } from 'next/server';
 import { db } from '@/lib/db';
 
 interface Article {
@@ -11,16 +10,10 @@ interface Article {
   slug: string;
 }
 
-type RouteParams = {
-  params: {
-    slug: string;
-  };
-};
-
 export async function GET(
-  request: NextRequest,
-  { params }: RouteParams
-): Promise<NextResponse> {
+  request: Request,
+  { params }: { params: { slug: string } }
+): Promise<Response> {
   try {
     const query = `
       SELECT 
