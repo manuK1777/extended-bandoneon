@@ -4,7 +4,7 @@ export default function AboutPage() {
       {/* Hero section */}
       <section className="mb-16">
         <h1 className="text-3xl md:text-4xl font-bold mb-8 text-yellow-200 font-heading">About</h1>
-        <div className="text-gray-300 font-body text-lg leading-relaxed">
+        <div className="text-gray-300 font-body space-y-4 leading-relaxed">
           <p className="mb-4">
             Welcome! I am Mercedes Krapovickas, a bandoneonist, pianist, composer, and sound artist from Argentina, based in Finland. My work explores the bandoneon&apos;s movement, textures, and expanded possibilities through extended techniques, sound design, and electronics.
           </p>
