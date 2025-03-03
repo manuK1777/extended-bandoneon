@@ -1,4 +1,4 @@
-import { NextResponse, NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 
 interface Article {
@@ -11,11 +11,18 @@ interface Article {
 }
 
 export async function GET(
-  request: NextRequest,
-  context: { params: { slug: string } }
-): Promise<NextResponse> {
+  request: Request
+) {
   try {
-    const { slug } = context.params; 
+    const { pathname } = new URL(request.url);
+    const slug = pathname.split('/').pop();
+    
+    if (!slug) {
+      return NextResponse.json(
+        { error: 'Invalid article slug' },
+        { status: 400 }
+      );
+    }
 
     const query = `
       SELECT 
