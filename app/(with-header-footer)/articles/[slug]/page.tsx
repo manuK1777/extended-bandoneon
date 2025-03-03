@@ -84,7 +84,7 @@ export default async function ArticlePage({ params }: Props) {
           </div>
         )}
         {article.abstract && (
-          <div className="bg-white/5 p-6 rounded-lg mb-8">
+          <div className="bg-gray-900 p-6 rounded-lg mb-8">
             <h2 className="text-lg font-semibold mb-4 text-fuchsia-200">Abstract</h2>
             <p className="text-gray-300 font-body space-y-4 leading-relaxed">{article.abstract}</p>
           </div>

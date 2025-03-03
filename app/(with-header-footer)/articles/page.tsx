@@ -36,7 +36,7 @@ export default async function ArticlesPage() {
             <li key={article.id} className="relative pl-8 before:content-['→'] before:absolute before:left-2 before:top-1/2 before:-translate-y-1/2 before:text-fuchsia-200 before:font-bold">
               <Link
                 href={`/articles/${article.slug}`}
-                className="block p-6 rounded-lg bg-white/5 hover:bg-white/10 transition-colors duration-200"
+                className="block p-6 rounded-lg bg-gray-900 hover:bg-gray-800 transition-colors duration-200"
               >
                 <h2 className="font-heading text-sm md:text-base text-gray-900 dark:text-white hover:text-fuchsia-200 transition-colors duration-200">
                   {article.title}

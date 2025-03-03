@@ -54,7 +54,7 @@ export default function AboutPage() {
       </div>
 
       {/* Contact section */}
-      <section className="mt-16 bg-white/5 p-8 rounded-lg backdrop-blur-sm">
+      <section className="mt-16 bg-gray-900 p-8 rounded-lg backdrop-blur-sm">
         <h2 className="text-2xl font-display mb-4 text-yellow-200">Get in Touch</h2>
         <div className="text-gray-300 font-body">
           <p>
