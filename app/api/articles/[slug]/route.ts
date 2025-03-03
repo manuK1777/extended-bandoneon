@@ -1,4 +1,4 @@
-import { NextResponse } from 'next/server';
+import { NextResponse, NextRequest } from 'next/server';
 import { db } from '@/lib/db';
 
 interface Article {
@@ -11,10 +11,12 @@ interface Article {
 }
 
 export async function GET(
-  request: Request,
-  { params }: { params: { slug: string } }
-): Promise<Response> {
+  request: NextRequest,
+  context: { params: { slug: string } }
+): Promise<NextResponse> {
   try {
+    const { slug } = context.params; 
+
     const query = `
       SELECT 
         id,
@@ -27,8 +29,8 @@ export async function GET(
       WHERE slug = ?
     `;
 
-    const articles = await db.query<Article>(query, [params.slug]);
-    
+    const articles = await db.query<Article>(query, [slug]);
+
     if (!articles || articles.length === 0) {
       return NextResponse.json(
         { error: 'Article not found' },
