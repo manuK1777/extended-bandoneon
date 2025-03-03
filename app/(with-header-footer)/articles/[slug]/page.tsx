@@ -84,7 +84,7 @@ export default async function ArticlePage({ params }: Props) {
           </div>
         )}
         {article.abstract && (
-          <div className="bg-gray-900 p-6 rounded-lg mb-8">
+          <div className="bg-gradient-to-b from-white/5 to-white/10 backdrop-blur-sm p-6 rounded-lg mb-8">
             <h2 className="text-lg font-semibold mb-4 text-fuchsia-200">Abstract</h2>
             <p className="text-gray-300 font-body space-y-4 leading-relaxed">{article.abstract}</p>
           </div>
@@ -95,7 +95,7 @@ export default async function ArticlePage({ params }: Props) {
               href={article.pdf_url}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center px-2 py-3 bg-white/5 text-yellow-200 hover:bg-white/10 rounded-lg hover:text-fuchsia-500 transition-colors duration-200"
+              className="inline-flex items-center px-2 py-3 bg-gradient-to-b from-white/5 to-white/10 backdrop-blur-sm transition-colors duration-200 hover:from-white/10 hover:to-white/15 text-yellow-200 rounded-lg hover:text-fuchsia-500"
             >
               <Download size={18} className="mr-2" />
               Full pdf article

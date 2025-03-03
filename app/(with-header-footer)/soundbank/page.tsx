@@ -360,7 +360,7 @@ export default function SoundbankPage() {
           {filteredSounds.map((sound) => (
             <div
               key={sound.id}
-              className="bg-gray-800 rounded-lg p-4 hover:bg-gray-750 transition-colors"
+              className="rounded-lg p-4 bg-gradient-to-b from-white/5 to-white/10 backdrop-blur-sm transition-colors duration-200 hover:from-white/10 hover:to-white/15"
             >
               <div className="mb-4">
                 <div className="flex justify-between items-start mb-1">
