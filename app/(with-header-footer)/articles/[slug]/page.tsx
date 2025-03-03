@@ -61,7 +61,7 @@ export default async function ArticlePage({ params }: Props) {
     <div className="container w-[90%] lg:w-[70%] mx-auto space-y-8">
       <Link 
         href="/articles" 
-        className="inline-flex items-center text-fuchsia-200 hover:text-fuchsia-300 transition-colors duration-200"
+        className="inline-flex text-md items-center text-fuchsia-200 hover:text-fuchsia-300 transition-colors duration-200"
       >
         <span className="inline-block align-middle">←</span>
         <span className="ml-2">Back to Articles</span>
@@ -69,17 +69,17 @@ export default async function ArticlePage({ params }: Props) {
       <article className="mt-4">
         <h1 className="text-2xl font-bold mb-2 text-yellow-200">{article.title}</h1>
         {article.author && (
-          <p className="text-md text-gray-400">
+          <p className="text-md text-gray-300">
             By {article.author}
           </p>
         )}
         {(article.publication_info || article.publisher) && (
           <div className="text-sm text-gray-400 mb-8 mt-2 space-y-1">
             {article.publication_info && (
-              <p>• {article.publication_info}</p>
+              <p>{article.publication_info}</p>
             )}
             {article.publisher && (
-              <p>• Published by {article.publisher}</p>
+              <p>Published by {article.publisher}</p>
             )}
           </div>
         )}
@@ -95,7 +95,7 @@ export default async function ArticlePage({ params }: Props) {
               href={article.pdf_url}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center px-2 py-3 bg-white/5 text-red-200 hover:bg-white/10 rounded-lg hover:text-fuchsia-500 transition-colors duration-200"
+              className="inline-flex items-center px-2 py-3 bg-white/5 text-yellow-200 hover:bg-white/10 rounded-lg hover:text-fuchsia-500 transition-colors duration-200"
             >
               <Download size={18} className="mr-2" />
               Full pdf article
