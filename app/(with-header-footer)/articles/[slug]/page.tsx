@@ -61,10 +61,10 @@ export default async function ArticlePage({ params }: Props) {
     <div className="container w-[90%] lg:w-[70%] mx-auto space-y-8">
       <Link 
         href="/articles" 
-        className="inline-flex text-md items-center text-fuchsia-200 hover:text-fuchsia-300 transition-colors duration-200"
+        className="inline-flex text-sm items-center text-fuchsia-200 hover:text-fuchsia-300 transition-colors duration-200"
       >
         <span className="inline-block align-middle">←</span>
-        <span className="ml-2">Back to Articles</span>
+        <span className="ml-2">Back to Articles list</span>
       </Link>
       <article className="mt-4">
         <h1 className="text-2xl font-bold mb-2 text-yellow-200">{article.title}</h1>

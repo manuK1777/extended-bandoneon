@@ -19,7 +19,7 @@ export default function NavButton({
 }: NavButtonProps) {
   const href = `/${name.toLowerCase()}`;
   const pathname = usePathname();
-  const isActive = pathname === href;
+  const isActive = pathname.startsWith(href);
   const isHome = pathname === '/';
   
   const baseClasses = `btn font-body px-2 transition-colors duration-200 text-sm sm:text-base rounded-none w-full ${isHome ? 'bg-white/5' : ''}`;
