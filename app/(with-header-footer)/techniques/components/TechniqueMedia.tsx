@@ -36,7 +36,7 @@ export const TechniqueMedia = ({ media }: TechniqueMediaProps) => {
               <img
                 src={img.url}
                 alt={`Technique image ${idx + 1}`}
-                className="rounded-lg w-full h-full object-cover hover:opacity-90 transition-opacity"
+                className="rounded-lg w-full h-full object-cover hover:opacity-75 transition-opacity"
                 loading="lazy"
               />
             </div>

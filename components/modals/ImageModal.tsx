@@ -28,7 +28,7 @@ export const ImageModal = ({ isOpen, onClose, imageUrl, alt }: ImageModalProps) 
         <img
           src={imageUrl}
           alt={alt}
-          className="max-w-[55vw] w-auto h-auto object-contain rounded-lg"
+          className="max-w-[90vw] md:max-w-[55vw] w-auto h-auto object-contain rounded-lg"
         />
       </div>
     </div>

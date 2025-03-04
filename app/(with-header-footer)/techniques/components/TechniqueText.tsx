@@ -9,7 +9,7 @@ export const TechniqueText = ({ description }: TechniqueTextProps) => {
       if (block.trim().startsWith("# ")) {
         const headingText = block.trim().substring(2);
         return (
-          <h2 key={index} className="text-mdl font-bold text-fuchsia-200 mt-6 mb-4 font-heading">
+          <h2 key={index} className="text-mdl font-bold text-fuchsia-200 mt-14 mb-6 font-heading">
             {headingText}
           </h2>
         );
