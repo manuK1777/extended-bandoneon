@@ -14,12 +14,12 @@ export const ImageModal = ({ isOpen, onClose, imageUrl, alt }: ImageModalProps) 
 
   return (
     <div 
-      className="fixed inset-0 bg-black/50 z-50 overflow-auto"
+      className="fixed inset-0 bg-black/80 z-50 overflow-auto"
       onClick={onClose}
     >
       <div 
         className="min-h-screen w-full flex items-center justify-center p-4"
-        onClick={e => e.stopPropagation()}
+        onClick={(e) => e.stopPropagation()} // Prevent closing when clicking the image
       >
         <button
           onClick={onClose}
