@@ -54,7 +54,7 @@ async function getTechniqueMedia(techniqueId: number): Promise<Media[]> {
 export default async function TechniquePage({
   params,
 }: {
-  params: { slug: string };
+  params: { slug: string }
 }) {
   const technique = await getTechnique(params.slug);
   

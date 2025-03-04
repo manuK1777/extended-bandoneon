@@ -1,5 +1,7 @@
 "use client";
 
+import Image from 'next/image';
+
 interface ImageModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -25,10 +27,13 @@ export const ImageModal = ({ isOpen, onClose, imageUrl, alt }: ImageModalProps) 
         >
           Close
         </button>
-        <img
+        <Image
           src={imageUrl}
           alt={alt}
+          width={1200}
+          height={800}
           className="max-w-[90vw] md:max-w-[55vw] w-auto h-auto object-contain rounded-lg"
+          priority
         />
       </div>
     </div>

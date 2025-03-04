@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from 'react';
+import Image from 'next/image';
 import { ImageModal } from '@/components/modals/ImageModal';
 
 interface Media {
@@ -33,11 +34,13 @@ export const TechniqueMedia = ({ media }: TechniqueMediaProps) => {
                 alt: `Technique image ${idx + 1}`
               })}
             >
-              <img
+              <Image
                 src={img.url}
                 alt={`Technique image ${idx + 1}`}
-                className="rounded-lg w-full h-full object-cover hover:opacity-75 transition-opacity"
-                loading="lazy"
+                className="rounded-lg object-cover hover:opacity-75 transition-opacity"
+                fill
+                sizes="(max-width: 768px) 90vw, (max-width: 1200px) 50vw, 33vw"
+                priority={idx === 0}
               />
             </div>
           ))}
