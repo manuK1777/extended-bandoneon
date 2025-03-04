@@ -1,14 +1,32 @@
 import Link from 'next/link';
+import { createConnection, closeConnection } from '@/lib/db/connection';
+import { RowDataPacket } from 'mysql2';
 
-const techniques = [
-  { id: 'technique-1', name: 'Technique 1' },
-  { id: 'technique-2', name: 'Technique 2' },
-  { id: 'technique-3', name: 'Technique 3' },
-  { id: 'technique-4', name: 'Technique 4' },
-  { id: 'technique-5', name: 'Technique 5' },
-];
+interface Technique extends RowDataPacket {
+  id: number;
+  slug: string;
+  title: string;
+  description: string;
+}
 
-export default function TechniquesPage() {
+async function getTechniques(): Promise<Technique[]> {
+  const connection = await createConnection();
+  try {
+    const [rows] = await connection.execute<Technique[]>(
+      'SELECT id, slug, title, description FROM techniques ORDER BY created_at DESC'
+    );
+    return rows;
+  } catch (error) {
+    console.error('Database error:', error);
+    return [];
+  } finally {
+    await closeConnection(connection);
+  }
+}
+
+export default async function TechniquesPage() {
+  const techniques = await getTechniques();
+
   return (
     <main className="container w-[90%] mx-auto px-4 py-8">
       <h1 className="text-3xl md:text-4xl font-bold mb-8 text-yellow-200 font-heading">Extended Techniques</h1>
@@ -16,11 +34,13 @@ export default function TechniquesPage() {
         {techniques.map((technique) => (
           <Link
             key={technique.id}
-            href={`/techniques/${technique.id}`}
+            href={`/techniques/${technique.slug}`}
             className="block p-6 rounded-lg bg-white/5 hover:bg-white/10 transition-colors duration-200"
           >
-            <h2 className="text-2xl font-semibold mb-2">{technique.name}</h2>
-            <p className="text-gray-400">Click to learn more about this technique</p>
+            <h2 className="text-2xl font-semibold mb-2 text-yellow-200">{technique.title}</h2>
+            <p className="text-gray-400">
+              {technique.description.split('\n\n')[0].replace(/^#\s/, '').slice(0, 150)}...
+            </p>
           </Link>
         ))}
       </div>
