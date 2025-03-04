@@ -65,17 +65,19 @@ export default async function TechniquePage({
   const media = await getTechniqueMedia(technique.id);
 
   return (
-    <main className="container w-[90%] lg:w-[80%] mx-auto px-4 py-8">
-      <Link 
+    <main className="container mx-auto py-8">
+      <div className="w-[90%] lg:w-[70%] mx-auto">
+        <Link 
           href="/techniques" 
           className="mb-8 inline-flex items-center text-sm text-fuchsia-200 hover:text-fuchsia-300 transition-colors duration-200"
         >
           <span className="inline-block align-middle mb-1">←</span>
           <span className="ml-2">Back to Techniques list</span>
         </Link>
-      <h1 className="text-2xl font-bold mb-12 text-yellow-200">
-        {technique.title}
-      </h1>
+        <h1 className="text-2xl font-bold mb-12 text-yellow-200">
+          {technique.title}
+        </h1>
+      </div>
       <TechniqueLayout technique={technique} media={media} />
     </main>
   );

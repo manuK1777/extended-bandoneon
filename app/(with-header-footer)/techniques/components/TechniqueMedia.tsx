@@ -21,39 +21,43 @@ export const TechniqueMedia = ({ media }: TechniqueMediaProps) => {
 
   return (
     <>
-      <div className="space-y-4">
+      <div className="space-y-8 mt-4">
         {/* Images */}
-        {images.map((img, idx) => (
-          <div 
-            key={img.id} 
-            className="relative max-w-[400px] mx-auto cursor-pointer"
-            onClick={() => setSelectedImage({
-              url: img.url,
-              alt: `Technique image ${idx + 1}`
-            })}
-          >
-            <img
-              src={img.url}
-              alt={`Technique image ${idx + 1}`}
-              className="rounded-lg w-full h-auto hover:opacity-90 transition-opacity"
-              loading="lazy"
-            />
-          </div>
-        ))}
+        <div className="flex flex-wrap gap-6 justify-center">
+          {images.map((img, idx) => (
+            <div 
+              key={img.id} 
+              className="relative w-[350px] h-[500px] cursor-pointer"
+              onClick={() => setSelectedImage({
+                url: img.url,
+                alt: `Technique image ${idx + 1}`
+              })}
+            >
+              <img
+                src={img.url}
+                alt={`Technique image ${idx + 1}`}
+                className="rounded-lg w-full h-full object-cover hover:opacity-90 transition-opacity"
+                loading="lazy"
+              />
+            </div>
+          ))}
+        </div>
 
         {/* Videos */}
-        {videos.map((video) => (
-          <div key={video.id} style={{ padding: '56.25% 0 0 0', position: 'relative' }}>
-            <iframe
-              src={video.url}
-              style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', border: 0 }}
-              allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media"
-              allowFullScreen
-              title="Technique Video"
-              className="rounded-lg"
-            />
-          </div>
-        ))}
+        <div className="flex flex-col lg:flex-row gap-4 justify-center items-center">
+          {videos.map((video) => (
+            <div key={video.id} className="w-[350px] lg:w-[400px] aspect-[16/9]" style={{ position: 'relative' }}>
+              <iframe
+                src={video.url}
+                style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', border: 0 }}
+                allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media"
+                allowFullScreen
+                title="Technique Video"
+                className="rounded-lg"
+              />
+            </div>
+          ))}
+        </div>
       </div>
 
       <ImageModal

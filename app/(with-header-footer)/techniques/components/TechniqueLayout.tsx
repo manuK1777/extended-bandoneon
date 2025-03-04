@@ -24,11 +24,11 @@ interface TechniqueLayoutProps {
 export const TechniqueLayout = ({ technique, media }: TechniqueLayoutProps) => {
   if (technique.layout === 'standard') {
     return (
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-0 max-w-6xl mx-auto">
-        <div className="order-1 lg:order-1 lg:-mr-[2rem]">
+      <div className="grid grid-cols-1 gap-8 container w-[90%] lg:w-[70%] mx-auto">
+        <div>
           <TechniqueText description={technique.description} />
         </div>
-        <div className="order-2 lg:order-2">
+        <div>
           <TechniqueMedia media={media} />
         </div>
       </div>
