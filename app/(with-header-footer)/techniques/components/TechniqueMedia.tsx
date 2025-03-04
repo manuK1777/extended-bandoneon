@@ -28,12 +28,15 @@ export const TechniqueMedia = ({ media }: TechniqueMediaProps) => {
 
       {/* Videos */}
       {videos.map((video) => (
-        <div key={video.id} className="relative aspect-video">
+        <div key={video.id} style={{ padding: '56.25% 0 0 0', position: 'relative' }}>
           <iframe
             src={video.url}
-            className="w-full h-full rounded-lg"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }}
+            frameBorder="0"
+            allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media"
             allowFullScreen
+            title="Technique Video"
+            className="rounded-lg"
           />
         </div>
       ))}
