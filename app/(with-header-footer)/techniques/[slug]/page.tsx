@@ -75,7 +75,7 @@ export default async function TechniquePage({
           <span className="inline-block align-middle mb-1">←</span>
           <span className="ml-2">Back to Techniques list</span>
         </Link>
-        <h1 className="text-2xl font-bold mb-12 text-yellow-200">
+        <h1 className="text-2xl font-bold mb-8 text-yellow-200">
           {technique.title}
         </h1>
       </div>
