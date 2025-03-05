@@ -32,7 +32,7 @@ export const ImageModal = ({ isOpen, onClose, imageUrl, alt }: ImageModalProps) 
           alt={alt}
           width={1200}
           height={800}
-          className="max-w-[90vw] md:max-w-[55vw] w-auto h-auto object-contain rounded-lg"
+          className="max-w-[90vw] md:max-w-[65vw] lg:max-w-[50vw] w-auto h-auto object-contain rounded-lg"
           priority
         />
       </div>

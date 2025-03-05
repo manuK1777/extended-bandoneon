@@ -37,7 +37,7 @@ export default async function TechniquesPage() {
             href={`/techniques/${technique.slug}`}
             className="block p-6 rounded-lg bg-white/5 hover:bg-white/10 transition-colors duration-200"
           >
-            <h2 className="text-base font-semibold mb-2 text-fuchsia-200">{technique.title}</h2>
+            <h2 className="text-lg font-semibold mb-2 text-fuchsia-200">{technique.title}</h2>
             <p className="text-gray-400 text-md">
               {technique.description.split('\n\n')[0].replace(/^#\s/, '').slice(0, 150)}...
             </p>

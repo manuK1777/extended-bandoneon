@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { ImageModal } from '@/components/modals/ImageModal';
 
@@ -17,8 +17,29 @@ interface TechniqueMediaProps {
 
 export const TechniqueMedia = ({ media }: TechniqueMediaProps) => {
   const [selectedImage, setSelectedImage] = useState<{ url: string; alt: string } | null>(null);
+  const [isMobile, setIsMobile] = useState(true);
   const images = media.filter(m => m.type === 'image');
   const videos = media.filter(m => m.type === 'video');
+
+  useEffect(() => {
+    const checkIfMobile = () => {
+      setIsMobile(window.innerWidth < 768); // 768px is the 'md' breakpoint in Tailwind
+    };
+
+    checkIfMobile();
+    window.addEventListener('resize', checkIfMobile);
+    
+    return () => window.removeEventListener('resize', checkIfMobile);
+  }, []);
+
+  const handleImageClick = (img: Media, idx: number) => {
+    if (!isMobile) {
+      setSelectedImage({
+        url: img.url,
+        alt: `Technique image ${idx + 1}`
+      });
+    }
+  };
 
   return (
     <>
@@ -29,10 +50,7 @@ export const TechniqueMedia = ({ media }: TechniqueMediaProps) => {
             <div 
               key={img.id} 
               className="relative w-[350px] h-[500px] cursor-pointer"
-              onClick={() => setSelectedImage({
-                url: img.url,
-                alt: `Technique image ${idx + 1}`
-              })}
+              onClick={() => handleImageClick(img, idx)}
             >
               <Image
                 src={img.url}
@@ -49,7 +67,7 @@ export const TechniqueMedia = ({ media }: TechniqueMediaProps) => {
         {/* Videos */}
         <div className="flex flex-col lg:flex-row gap-4 justify-center items-center">
           {videos.map((video) => (
-            <div key={video.id} className="w-[350px] lg:w-[400px] aspect-[16/9]" style={{ position: 'relative' }}>
+            <div key={video.id} className="w-[300px] lg:w-[400px] aspect-[16/9]" style={{ position: 'relative' }}>
               <iframe
                 src={video.url}
                 style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', border: 0 }}
@@ -64,7 +82,7 @@ export const TechniqueMedia = ({ media }: TechniqueMediaProps) => {
       </div>
 
       <ImageModal
-        isOpen={!!selectedImage}
+        isOpen={!!selectedImage && !isMobile}
         onClose={() => setSelectedImage(null)}
         imageUrl={selectedImage?.url || ''}
         alt={selectedImage?.alt || ''}
