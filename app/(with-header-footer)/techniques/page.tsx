@@ -29,7 +29,7 @@ export default async function TechniquesPage() {
 
   return (
     <main className="container w-[90%] lg:w-[70%] mx-auto">
-      <h1 className="text-3xl md:text-4xl font-bold mb-8 text-yellow-200 font-heading">Extended Techniques</h1>
+      <h1 className="text-3xl md:text-4xl font-bold mb-8 mt-6 text-yellow-200 font-heading">Extended Techniques</h1>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {techniques.map((technique) => (
           <Link

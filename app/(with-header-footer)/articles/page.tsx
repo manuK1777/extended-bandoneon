@@ -27,7 +27,7 @@ export default async function ArticlesPage() {
 
   return (
     <div className="container w-[90%] lg:w-[70%] mx-auto space-y-8">
-      <h1 className="text-3xl md:text-4xl font-bold mb-8 text-yellow-200 font-heading">Articles</h1>
+      <h1 className="text-3xl md:text-4xl font-bold mb-8 mt-6 text-yellow-200 font-heading">Articles</h1>
       {articles.length === 0 ? (
         <p className="text-gray-400">No articles found.</p>
       ) : (
