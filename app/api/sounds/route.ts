@@ -40,7 +40,7 @@ export async function GET(
         s.created_at,
         sp.name as soundpack_name,
         sp.description as soundpack_description,
-        GROUP_CONCAT(h.tag) as tags
+        GROUP_CONCAT(DISTINCT h.tag ORDER BY h.tag) as tags
       FROM sounds s
       LEFT JOIN soundpacks sp ON s.soundpack_id = sp.id
       LEFT JOIN entity_hashtags eh ON s.id = eh.entity_id AND eh.entity_type = 'sound'
