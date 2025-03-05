@@ -49,13 +49,13 @@ export const TechniqueMedia = ({ media }: TechniqueMediaProps) => {
           {images.map((img, idx) => (
             <div 
               key={img.id} 
-              className="relative w-[350px] h-[500px] cursor-pointer"
+              className="relative w-[350px] h-[500px] md:cursor-pointer"
               onClick={() => handleImageClick(img, idx)}
             >
               <Image
                 src={img.url}
                 alt={`Technique image ${idx + 1}`}
-                className="rounded-lg object-cover hover:opacity-75 transition-opacity"
+                className="rounded-lg object-cover md:hover:opacity-75 transition-opacity"
                 fill
                 sizes="(max-width: 768px) 90vw, (max-width: 1200px) 50vw, 33vw"
                 priority={idx === 0}
