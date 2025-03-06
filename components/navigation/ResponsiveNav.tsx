@@ -93,7 +93,7 @@ export default function ResponsiveNav({
                   className="h-8 w-8"
                   fill="none"
                   viewBox="0 0 24 24"
-                  stroke="#FFFFFF"
+                  stroke="#D1D5DB"
                 >
                   <path
                     strokeLinecap="round"
