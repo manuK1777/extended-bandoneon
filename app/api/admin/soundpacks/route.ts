@@ -1,6 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { processTags } from '@/utils/tag-utils';
+import { v2 as cloudinary } from 'cloudinary';
+
+// Configure Cloudinary
+cloudinary.config({
+  cloud_name: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
 
 interface SoundpackRow {
   id: number;
@@ -25,8 +33,24 @@ interface Soundpack {
   tags: string[];
 }
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
+    const { searchParams } = new URL(request.url);
+    const listFiles = searchParams.get('listFiles') === 'true';
+    const folder = searchParams.get('folder');
+
+    // If listFiles is true, return Cloudinary resources for the specified folder
+    if (listFiles) {
+      const result = await cloudinary.api.resources({
+        type: 'upload',
+        prefix: folder || 'soundbank',
+        resource_type: 'video', // Cloudinary uses 'video' type for audio files
+        max_results: 500
+      });
+      return NextResponse.json(result);
+    }
+
+    // Otherwise, return soundpacks data
     const rows = await db.query<SoundpackRow & { tags: string }>(`
       SELECT 
         s.id,

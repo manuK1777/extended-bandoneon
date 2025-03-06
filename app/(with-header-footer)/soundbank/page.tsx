@@ -55,8 +55,7 @@ async function fetchSounds({ pageParam, limit = 12 }: FetchSoundsParams): Promis
     throw new Error(error.error || 'Failed to fetch sounds');
   }
   const data = await response.json();
-  console.log('Fetched sounds:', data);
-  return data;
+  return data; // The API already returns data in the correct format
 }
 
 function formatFileSize(bytes: number | null): string {
@@ -219,6 +218,7 @@ export default function SoundbankPage() {
                         >
                           <ListboxOptions className="text-sm absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-cyan-900 py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
                             <ListboxOption
+                              key="all-soundpacks"
                               value=""
                               className={({ selected }) =>
                                 `relative cursor-pointer select-none py-2 pl-10 pr-4 ${
@@ -241,7 +241,7 @@ export default function SoundbankPage() {
                             </ListboxOption>
                             {allSoundpacks.sort().map((pack) => (
                               <ListboxOption
-                                key={pack}
+                                key={`soundpack-${pack}`}
                                 value={pack}
                                 className={({ selected }) =>
                                   `relative cursor-pointer select-none py-2 pl-10 pr-4 bg-cyan-900 ${
@@ -310,7 +310,7 @@ export default function SoundbankPage() {
                               .filter((tag) => tag.toLowerCase().includes(tagSearch?.toLowerCase() || ''))
                               .map((tag) => (
                                 <ListboxOption
-                                  key={tag}
+                                  key={`tag-${tag}`}
                                   value={tag}
                                   className={({ selected }) =>
                                     `relative cursor-pointer select-none py-2 pl-10 pr-4 ${
@@ -373,7 +373,7 @@ export default function SoundbankPage() {
                       <Download size={18} />
                     </summary>
                     <ul className="dropdown-content z-[1] menu p-2 shadow bg-gray-800 rounded-box w-40">
-                      <li>
+                      <li key="wav-download">
                         <button
                           onClick={(e) => {
                             (e.target as HTMLElement).closest('details')?.removeAttribute('open');
@@ -384,7 +384,7 @@ export default function SoundbankPage() {
                           Download WAV
                         </button>
                       </li>
-                      <li>
+                      <li key="mp3-download">
                         <button
                           onClick={(e) => {
                             (e.target as HTMLElement).closest('details')?.removeAttribute('open');
