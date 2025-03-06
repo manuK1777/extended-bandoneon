@@ -82,7 +82,7 @@ export default function ResponsiveNav({
             animate={{ opacity: 1 }}
             transition={{ duration: 0.15, ease: "easeOut" }}
           >
-            <div className="backdrop-blur-md bg-black/70 w-full pt-16 px-4">
+            <div className="backdrop-blur-md bg-black/70 w-full pt-16 px-4 pb-2">
               <button 
                 className="fixed top-6 right-6 hover:rotate-90 transition-transform duration-200"
                 onClick={() => setIsOpen(false)}
