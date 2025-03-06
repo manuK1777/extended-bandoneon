@@ -53,7 +53,7 @@ export default function ResponsiveNav({
       </div>
 
       {/* Mobile Navigation */}
-      <div className="md:hidden absolute z-20 top-4 right-4" ref={menuRef}>
+      <div className="md:hidden fixed z-20 top-4 right-4" ref={menuRef}>
         <button 
           className="btn btn-ghost btn-circle"
           onClick={() => setIsOpen(!isOpen)}
@@ -77,38 +77,57 @@ export default function ResponsiveNav({
         </button>
         {isOpen && (
           <motion.div
-            className="absolute mt-2 w-22 sm:w-32 right-0"
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ 
-              duration: 0.15,
-              ease: "easeOut"
-            }}
+            className="fixed top-0 left-0 right-0 w-full h-screen"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.15, ease: "easeOut" }}
           >
-            <ul className="menu menu-sm p-2 backdrop-blur-md bg-black/30 rounded-lg shadow-lg flex items-left">
-              {mobileNavItems.map((item) => {
-                const isActive = pathname === item.href;
-                return (
-                  <li key={item.name} className={`hover:bg-yellow-200 ${isActive ? 'bg-transparent' : ''}`}>
-                    <Link 
-                      href={item.href}
-                      className={`text-[.875rem] text-fuchsia-200 font-body transition-colors duration-200 py-2 px-1
-                        ${isActive ? 'text-red-600 hover:text-red-600' : 'hover:text-red-500'}`}
-                      onClick={() => {
-                        // Close menu first
-                        setIsOpen(false);
-                        // Small delay to ensure smooth transition
-                        setTimeout(() => {
-                          window.scrollTo(0, 0);
-                        }, 100);
-                      }}
-                    >
-                      {item.name}
-                    </Link>
-                  </li>
-                );
-              })}
-            </ul>
+            <div className="backdrop-blur-md bg-black/70 w-full pt-16 px-4">
+              <button 
+                className="fixed top-6 right-6 hover:rotate-90 transition-transform duration-200"
+                onClick={() => setIsOpen(false)}
+                aria-label="Close menu"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-8 w-8"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="#FFFFFF"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M6 18L18 6M6 6l12 12"
+                  />
+                </svg>
+              </button>
+              <ul className="menu menu-lg">
+                {mobileNavItems.map((item) => {
+                  const isActive = pathname === item.href;
+                  return (
+                    <li key={item.name} className={`hover:bg-yellow-200 ${isActive ? 'bg-transparent' : ''}`}>
+                      <Link 
+                        href={item.href}
+                        className={`text-base text-fuchsia-200 font-body transition-colors duration-200 py-2 px-1
+                          ${isActive ? 'text-red-600 hover:text-red-600' : 'hover:text-red-500'}`}
+                        onClick={() => {
+                          // Close menu first
+                          setIsOpen(false);
+                          // Small delay to ensure smooth transition
+                          setTimeout(() => {
+                            window.scrollTo(0, 0);
+                          }, 100);
+                        }}
+                      >
+                        {item.name}
+                      </Link>
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
           </motion.div>
         )}
       </div>
