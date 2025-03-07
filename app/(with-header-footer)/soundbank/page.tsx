@@ -240,14 +240,14 @@ export default function SoundbankPage() {
                               key="all-soundpacks"
                               value=""
                               className={({ selected }) =>
-                                `relative cursor-pointer select-none py-2 pl-10 pr-4 ${
-                                  selected ? 'bg-red-500 text-white' : 'text-white bg-cyan-900'
-                                }`
+                                `relative cursor-pointer select-none py-2 pl-10 pr-4 bg-cyan-900 ${
+                                  selected ? 'bg-red-500 text-white' : 'text-white'
+                                } ${!selected && '[&:hover]:bg-red-400 touch:hover:bg-transparent'}`
                               }
                             >
                               {({ selected }) => (
                                 <>
-                                  <span className={`block truncate ${selected ? 'font-medium' : 'font-normal bg-cyan-900'}`}>
+                                  <span className={`block truncate ${selected ? 'font-medium' : 'font-normal'}`}>
                                     All Soundpacks
                                   </span>
                                   {selected && (
@@ -264,8 +264,8 @@ export default function SoundbankPage() {
                                 value={pack}
                                 className={({ selected }) =>
                                   `relative cursor-pointer select-none py-2 pl-10 pr-4 bg-cyan-900 ${
-                                    selected ? 'bg-red-500 text-white' : 'text-white hover:bg-red-400'
-                                  }`
+                                    selected ? 'bg-red-500 text-white' : 'text-white'
+                                  } ${!selected && 'hover:not-touch:bg-red-400'}`
                                 }
                               >
                                 {({ selected }) => (
@@ -332,9 +332,9 @@ export default function SoundbankPage() {
                                   key={`tag-${tag}`}
                                   value={tag}
                                   className={({ selected }) =>
-                                    `relative cursor-pointer select-none py-2 pl-10 pr-4 ${
-                                      selected ? 'bg-red-500 text-white' : 'text-white hover:bg-red-400'
-                                    }`
+                                    `relative cursor-pointer select-none py-2 pl-10 pr-4 bg-cyan-900 ${
+                                      selected ? 'bg-red-500 text-white' : 'text-white'
+                                    } ${!selected && 'hover:not-touch:bg-red-400'}`
                                   }
                                 >
                                   {({ selected }) => (
@@ -359,7 +359,7 @@ export default function SoundbankPage() {
                   {selectedTags.length > 0 && (
                     <button
                       onClick={() => setSelectedTags([])}
-                      className="absolute -right-20 top-0 px-3 py-2 bg-cyan-900 text-yellow-200 rounded-md border border-gray-600 hover:bg-cyan-700 focus:outline-none focus:ring-1 focus:ring-red-500"
+                      className="absolute -right-20 top-0 px-3 py-2 bg-cyan-900 text-yellow-200 rounded-md border border-gray-600 @media (hover: hover) and (pointer: fine) { &:hover { @apply bg-cyan-700 } } focus:outline-none focus:ring-1 focus:ring-red-500"
                       aria-label="Clear selected tags"
                     >
                       Clear
@@ -379,14 +379,14 @@ export default function SoundbankPage() {
           {filteredSounds.map((sound) => (
             <div
               key={sound.id}
-              className="rounded-lg p-4 bg-gradient-to-b from-white/5 to-white/10 backdrop-blur-sm transition-colors duration-200 hover:from-white/10 hover:to-white/15"
+              className="rounded-lg p-4 bg-gradient-to-b from-white/5 to-white/10 backdrop-blur-sm transition-colors duration-200 @media (hover: hover) and (pointer: fine) { &:hover { @apply from-white/10 to-white/15 } }"
             >
               <div className="mb-4">
                 <div className="flex justify-between items-start mb-1">
                   <h3 className="text-lg font-medium text-white">{sound.title}</h3>
                   <details className="dropdown dropdown-end">
                     <summary 
-                      className="p-1.5 text-gray-400 hover:text-white hover:bg-gray-700 rounded-full transition-colors list-none cursor-pointer"
+                      className="p-1.5 text-gray-400 rounded-full transition-colors list-none cursor-pointer @media (hover: hover) and (pointer: fine) { &:hover { @apply text-white bg-gray-700 } }"
                       title="Download options"
                     >
                       <Download size={18} />
