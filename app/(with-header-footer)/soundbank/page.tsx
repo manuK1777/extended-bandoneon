@@ -3,7 +3,7 @@
 import React, { useState, useEffect, Fragment } from 'react';
 import dynamic from 'next/dynamic';
 import Head from "next/head";
-import { useInfiniteQuery } from '@tanstack/react-query';
+import { useQuery, useInfiniteQuery } from '@tanstack/react-query';
 import { useInView } from 'react-intersection-observer';
 import { Download } from 'lucide-react';
 import toast from 'react-hot-toast';
@@ -44,6 +44,11 @@ interface FetchSoundsParams {
   limit?: number;
 }
 
+interface Filters {
+  tags: string[];
+  soundpacks: string[];
+}
+
 async function fetchSounds({ pageParam, limit = 12 }: FetchSoundsParams): Promise<SoundResponse> {
   const params = new URLSearchParams();
   if (pageParam) params.append('cursor', pageParam);
@@ -56,6 +61,14 @@ async function fetchSounds({ pageParam, limit = 12 }: FetchSoundsParams): Promis
   }
   const data = await response.json();
   return data; // The API already returns data in the correct format
+}
+
+async function fetchFilters(): Promise<Filters> {
+  const response = await fetch('/api/filters');
+  if (!response.ok) {
+    throw new Error('Failed to fetch filters');
+  }
+  return response.json();
 }
 
 function formatFileSize(bytes: number | null): string {
@@ -116,6 +129,12 @@ export default function SoundbankPage() {
     initialPageParam: null as string | null
   });
 
+  // Query for filters
+  const { data: filtersData } = useQuery({
+    queryKey: ['filters'],
+    queryFn: fetchFilters
+  });
+
   // Intersection observer for infinite scroll
   const { ref, inView } = useInView();
 
@@ -129,9 +148,9 @@ export default function SoundbankPage() {
   // Flatten and filter sounds
   const sounds = data?.pages.flatMap(page => page.sounds) ?? [];
   
-  // Get unique tags and soundpacks for filters
-  const allTags = Array.from(new Set(sounds?.flatMap(s => s.tags || []).filter(Boolean) || []));
-  const allSoundpacks = Array.from(new Set(sounds?.map(s => s.soundpackName).filter((name): name is string => name !== null) || []));
+  // Get unique tags and soundpacks from filters data
+  const allTags = filtersData?.tags ?? [];
+  const allSoundpacks = filtersData?.soundpacks ?? [];
 
   // Filter sounds based on selected tags and soundpack
   const filteredSounds = sounds.filter(sound => {
