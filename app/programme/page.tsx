@@ -105,7 +105,7 @@ export default function ProgrammePage() {
           href="https://extendedbandoneon.com"
           target="_blank"
           rel="noopener noreferrer"
-          className="px-6 py-3 bg-yellow-600 hover:bg-yellow-500 text-black font-semibold rounded-md transition-colors duration-200"
+          className="px-6 py-3 bg-yellow-600 hover:bg-yellow-500 text-black font-semibold rounded-md transition-colors duration-200 animate-pulse hover:animate-none shadow-lg shadow-yellow-600/30 hover:shadow-yellow-500/50"
         >
           {content.button}
         </a>
