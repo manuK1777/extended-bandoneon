@@ -1,0 +1,23 @@
+{
+  "title": "Bandoneón Resonance #1",
+  "subtitle": "NEONES & NEUTRALES",
+  "description": "Un Circuito para Bandoneón, Electrónica y Movimiento",
+  "introduction": "Las ciudades respiran. Su ritmo oscila entre la quietud y la velocidad, entre la intensidad de los neones y el murmullo apagado de las calles en calma. Neones & Neutrales habita en esta oscilación, donde la energía cruda se encuentra con la contención, donde la distorsión se cruza con el silencio. El bandoneón, expandido más allá de su voz tradicional, se convierte en una extensión de este paisaje urbano: explorando, ampliando y reconfigurando las narrativas que llevo conmigo. La pieza se despliega en tres escenas urbanas, cada una reflejando el tiempo, el movimiento y la decisión.",
+  "scenes": [
+    {
+      "title": "I. INTERSECCIONES: ENTRE QUIETUD Y MOVIMIENTO",
+      "text": "Antes del primer destello de luz, todo es ingrávido. El paisaje sonoro se disuelve en ecos, texturas que se superponen, se estiran, se fragmentan. El bandoneón inhala profundamente, su fuelle se expande como las avenidas vacías al amanecer. Hay una elección por hacer, pero no un camino evidente. A veces, tomar el rumbo equivocado también es avanzar. La ciudad escucha, recalibra. La segunda entrada permite la desviación, el movimiento dentro del sistema."
+    },
+    {
+      "title": "II. LA TRAMA: CIRCUITOS NOCTURNOS",
+      "text": "La ciudad impone su energía. Ritmos pulsantes emergen de las venas eléctricas de las calles de concreto. Un mundo de ritmos. La entrada no siempre es dócil: resiste, titubea, exige ser domada. Pero en la fricción, hay libertad. Los neones parpadean como señales, llamando: ¿hacia dónde ir ahora?"
+    },
+    {
+      "title": "III. LUCES DERRAMADAS: UN TANGO DISTORSIONADO",
+      "text": "El baile no está en el movimiento, sino en el instante justo antes de que ocurra. Un tango desmembrado y rearmado, sus gestos distorsionados por reflejos y refracciones de memorias. Aquí, todo colisiona: el sonido del tráfico inquieto, el latido de una melodía que se desvanece, el vaivén de decisiones que no pueden deshacerse. El bandoneón respira conmigo, o al menos, debería."
+    }
+  ],
+  "closing": "Neones & Neutrales es un acto de navegación. De perderse. De encontrar ritmo en la imprevisibilidad. La ciudad duerme, la ciudad despierta, y en algún punto intermedio, el sonido toma forma.",
+  "button": "Visitar Extended Bandoneon",
+  "languageSwitch": "English"
+}
