@@ -60,7 +60,7 @@ export default function ProgrammePage() {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-4xl">
+    <div className="container mx-auto px-4 pb-12 max-w-4xl">
       {/* Language switcher */}
       <div className="flex justify-end mb-8">
         <button
@@ -95,7 +95,7 @@ export default function ProgrammePage() {
 
       {/* Closing */}
       <section className="mb-16">
-        <div className="text-gray-300 font-body space-y-4 leading-relaxed italic">
+        <div className="text-gray-300 mx-8 font-body space-y-4 leading-relaxed italic">
           <p className="mb-4">{content.closing}</p>
         </div>
       </section>

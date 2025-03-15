@@ -6,7 +6,7 @@ export default function ProgrammesLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="min-h-screen flex flex-col bg-black">
+    <div className="min-h-screen flex flex-col">
       {children}
     </div>
   );
