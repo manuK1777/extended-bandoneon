@@ -1,0 +1,58 @@
+{
+  "title": "Bandoneon Resonance #1",
+  "subtitle": "NEONS & NEUTRALS",
+  "description": "Bandoneonin, elektroniikan ja liikkeen virtapiiri",
+  "programmeNotes": {
+    "title": "Ohjelman tiedot",
+    "text": "Kaupungit hengittävät, niiden rytmi sykkii hiljaisuuden ja vauhdin, neonvalojen kirkkauden ja hiljaisten katujen huminan välillä. Neons & Neutrals elää tässä värähtelyssä, jossa raaka energia kohtaa hillinnän ja särö hiljaisuuden. Bandoneon laajentaa perinteistä ääntään, sulautuen kaupunkimaisemaan ja kertoen uusia tarinoita.\n\nEsitys koostuu kolmesta kaupunkikohtauksesta, jotka heijastavat aikaa, liikettä ja valintoja."
+  },
+  "introduction": "",
+  "scenes": [
+    {
+      "title": "I. RISTEYKSET: HILJAISUUS JA LIIKKE KESKUSTELEVAT",
+      "text": "Ennen ensimmäistä valoa kaikki on painotonta. Äänimaisema muuttuu kaikuiksi, tekstuurit kerrostuvat ja pirstoutuvat. Bandoneon hengittää syvään, sen palkeet laajenevat kuin tyhjät kadut aamulla. Valinta on tehtävä, mutta polku ei ole selvä. Joskus väärä käännös on silti suunta. Kaupunki kuuntelee ja mukautuu."
+    },
+    {
+      "title": "II. VERKKO: YÖN PIIRIT",
+      "text": "Kaupunki pakottaa energiansa esiin. Sykkivät rytmit nousevat betonikatujen sähköisistä suonista. Rytmien maailma, jossa syöte ei aina myönny: se vastustaa ja vaatii kamppailua. Kitkan sisällä on kuitenkin vapaus. Neonvalot vilkkuvat kuin signaalit, kysyen: minne seuraavaksi?"
+    },
+    {
+      "title": "III. LÄIKKYNEET VALOT: VÄÄRISTYNYT TANGO",
+      "text": "Tanssi on hetkessä juuri ennen liikettä. Tango vedetään erilleen ja kootaan uudelleen, sen eleet vääristyvät muistojen heijastuksista. Täällä kaikki törmää: liikenteen levoton ääni, hiipuvan melodian syke, päätökset, joita ei voi perua. Bandoneon hengittää kanssani, tai ainakin sen pitäisi."
+    }
+  ],
+  "closing": "Neons & Neutrals on navigointia, eksymistä ja rytmin löytämistä arvaamattomuudessa. Kaupunki nukkuu, herää, ja jossain siinä välissä ääni löytää muotonsa.",
+  "concertDetails": {
+    "title": "Konsertin tiedot",
+    "dateTime": {
+      "title": "Konsertin ajankohta",
+      "date": "18.3.2025",
+      "sets": [
+        "19:00 – 19:45 (Ensimmäinen esitys)",
+        "20:00 – 20:45 (Toinen esitys)"
+      ]
+    },
+    "venue": {
+      "title": "Paikka",
+      "name": "Musiikkitalo Black Box"
+    },
+    "performer": {
+      "title": "Säveltäjä-esiintyjä",
+      "name": "Mercedes Krapovickas, bandoneon & elektroniikka"
+    },
+    "about": {
+      "title": "Konsertista",
+      "text": "Tämä konsertti on Mercedes Krapovickasin ensimmäinen tohtorikonsertti, osana hänen taiteellista tutkimustaan Musiikin ja teknologian osastolla, Sibelius-Akatemiassa, Taideyliopistossa."
+    }
+  },
+  "acknowledgements": {
+    "title": "Kiitokset",
+    "text": "Kiitos Jan Schacherille ohjauksesta ja neuvoista sekä Marianne Decoster-Taivalkoskelle ja Libero Muredulle arvokkaista kommenteista. Arvostan taiteellisen komitean läsnäoloa ja heidän panostaan tähän konserttiin. Kiitän tuotantotiimiä, Mute-kollegoita, Manuel Krapovickasia, Jukka-Pekka Liljaa ja Tove Slottea sekä Sibelius-Akatemiaa heidän tuestaan."
+  },
+  "button": "Vieraile Extended Bandoneon",
+  "languageSwitch": {
+    "en": "English",
+    "es": "Español",
+    "fi": "Suomeksi"
+  }
+}

@@ -45,6 +45,14 @@
       "text": "This concert is Mercedes Krapovickas' first doctoral concert as part of her artistic research at the Music and Technology Department, Sibelius Academy, University of the Arts Helsinki."
     }
   },
+  "acknowledgements": {
+    "title": "Acknowledgments",
+    "text": "Thank you to Jan Schacher for his guidance and advice, and to Marianne Decoster-Taivalkoski and Libero Muredu for their valuable insights. I appreciate the presence of the artistic committee and their engagement in this concert. Gratitude to the production team, Mute colleagues, Manuel Krapovickas, Jukka-Pekka Lilja, and Tove Slotte, as well as Sibelius Academy for their support."
+  },
   "button": "Visit Extended Bandoneon",
-  "languageSwitch": "Español"
+  "languageSwitch": {
+    "en": "English",
+    "es": "Español",
+    "fi": "Suomeksi"
+  }
 }

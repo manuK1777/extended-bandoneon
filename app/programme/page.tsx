@@ -34,6 +34,17 @@ type ProgrammeNotes = {
   text: string;
 };
 
+type Acknowledgements = {
+  title: string;
+  text: string;
+};
+
+type LanguageSwitch = {
+  en: string;
+  es: string;
+  fi: string;
+};
+
 type ProgrammeContent = {
   title: string;
   subtitle: string;
@@ -43,13 +54,14 @@ type ProgrammeContent = {
   scenes: Scene[];
   closing: string;
   concertDetails?: ConcertDetails;
+  acknowledgements?: Acknowledgements;
   button: string;
-  languageSwitch: string;
+  languageSwitch: LanguageSwitch;
 };
 
 export default function ProgrammePage() {
   // State for language selection (default to English)
-  const [language, setLanguage] = useState<'en' | 'es'>('en');
+  const [language, setLanguage] = useState<'en' | 'fi' | 'es'>('en');
   const [content, setContent] = useState<ProgrammeContent | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -71,31 +83,55 @@ export default function ProgrammePage() {
     loadContent();
   }, [language]);
 
-  // Toggle language between English and Spanish
-  const toggleLanguage = () => {
-    setLanguage(language === 'en' ? 'es' : 'en');
+  // Change language to the selected option
+  const changeLanguage = (newLanguage: 'en' | 'fi' | 'es') => {
+    setLanguage(newLanguage);
   };
 
   if (isLoading || !content) {
     return (
-      <div className="container mx-auto px-4 py-8 max-w-4xl">
-        <div className="flex justify-center items-center h-64">
-          <div className="animate-pulse text-yellow-200">Loading...</div>
-        </div>
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-yellow-400"></div>
       </div>
     );
   }
 
   return (
-    <div className="container mx-auto px-4 pb-12 max-w-4xl">
+    <div className="min-h-screen py-12 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto">
       {/* Language switcher */}
       <div className="flex justify-end mb-8">
-        <button
-          onClick={toggleLanguage}
-          className="px-4 py-2 bg-fuchsia-900/50 hover:bg-fuchsia-800/50 text-yellow-200 rounded-md transition-colors duration-200"
-        >
-          {content.languageSwitch}
-        </button>
+        <div className="inline-flex rounded-md shadow-sm" role="group">
+          <button
+            onClick={() => changeLanguage('en')}
+            className={`px-4 py-2 text-sm font-medium rounded-l-lg ${
+              language === 'en'
+                ? 'bg-yellow-400 text-black'
+                : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
+            }`}
+          >
+            {content.languageSwitch.en}
+          </button>
+          <button
+            onClick={() => changeLanguage('fi')}
+            className={`px-4 py-2 text-sm font-medium ${
+              language === 'fi'
+                ? 'bg-yellow-400 text-black'
+                : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
+            }`}
+          >
+            {content.languageSwitch.fi}
+          </button>
+          <button
+            onClick={() => changeLanguage('es')}
+            className={`px-4 py-2 text-sm font-medium rounded-r-lg ${
+              language === 'es'
+                ? 'bg-yellow-400 text-black'
+                : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
+            }`}
+          >
+            {content.languageSwitch.es}
+          </button>
+        </div>
       </div>
 
       {/* Hero section */}
@@ -153,9 +189,9 @@ export default function ProgrammePage() {
       {/* Scenes */}
       <div className="space-y-12 mb-16">
         {content.scenes.map((scene, index) => (
-          <section key={index} className="bg-gradient-to-b from-white/5 to-white/10 backdrop-blur-sm p-8 rounded-lg">
-            <h2 className="text-2xl font-display mb-4 text-fuchsia-300">{scene.title}</h2>
-            <div className="text-gray-300 font-body space-y-4 leading-relaxed">
+          <section key={index}>
+            <h2 className="text-xl font-bold mb-4 text-gray-300">{scene.title}</h2>
+            <div className="text-gray-300 font-body leading-relaxed">
               <p>{scene.text}</p>
             </div>
           </section>
@@ -164,12 +200,22 @@ export default function ProgrammePage() {
 
       {/* Closing */}
       <section className="mb-16">
-        <div className="text-gray-300 mx-8 font-body space-y-4 leading-relaxed italic">
-          <p className="mb-4">{content.closing}</p>
+        <div className="text-gray-300 font-body leading-relaxed">
+          <p className="italic">{content.closing}</p>
         </div>
       </section>
 
-      {/* Visit Extended Bandoneon button */}
+      {/* Acknowledgements */}
+      {content.acknowledgements && (
+        <section className="mb-16">
+          <h2 className="text-2xl font-display mb-4 text-fuchsia-300">{content.acknowledgements.title}</h2>
+          <div className="text-gray-300 font-body leading-relaxed">
+            <p>{content.acknowledgements.text}</p>
+          </div>
+        </section>
+      )}
+
+      {/* Button to Extended Bandoneon */}
       <div className="flex justify-center">
         <a
           href="https://extendedbandoneon.com"
