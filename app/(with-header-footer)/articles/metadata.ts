@@ -31,8 +31,19 @@ export const metadata: Metadata = {
   },
 };
 
+// Define the Article type
+interface Article {
+  title: string;
+  description?: string;
+  excerpt?: string;
+  slug: string;
+  publishedAt?: string;
+  createdAt?: string;
+  author?: string;
+}
+
 // Generate structured data for articles collection
-export function generateArticlesStructuredData(articles: any[]) {
+export function generateArticlesStructuredData(articles: Article[]) {
   return {
     "@context": "https://schema.org",
     "@type": "ItemList",

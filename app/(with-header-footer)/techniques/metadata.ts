@@ -3,21 +3,21 @@ import { sharedMetadata } from '@/app/shared-metadata';
 
 export const metadata: Metadata = {
   ...sharedMetadata,
-  title: 'Extended Techniques | Extended Bandoneon',
-  description: 'Explore a collection of extended techniques for the bandoneon, with detailed explanations, examples, and media resources.',
-  keywords: ['bandoneon techniques', 'extended techniques', 'contemporary bandoneon', 'experimental music', 'bandoneon performance'],
+  title: 'Extended Bandoneon Techniques',
+  description: 'Explore extended techniques for the bandoneon, including unconventional playing methods, sound production techniques, and innovative approaches.',
+  keywords: ['bandoneon techniques', 'extended techniques', 'contemporary bandoneon', 'experimental bandoneon', 'bandoneon playing methods'],
   alternates: {
     canonical: 'https://extendedbandoneon.com/techniques',
   },
   openGraph: {
     ...sharedMetadata.openGraph as object,
-    title: 'Bandoneon Extended Techniques',
-    description: 'Explore a collection of extended techniques for the bandoneon.',
+    title: 'Extended Bandoneon Techniques',
+    description: 'Explore extended techniques for the bandoneon, including unconventional playing methods and innovative approaches.',
     url: 'https://extendedbandoneon.com/techniques',
     images: [
       {
         url: 'https://res.cloudinary.com/djxcomnwb/image/upload/v1738595952/main_k58gfs.jpg',
-        alt: 'Bandoneon Extended Techniques',
+        alt: 'Extended Bandoneon Techniques',
         width: 1200,
         height: 630,
       }
@@ -25,18 +25,30 @@ export const metadata: Metadata = {
   },
   twitter: {
     ...sharedMetadata.twitter as object,
-    title: 'Bandoneon Extended Techniques',
-    description: 'Explore a collection of extended techniques for the bandoneon.',
+    title: 'Extended Bandoneon Techniques',
+    description: 'Explore extended techniques for the bandoneon, including unconventional playing methods and innovative approaches.',
     images: ['https://res.cloudinary.com/djxcomnwb/image/upload/v1738595952/main_k58gfs.jpg'],
   },
 };
 
+// Define the Technique type
+interface Technique {
+  title: string;
+  description?: string;
+  excerpt?: string;
+  slug: string;
+  publishedAt?: string;
+  createdAt?: string;
+  author?: string;
+  videoUrl?: string;
+}
+
 // Generate structured data for techniques collection
-export function generateTechniquesStructuredData(techniques: any[]) {
+export function generateTechniquesStructuredData(techniques: Technique[]) {
   return {
     "@context": "https://schema.org",
     "@type": "ItemList",
-    "name": "Bandoneon Extended Techniques",
+    "name": "Extended Bandoneon Techniques",
     "description": "A collection of extended techniques for the bandoneon",
     "numberOfItems": techniques.length,
     "itemListElement": techniques.map((technique, index) => ({
@@ -44,9 +56,20 @@ export function generateTechniquesStructuredData(techniques: any[]) {
       "position": index + 1,
       "item": {
         "@type": "TechArticle",
-        "name": technique.title,
-        "description": technique.description,
-        "url": `https://extendedbandoneon.com/techniques/${technique.slug}`
+        "headline": technique.title,
+        "description": technique.description || technique.excerpt,
+        "url": `https://extendedbandoneon.com/techniques/${technique.slug}`,
+        "datePublished": technique.publishedAt || technique.createdAt,
+        "author": {
+          "@type": "Person",
+          "name": technique.author || "Extended Bandoneon"
+        },
+        ...(technique.videoUrl && {
+          "video": {
+            "@type": "VideoObject",
+            "url": technique.videoUrl
+          }
+        })
       }
     }))
   };

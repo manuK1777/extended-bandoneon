@@ -1,5 +1,4 @@
-import { metadata, generateArticlesStructuredData } from './metadata';
-import Script from 'next/script';
+import { metadata } from './metadata';
 
 export { metadata };
 

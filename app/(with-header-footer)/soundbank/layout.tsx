@@ -1,5 +1,4 @@
 import { metadata } from './metadata';
-import Script from 'next/script';
 
 export { metadata };
 

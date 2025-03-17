@@ -31,9 +31,19 @@ export const metadata: Metadata = {
   },
 };
 
+// Define the Sound type
+interface Sound {
+  title: string;
+  description?: string;
+  duration?: number;
+  fileSize?: number;
+  fileFormat?: string;
+  createdAt: string;
+}
+
 // This function generates structured data for the soundbank page
 // It takes the sounds array as input to create a dynamic collection page schema
-export function generateSoundbankStructuredData(sounds: any[]) {
+export function generateSoundbankStructuredData(sounds: Sound[]) {
   return {
     "@context": "https://schema.org",
     "@type": "CollectionPage",
