@@ -35,7 +35,7 @@ export const sharedMetadata: Metadata = {
     url: 'https://www.extendedbandoneon.com',
     siteName: 'Extended Bandoneon',
     title: 'Extended Bandoneon',
-    description: 'Explore extended techniques of the bandoneon',
+    description: 'A website exploring extended bandoneon techniques.',
     images: [
       MAIN_OG_IMAGE
     ],
@@ -45,7 +45,7 @@ export const sharedMetadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     title: 'Extended Bandoneon',
-    description: 'Explore extended techniques of the bandoneon',
+    description: 'A website exploring extended bandoneon techniques.',
     images: [
       MAIN_OG_IMAGE
     ],
@@ -58,8 +58,8 @@ export const sharedMetadata: Metadata = {
   },
   
   // Verification for search engines (you can add these later)
-  // verification: {
-  //   google: 'your-google-verification-code',
-  //   yandex: 'your-yandex-verification-code',
-  // },
+  verification: {
+    google: 'google-site-verification=T74IxEpOnY8u3cRtI7HnSobA5FYT4nklSE448NHHOxM',
+    // yandex: 'your-yandex-verification-code',
+  },
 };

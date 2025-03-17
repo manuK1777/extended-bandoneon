@@ -1,9 +1,9 @@
-import { metadata } from './metadata';
+import { metadata, generateTechniquesStructuredData } from './metadata';
 import Script from 'next/script';
 
 export { metadata };
 
-export default function SoundbankLayout({
+export default function TechniquesLayout({
   children,
 }: {
   children: React.ReactNode;

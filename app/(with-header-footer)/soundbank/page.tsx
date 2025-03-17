@@ -2,13 +2,14 @@
 
 import React, { useState, useEffect, Fragment } from 'react';
 import dynamic from 'next/dynamic';
-import Head from "next/head";
 import { useQuery, useInfiniteQuery } from '@tanstack/react-query';
 import { useInView } from 'react-intersection-observer';
 import { Download } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { Listbox, Transition, ListboxOption, ListboxButton, ListboxOptions } from '@headlessui/react';
 import { ChevronUpDownIcon, CheckIcon } from '@heroicons/react/20/solid';
+import { generateSoundbankStructuredData } from './metadata';
+import Script from 'next/script';
 
 // Lazy load the SoundPlayer component
 const SoundPlayer = dynamic(() => import('@/components/SoundPlayer'), {
@@ -165,23 +166,8 @@ export default function SoundbankPage() {
     return matchesTags && matchesSoundpack && isMp3;
   });
 
-  // Generate JSON-LD structured data
-  const structuredData = {
-    "@context": "https://schema.org",
-    "@type": "CollectionPage",
-    "name": "Extended Bandoneon Soundbank",
-    "description": "Collection of high-quality bandoneon sound samples",
-    "numberOfItems": filteredSounds.length,
-    "hasPart": filteredSounds.map(sound => ({
-      "@type": "AudioObject",
-      "name": sound.title,
-      "description": sound.description || undefined,
-      "duration": sound.duration ? `PT${Math.floor(sound.duration)}S` : undefined,
-      "contentSize": sound.fileSize || undefined,
-      "encodingFormat": sound.fileFormat || undefined,
-      "datePublished": sound.createdAt
-    }))
-  };
+  // Generate structured data for the current filtered sounds
+  const structuredData = generateSoundbankStructuredData(filteredSounds);
 
   return (
     <div className="container w-[90%] mx-auto px-4 py-8">
@@ -192,13 +178,8 @@ export default function SoundbankPage() {
         </div>
       )}
       
-      <Head>
-        <title>Extended Bandoneon Soundbank - Free Bandoneon Sound Samples</title>
-        <meta name="description" content="Explore our collection of high-quality bandoneon sound samples. Download free sounds for music production, research, and creative projects." />
-        <meta name="keywords" content="bandoneon sounds, bandoneon samples, free bandoneon sounds, music production, sound library" />
-      </Head>
-      
-      <script
+      <Script
+        id="soundbank-structured-data"
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
       />

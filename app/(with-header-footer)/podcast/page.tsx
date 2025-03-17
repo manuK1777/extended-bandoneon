@@ -1,6 +1,5 @@
-"use client";
+'use client';
 
-import Head from "next/head";
 import { useState } from "react";
 import { FilterSection } from "@/components/FilterSection";
 
@@ -140,125 +139,89 @@ export default function PodcastPage() {
     });
 
   return (
-    <>
-      <Head>
-        <title>Bandoneon Perspectives Podcast | Contemporary Bandoneon Stories</title>
-        <meta name="description" content="Listen to in-depth conversations with renowned bandoneon players like Victor Hugo Villena, Kristina Kuusisto, Eszter Vörös, and Simone Van Der Weerden. Explore contemporary bandoneon techniques, stories, and music." />
-        <link rel="canonical" href="https://extendedbandoneon.com/podcast" />
-        
-        <script type="application/ld+json">
-          {JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "PodcastSeries",
-            "name": "Bandoneon Perspectives",
-            "description": "A podcast to unfold contemporary bandoneon stories and discussions",
-            "url": "https://extendedbandoneon.com/podcast",
-            "author": {
-              "@type": "Person",
-              "name": "Mercedes Krapovickas"
-            },
-            "inLanguage": ["en", "es"],
-            "keywords": "bandoneon, tango, music",
-          })}
-        </script>
+    <main className="container mx-auto px-4 py-8 min-h-screen">
+      <header className="w-[90%] md:w-[70%] mx-auto">
+        <h1 className="text-3xl md:text-4xl font-bold mb-6 text-yellow-200 font-heading">Bandoneon Perspectives</h1>
+        <p className="text-[0.875rem] md:text-lg text-left mb-[1rem] md:mb-[2rem] font-body tracking-normal text-gray-300">
+          A podcast to unfold contemporary bandoneon stories. This is a space to talk about things related to the bandoneon.
+        </p>
+      </header>
 
-        <meta property="og:title" content="Bandoneon Perspectives Podcast | Contemporary Bandoneon Stories" />
-        <meta property="og:description" content="Listen to in-depth conversations with renowned bandoneon players. Explore contemporary bandoneon techniques, stories, and music." />
-        <meta property="og:type" content="website" />
-        <meta property="og:url" content="https://extendedbandoneon.com/podcast" />
-        <meta property="og:image" content="https://extendedbandoneon.com/images/podcast-cover.jpg" />
-        <meta property="og:image:alt" content="Bandoneon Perspectives Podcast Cover" />
-        
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="Bandoneon Perspectives Podcast" />
-        <meta name="twitter:description" content="Listen to in-depth conversations with renowned bandoneon players. Explore contemporary bandoneon techniques, stories, and music." />
-        <meta name="twitter:image" content="https://extendedbandoneon.com/images/podcast-cover.jpg" />
-      </Head>
+      <FilterSection
+        searchQuery={searchQuery}
+        setSearchQuery={setSearchQuery}
+        sortOrder={sortOrder}
+        setSortOrder={setSortOrder}
+        sortOptions={sortOptions}
+        containerClassName="mb-8 w-[90%] md:w-[70%] mx-auto font-body"
+        placeholder="Search episodes..."
+        sortLabel="Sort by:"
+      />
 
-      <main className="container mx-auto px-4 py-8 min-h-screen">
-        <header className="w-[90%] md:w-[70%] mx-auto">
-          <h1 className="text-3xl md:text-4xl font-bold mb-6 text-yellow-200 font-heading">Bandoneon Perspectives</h1>
-          <p className="text-[0.875rem] md:text-lg text-left mb-[1rem] md:mb-[2rem] font-body tracking-normal text-gray-300">
-            A podcast to unfold contemporary bandoneon stories. This is a space to talk about things related to the bandoneon.
-          </p>
-        </header>
+      <div className="w-[90%] lg:w-[70%] mx-auto space-y-8">
+        {filteredAndSortedEpisodes.map((episode) => (
+          <div
+            key={episode.episodeNumber}
+            className="relative bg-gradient-to-b from-white/5 to-white/10 backdrop-blur-sm p-6 rounded-lg space-y-4 transition-colors duration-200 hover:from-white/10 hover:to-white/15"
+          >
+            <div className="flex justify-between items-start">
+              <h2 className="text-xl md:text-2xl font-heading tracking-tight">
+                {episode.title}
+                <span className="text-yellow-400 font-display ml-2">#{episode.episodeNumber}</span>
+              </h2>
+              <time className="text-xs md:text-sm text-gray-400 font-mono">
+                {new Date(episode.publishDate).toLocaleDateString()}
+              </time>
+            </div>
+            
+            <div className="font-body">
+              <p className="text-sm md:text-base text-gray-300">{episode.description}</p>
+              <p className="mt-2 text-sm md:text-base text-fuchsia-200 font-display">Guest: {episode.guest}</p>
+            </div>
 
-        <FilterSection
-          searchQuery={searchQuery}
-          setSearchQuery={setSearchQuery}
-          sortOrder={sortOrder}
-          setSortOrder={setSortOrder}
-          sortOptions={sortOptions}
-          containerClassName="mb-8 w-[90%] md:w-[70%] mx-auto font-body"
-          placeholder="Search episodes..."
-          sortLabel="Sort by:"
-        />
+            <div className="flex flex-wrap gap-1 md:gap-2">
+              {episode.keywords.map((keyword, index) => (
+                <span
+                  key={`${episode.episodeNumber}-${keyword}-${index}`}
+                  className="px-1.5 py-0.5 md:px-2 md:py-1 bg-white/10 rounded text-[10px] md:text-sm font-mono tracking-tight"
+                >
+                  {keyword}
+                </span>
+              ))}
+            </div>
 
-        <div className="w-[90%] lg:w-[70%] mx-auto space-y-8">
-          {filteredAndSortedEpisodes.map((episode) => (
-            <div
-              key={episode.episodeNumber}
-              className="relative bg-gradient-to-b from-white/5 to-white/10 backdrop-blur-sm p-6 rounded-lg space-y-4 transition-colors duration-200 hover:from-white/10 hover:to-white/15"
-            >
-              <div className="flex justify-between items-start">
-                <h2 className="text-xl md:text-2xl font-heading tracking-tight">
-                  {episode.title}
-                  <span className="text-yellow-400 font-display ml-2">#{episode.episodeNumber}</span>
-                </h2>
-                <time className="text-xs md:text-sm text-gray-400 font-mono">
-                  {new Date(episode.publishDate).toLocaleDateString()}
-                </time>
-              </div>
-              
-              <div className="font-body">
-                <p className="text-sm md:text-base text-gray-300">{episode.description}</p>
-                <p className="mt-2 text-sm md:text-base text-fuchsia-200 font-display">Guest: {episode.guest}</p>
-              </div>
-
-              <div className="flex flex-wrap gap-1 md:gap-2">
-                {episode.keywords.map((keyword, index) => (
-                  <span
-                    key={`${episode.episodeNumber}-${keyword}-${index}`}
-                    className="px-1.5 py-0.5 md:px-2 md:py-1 bg-white/10 rounded text-[10px] md:text-sm font-mono tracking-tight"
-                  >
-                    {keyword}
-                  </span>
-                ))}
-              </div>
-
-              <div className="mt-6">
-                {/* Static background container - always visible */}
-                <div className="relative min-h-[200px] bg-gradient-to-b from-black/30 to-black/50 backdrop-blur-sm rounded-lg overflow-hidden">
-                  {/* Loading state container */}
-                  {!loadedPlayers[episode.episodeNumber] && (
-                    <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-b from-white/5 to-transparent backdrop-blur-sm">
-                      <div className="text-sm text-gray-400">Loading player...</div>
-                    </div>
-                  )}
-                  {/* Player iframe */}
-                  <iframe
-                    src={episode.url}
-                    height="200px"
-                    width="100%"
-                    seamless
-                    sandbox="allow-same-origin allow-scripts allow-popups"
-                    className={`w-full transition-opacity duration-300 ${
-                      loadedPlayers[episode.episodeNumber] ? 'opacity-100' : 'opacity-0'
-                    }`}
-                    title={`${episode.title} - Episode ${episode.episodeNumber}`}
-                    onLoad={() => handlePlayerLoad(episode.episodeNumber)}
-                    loading="lazy"
-                    referrerPolicy="origin"
-                    allow="web-share"
-                    data-podcast-player="true"
-                    data-prevent-app-launch="true"
-                  ></iframe>
-                </div>
+            <div className="mt-6">
+              {/* Static background container - always visible */}
+              <div className="relative min-h-[200px] bg-gradient-to-b from-black/30 to-black/50 backdrop-blur-sm rounded-lg overflow-hidden">
+                {/* Loading state container */}
+                {!loadedPlayers[episode.episodeNumber] && (
+                  <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-b from-white/5 to-transparent backdrop-blur-sm">
+                    <div className="text-sm text-gray-400">Loading player...</div>
+                  </div>
+                )}
+                {/* Player iframe */}
+                <iframe
+                  src={episode.url}
+                  height="200px"
+                  width="100%"
+                  seamless
+                  sandbox="allow-same-origin allow-scripts allow-popups"
+                  className={`w-full transition-opacity duration-300 ${
+                    loadedPlayers[episode.episodeNumber] ? 'opacity-100' : 'opacity-0'
+                  }`}
+                  title={`${episode.title} - Episode ${episode.episodeNumber}`}
+                  onLoad={() => handlePlayerLoad(episode.episodeNumber)}
+                  loading="lazy"
+                  referrerPolicy="origin"
+                  allow="web-share"
+                  data-podcast-player="true"
+                  data-prevent-app-launch="true"
+                ></iframe>
               </div>
             </div>
-          ))}
-        </div>
-      </main>
-    </>
+          </div>
+        ))}
+      </div>
+    </main>
   );
 }
