@@ -18,6 +18,29 @@
     }
   ],
   "closing": "Neones & Neutrales es un acto de navegación. De perderse. De encontrar ritmo en la imprevisibilidad. La ciudad duerme, la ciudad despierta, y en algún punto intermedio, el sonido toma forma.",
+  "concertDetails": {
+    "title": "Detalles del Concierto",
+    "dateTime": {
+      "title": "Fecha y Hora del Concierto",
+      "date": "18.3.2025",
+      "sets": [
+        "19:00 – 19:45 (Primera función)",
+        "20:00 – 20:45 (Segunda función)"
+      ]
+    },
+    "venue": {
+      "title": "Lugar",
+      "name": "Musiikkitalo Black Box"
+    },
+    "performer": {
+      "title": "Compositora-Intérprete",
+      "name": "Mercedes Krapovickas, bandoneón y electrónica"
+    },
+    "about": {
+      "title": "Sobre el Concierto",
+      "text": "Este concierto es el primer concierto doctoral de Mercedes Krapovickas, como parte de su investigación artística en el Departamento de Música y Tecnología, Sibelius Academy, Universidad de las Artes de Helsinki."
+    }
+  },
   "button": "Visitar Extended Bandoneon",
   "languageSwitch": "English"
 }

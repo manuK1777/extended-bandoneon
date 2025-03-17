@@ -8,6 +8,27 @@ type Scene = {
   text: string;
 };
 
+type ConcertDetails = {
+  title: string;
+  dateTime: {
+    title: string;
+    date: string;
+    sets: string[];
+  };
+  venue: {
+    title: string;
+    name: string;
+  };
+  performer: {
+    title: string;
+    name: string;
+  };
+  about: {
+    title: string;
+    text: string;
+  };
+};
+
 type ProgrammeContent = {
   title: string;
   subtitle: string;
@@ -15,6 +36,7 @@ type ProgrammeContent = {
   introduction: string;
   scenes: Scene[];
   closing: string;
+  concertDetails?: ConcertDetails;
   button: string;
   languageSwitch: string;
 };
@@ -71,7 +93,7 @@ export default function ProgrammePage() {
       </div>
 
       {/* Hero section */}
-      <section className="mb-16">
+      <section className="mb-12">
         <h1 className="text-3xl md:text-4xl font-bold mb-2 text-yellow-200 font-heading">{content.title}</h1>
         <h2 className="text-2xl md:text-3xl font-bold mb-4 text-fuchsia-300 font-heading">{content.subtitle}</h2>
         <p className="text-xl text-gray-300 mb-8 font-body">{content.description}</p>
@@ -79,6 +101,36 @@ export default function ProgrammePage() {
           <p className="mb-4">{content.introduction}</p>
         </div>
       </section>
+
+      {/* Concert Details */}
+      {content.concertDetails && (
+        <section className="mb-12">
+          <h2 className="text-2xl font-display mb-4 text-fuchsia-300">{content.concertDetails.title}</h2>
+          <div className="space-y-8">
+            <div>
+              <h3 className="text-xl font-bold mb-2 text-gray-300">{content.concertDetails.dateTime.title}</h3>
+              <p className="text-gray-300 mb-2">{content.concertDetails.dateTime.date}</p>
+              <ul className="list-none m-0 p-0 text-gray-300">
+                {content.concertDetails.dateTime.sets.map((set, index) => (
+                  <li key={index} className="mb-2">{set}</li>
+                ))}
+              </ul>
+            </div>
+            <div>
+              <h3 className="text-xl font-bold mb-2 text-gray-300">{content.concertDetails.venue.title}</h3>
+              <p className="text-gray-300">{content.concertDetails.venue.name}</p>
+            </div>
+            <div>
+              <h3 className="text-xl font-bold mb-2 text-gray-300">{content.concertDetails.performer.title}</h3>
+              <p className="text-gray-300">{content.concertDetails.performer.name}</p>
+            </div>
+            <div>
+              <h3 className="text-xl font-bold mb-2 text-gray-300">{content.concertDetails.about.title}</h3>
+              <p className="text-gray-300">{content.concertDetails.about.text}</p>
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* Scenes */}
       <div className="space-y-12 mb-16">
