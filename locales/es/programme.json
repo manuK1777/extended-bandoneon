@@ -2,7 +2,11 @@
   "title": "Bandoneón Resonance #1",
   "subtitle": "NEONES & NEUTRALES",
   "description": "Un Circuito para Bandoneón, Electrónica y Movimiento",
-  "introduction": "Las ciudades respiran. Su ritmo oscila entre la quietud y la velocidad, entre la intensidad de los neones y el murmullo apagado de las calles en calma. Neones & Neutrales habita en esta oscilación, donde la energía cruda se encuentra con la contención, donde la distorsión se cruza con el silencio. El bandoneón, expandido más allá de su voz tradicional, se convierte en una extensión de este paisaje urbano: explorando, ampliando y reconfigurando las narrativas que llevo conmigo. La pieza se despliega en tres escenas urbanas, cada una reflejando el tiempo, el movimiento y la decisión.",
+  "programmeNotes": {
+    "title": "Notas del Programa",
+    "text": "Las ciudades respiran. Su ritmo oscila entre la quietud y la velocidad, entre la intensidad de los neones y el murmullo apagado de las calles en calma. Neones & Neutrales habita en esta oscilación, donde la energía cruda se encuentra con la contención, donde la distorsión se cruza con el silencio. El bandoneón, expandido más allá de su voz tradicional, se convierte en una extensión de este paisaje urbano: explorando, ampliando y reconfigurando las narrativas que llevo conmigo.\n\nLa pieza se despliega en tres escenas urbanas, cada una reflejando el tiempo, el movimiento y la decisión."
+  },
+  "introduction": "",
   "scenes": [
     {
       "title": "I. INTERSECCIONES: ENTRE QUIETUD Y MOVIMIENTO",

@@ -29,11 +29,17 @@ type ConcertDetails = {
   };
 };
 
+type ProgrammeNotes = {
+  title: string;
+  text: string;
+};
+
 type ProgrammeContent = {
   title: string;
   subtitle: string;
   description: string;
   introduction: string;
+  programmeNotes?: ProgrammeNotes;
   scenes: Scene[];
   closing: string;
   concertDetails?: ConcertDetails;
@@ -97,8 +103,8 @@ export default function ProgrammePage() {
         <h1 className="text-3xl md:text-4xl font-bold mb-2 text-yellow-200 font-heading">{content.title}</h1>
         <h2 className="text-2xl md:text-3xl font-bold mb-4 text-fuchsia-300 font-heading">{content.subtitle}</h2>
         <p className="text-xl text-gray-300 mb-8 font-body">{content.description}</p>
-        <div className="text-gray-300 font-body space-y-4 leading-relaxed">
-          <p className="mb-4">{content.introduction}</p>
+        <div className="text-gray-300 mb-8 font-body leading-relaxed">
+          {content.introduction && <p>{content.introduction}</p>}
         </div>
       </section>
 
@@ -128,6 +134,18 @@ export default function ProgrammePage() {
               <h3 className="text-xl font-bold mb-2 text-gray-300">{content.concertDetails.about.title}</h3>
               <p className="text-gray-300">{content.concertDetails.about.text}</p>
             </div>
+          </div>
+        </section>
+      )}
+
+      {/* Programme Notes */}
+      {content.programmeNotes && (
+        <section className="mb-12">
+          <h2 className="text-2xl font-display mb-4 text-fuchsia-300">{content.programmeNotes.title}</h2>
+          <div className="text-gray-300 mb-8 font-body leading-relaxed">
+            {content.programmeNotes.text.split('\n\n').map((paragraph, index) => (
+              <p key={index} className={index > 0 ? 'mt-4' : ''}>{paragraph}</p>
+            ))}
           </div>
         </section>
       )}
