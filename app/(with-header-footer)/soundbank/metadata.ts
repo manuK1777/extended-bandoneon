@@ -31,14 +31,23 @@ export const metadata: Metadata = {
   },
 };
 
-// Define the Sound type
+// Define the Sound type to match the one in page.tsx
 interface Sound {
+  id: string;
   title: string;
-  description?: string;
-  duration?: number;
-  fileSize?: number;
-  fileFormat?: string;
+  description: string | null;
+  fileUrl: string;
+  wavUrl: string;
+  fileFormat: 'mp3' | 'wav' | 'flac' | 'ogg' | 'aac' | 'aiff' | null;
+  duration: number | null;
+  fileSize: number | null;
   createdAt: string;
+  soundpackName: string | null;
+  soundpackDescription: string | null;
+  tags: string[];
+  author?: string;
+  license?: string;
+  downloadCount?: number;
 }
 
 // This function generates structured data for the soundbank page
