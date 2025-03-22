@@ -59,7 +59,7 @@ export const sharedMetadata: Metadata = {
   
   // Verification for search engines (you can add these later)
   verification: {
-    google: 'google-site-verification=T74IxEpOnY8u3cRtI7HnSobA5FYT4nklSE448NHHOxM',
+    google: 'T74IxEpOnY8u3cRtI7HnSobA5FYT4nklSE448NHHOxM',
     // yandex: 'your-yandex-verification-code',
   },
 };
