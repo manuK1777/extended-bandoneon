@@ -36,9 +36,12 @@ export async function getConnectionPool() {
     // Create a connection pool with appropriate settings
     pool = mysql.createPool({
       uri: connectionUrl,
-      connectionLimit: 10, // Adjust based on your application needs
+      connectionLimit: 5, // Adjust based on your application needs
       queueLimit: 0,
-      waitForConnections: true
+      waitForConnections: true,
+      idleTimeout: 60000, // Close idle connections after 60 seconds
+      enableKeepAlive: true,
+      keepAliveInitialDelay: 30000
     });
     
     // Test the pool with a ping
