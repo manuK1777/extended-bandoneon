@@ -2,7 +2,8 @@
 
 import { useRouter } from 'next/navigation';
 import dynamic from 'next/dynamic';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useAuth } from '@/contexts/AuthContext';
 
 // Dynamically import the UploadSounds component
 const UploadSounds = dynamic(() => import('@/components/dashboard/upload-sounds'), {
@@ -11,18 +12,37 @@ const UploadSounds = dynamic(() => import('@/components/dashboard/upload-sounds'
 
 export default function AdminDashboard() {
   const router = useRouter();
+  const { user, isAdmin, logout } = useAuth();
   const [activeComponent, setActiveComponent] = useState<string | null>(null);
 
+  // Check if user is authenticated and has admin role
+  useEffect(() => {
+    if (!user || !isAdmin) {
+      router.push('/');
+    }
+  }, [user, isAdmin, router]);
+
   const handleLogout = async () => {
-    await fetch('/api/auth/logout', { method: 'POST' });
-    router.push('/login');
+    await logout();
+    router.push('/');
   };
+
+  if (!user || !isAdmin) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-100">
+        <p className="text-lg text-gray-600">Redirecting...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-100 py-8 px-4 sm:px-6 lg:px-8 !pt-8">
       <div className="max-w-7xl mx-auto">
         <div className="flex justify-between items-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">Admin Dashboard</h1>
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900">Admin Dashboard</h1>
+            <p className="text-gray-600 mt-1">Logged in as {user.email}</p>
+          </div>
           <button
             onClick={handleLogout}
             className="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"

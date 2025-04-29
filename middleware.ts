@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
+import { verifyToken } from './utils/auth';
 
 export function middleware(request: NextRequest) {
   console.log('Middleware triggered for:', request.nextUrl.pathname);
@@ -14,17 +15,24 @@ export function middleware(request: NextRequest) {
       return NextResponse.next();
     }
 
-    const token = request.cookies.get('admin_token')?.value;
-    console.log('Token found:', token);
+    const token = request.cookies.get('auth_token')?.value;
+    console.log('Token found:', !!token);
     
     // If no token is present, redirect to login
     if (!token) {
       console.log('No auth token found, redirecting to login');
-      return NextResponse.redirect(new URL('/login', request.url));
+      return NextResponse.redirect(new URL('/', request.url));
     }
 
-    // Token is present, proceed with the request
-    console.log('Token present, proceeding to admin route');
+    // Verify the token and check if the user is an admin
+    const payload = verifyToken(token);
+    if (!payload || payload.role !== 'admin') {
+      console.log('Invalid token or not an admin, redirecting to home');
+      return NextResponse.redirect(new URL('/', request.url));
+    }
+
+    // Token is valid and user is admin, proceed with the request
+    console.log('Token valid and user is admin, proceeding to admin route');
     return NextResponse.next();
   }
 
@@ -37,7 +45,6 @@ export function middleware(request: NextRequest) {
 export const config = {
   matcher: [
     '/admin/:path*',
-    '/api/admin/:path*',
-    '/login'
+    '/api/admin/:path*'
   ],
 };

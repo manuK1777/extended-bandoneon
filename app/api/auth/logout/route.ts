@@ -4,8 +4,8 @@ export async function POST() {
   // Create a response
   const response = NextResponse.json({ success: true });
 
-  // Set the admin token cookie with an expiration date in the past to delete it
-  response.cookies.set('admin_token', '', {
+  // Set the auth token cookie with an expiration date in the past to delete it
+  response.cookies.set('auth_token', '', {
     httpOnly: true,
     secure: process.env.NODE_ENV !== 'development',
     sameSite: 'strict',

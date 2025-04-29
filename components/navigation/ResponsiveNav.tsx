@@ -6,6 +6,7 @@ import { navItems } from "@/constants/navigation";
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import AdminNavItem from './AdminNavItem';
 
 interface ResponsiveNavProps {
   direction?: "horizontal" | "vertical";
@@ -126,6 +127,7 @@ export default function ResponsiveNav({
                     </li>
                   );
                 })}
+                <AdminNavItem />
               </ul>
             </div>
           </motion.div>

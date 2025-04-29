@@ -1,5 +1,7 @@
 import Link from 'next/link';
 import ResponsiveNav from '../navigation/ResponsiveNav';
+import AuthButton from '../auth/AuthButton';
+import UserMenu from '../auth/UserMenu';
 
 export default function Header() {
   return (
@@ -30,6 +32,11 @@ export default function Header() {
           <ResponsiveNav animated={false} direction="horizontal" />
         </div>
 
+        {/* Auth Controls - Right */}
+        <div className="flex-shrink-0 z-20 flex items-center">
+          <AuthButton />
+          <UserMenu />
+        </div>
       </div>
     </header>
   );
