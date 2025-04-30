@@ -40,13 +40,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     const checkAuth = async () => {
       try {
+        setIsLoading(true);
         const response = await fetch('/api/auth/me');
-        if (response.ok) {
-          const data = await response.json();
+        const data = await response.json();
+        
+        // The API always returns 200 with authenticated flag
+        if (data.authenticated && data.user) {
           setUser(data.user);
+        } else {
+          setUser(null);
         }
       } catch (error) {
         console.error('Error checking authentication:', error);
+        setUser(null);
       } finally {
         setIsLoading(false);
       }

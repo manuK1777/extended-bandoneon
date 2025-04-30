@@ -10,28 +10,36 @@ export async function GET(req: NextRequest) {
     const token = req.cookies.get('auth_token')?.value;
     
     if (!token) {
-      return NextResponse.json({ user: null }, { status: 401 });
+      // Return a successful response with null user instead of 401
+      return NextResponse.json({ user: null, authenticated: false }, { status: 200 });
     }
     
     // Verify token
     const payload = verifyToken(token);
     if (!payload) {
-      return NextResponse.json({ user: null }, { status: 401 });
+      // Return a successful response with null user instead of 401
+      return NextResponse.json({ user: null, authenticated: false }, { status: 200 });
     }
     
     // Get user from database
     const user = await findUserByEmail(payload.email);
     if (!user) {
-      return NextResponse.json({ user: null }, { status: 401 });
+      // Return a successful response with null user instead of 401
+      return NextResponse.json({ user: null, authenticated: false }, { status: 200 });
     }
     
     // Return user without password
-    return NextResponse.json({ user: sanitizeUser(user) });
+    return NextResponse.json({ 
+      user: sanitizeUser(user), 
+      authenticated: true 
+    });
   } catch (error) {
     console.error('Error getting current user:', error);
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
+    // Return a successful response with null user instead of 500
+    return NextResponse.json({ 
+      user: null, 
+      authenticated: false,
+      error: process.env.NODE_ENV === 'development' ? error : undefined
+    }, { status: 200 });
   }
 }
