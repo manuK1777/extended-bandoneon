@@ -10,15 +10,12 @@ export default function LoginPage() {
   const { isAuthenticated, isAdmin, openLoginModal } = useAuth();
 
   useEffect(() => {
-    // If already authenticated and admin, redirect to admin dashboard
-    if (isAuthenticated && isAdmin) {
+   if (isAuthenticated && isAdmin) {
       router.push('/admin/dashboard');
     } 
-    // If not authenticated, open the login modal
     else if (!isAuthenticated) {
       openLoginModal();
     }
-    // If authenticated but not admin, redirect to home
     else {
       router.push('/');
     }
