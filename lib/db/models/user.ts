@@ -55,7 +55,7 @@ export async function createUser(email: string, password: string, role: UserRole
   }
   
   // Return user without password
-  const { hashed_password: _unused, ...userWithoutPassword } = user;
+  const { hashed_password: _, ...userWithoutPassword } = user;
   return userWithoutPassword;
 }
 
@@ -64,6 +64,6 @@ export async function verifyPassword(user: User, password: string): Promise<bool
 }
 
 export function sanitizeUser(user: User): UserWithoutPassword {
-  const { hashed_password: _unused, ...userWithoutPassword } = user;
+  const { hashed_password: _, ...userWithoutPassword } = user;
   return userWithoutPassword;
 }
