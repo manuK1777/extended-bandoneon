@@ -4,6 +4,7 @@ import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 
+// Create a client-only component
 export default function LoginPage() {
   const router = useRouter();
   const { isAuthenticated, isAdmin, openLoginModal } = useAuth();

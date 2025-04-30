@@ -2,7 +2,6 @@
 const nextConfig = {
   reactStrictMode: true,
   images: {
-    domains: ['res.cloudinary.com'],
     remotePatterns: [
       {
         protocol: 'https',
@@ -11,13 +10,12 @@ const nextConfig = {
       },
     ],
   },
-  // Skip static generation for pages that use client-side authentication
+  // Configuration for handling Node.js APIs in the Edge Runtime
   experimental: {
-    // This ensures pages with client components that use authentication are not statically generated
+    // This ensures packages using Node.js APIs are properly handled
     serverComponentsExternalPackages: ['bcryptjs', 'jsonwebtoken', 'mysql2'],
   },
-  // Explicitly set which pages should be statically generated vs. server-side rendered
-  // This prevents issues with client components that use authentication hooks
+  // Set the output to standalone for better deployment compatibility
   output: 'standalone',
 };
 
