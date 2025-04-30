@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
+import { FaEye, FaEyeSlash } from 'react-icons/fa';
 
 export default function LoginForm() {
   const { login } = useAuth();
@@ -9,6 +10,11 @@ export default function LoginForm() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -56,11 +62,11 @@ export default function LoginForm() {
         <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
           Password
         </label>
-        <div className="mt-1">
+        <div className="mt-1 relative">
           <input
             id="password"
             name="password"
-            type="password"
+            type={showPassword ? "text" : "password"}
             autoComplete="current-password"
             required
             className="appearance-none block w-full px-3 py-2 border border-gray-300 
@@ -71,6 +77,14 @@ export default function LoginForm() {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
+          <button
+            type="button"
+            className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-600 dark:text-gray-500 hover:text-red-500 dark:hover:text-red-400 transition-colors"
+            onClick={togglePasswordVisibility}
+            aria-label={showPassword ? "Hide password" : "Show password"}
+          >
+            {showPassword ? <FaEyeSlash size={16} /> : <FaEye size={16} />}
+          </button>
         </div>
       </div>
 
