@@ -55,7 +55,13 @@ export async function createUser(email: string, password: string, role: UserRole
   }
   
   // Return user without password
-  const { hashed_password: _, ...userWithoutPassword } = user;
+  const userWithoutPassword = {
+    id: user.id,
+    email: user.email,
+    role: user.role,
+    created_at: user.created_at,
+    updated_at: user.updated_at
+  };
   return userWithoutPassword;
 }
 
@@ -64,6 +70,12 @@ export async function verifyPassword(user: User, password: string): Promise<bool
 }
 
 export function sanitizeUser(user: User): UserWithoutPassword {
-  const { hashed_password: _, ...userWithoutPassword } = user;
+  const userWithoutPassword = {
+    id: user.id,
+    email: user.email,
+    role: user.role,
+    created_at: user.created_at,
+    updated_at: user.updated_at
+  };
   return userWithoutPassword;
 }
