@@ -1,6 +1,5 @@
 'use client';
 
-import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '@/contexts/AuthContext';
 import LoginForm from './LoginForm';
@@ -59,7 +58,7 @@ export default function AuthModal() {
                     </h2>
                     <LoginForm />
                     <div className="mt-4 text-center text-sm">
-                      <span className="text-gray-600 dark:text-gray-400">Don't have an account? </span>
+                      <span className="text-gray-600 dark:text-gray-400">Don&apos;t have an account? </span>
                       <button 
                         className="text-indigo-600 hover:text-indigo-500 font-medium"
                         onClick={openRegisterModal}

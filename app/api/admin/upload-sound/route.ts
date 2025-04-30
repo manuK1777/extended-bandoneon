@@ -6,6 +6,8 @@ import { sanitizeTag } from '@/utils/tag-utils';
 import { convertWavToMp3 } from '@/utils/audio-utils';
 import { uploadToCloudinary } from '@/utils/cloudinary';
 
+export const runtime = 'nodejs'; // Explicitly use Node.js runtime
+
 interface SoundpackRow extends RowDataPacket {
   id: number;
 }

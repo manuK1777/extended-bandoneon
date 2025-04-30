@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 
+export const runtime = 'nodejs'; // Explicitly use Node.js runtime
+
 interface Sound {
   id: number;
   title: string;

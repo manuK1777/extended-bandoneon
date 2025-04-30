@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { verifyToken } from '@/utils/auth';
 import { findUserByEmail, sanitizeUser } from '@/lib/db/models/user';
 
+export const runtime = 'nodejs'; // Explicitly use Node.js runtime
+
 export async function GET(req: NextRequest) {
   try {
     // Get token from cookies
