@@ -35,7 +35,7 @@ export default function UserMenu() {
         <div className="w-8 h-8 rounded-full bg-indigo-600 flex items-center justify-center text-white">
           {user.email.charAt(0).toUpperCase()}
         </div>
-        <span className="hidden md:inline">{user.email.split('@')[0]}</span>
+        <span className="hidden md:inline text-sm">{user.email.split('@')[0]}</span>
       </button>
 
       <AnimatePresence>
@@ -45,7 +45,7 @@ export default function UserMenu() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.2 }}
-            className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-md shadow-lg py-1 z-50"
+            className="absolute top-full mt-2 right-0 w-46 bg-white dark:bg-gray-800 rounded-md shadow-lg z-50"
           >
             <div className="px-4 py-2 text-sm text-gray-700 dark:text-gray-300 border-b border-gray-200 dark:border-gray-700">
               Signed in as<br />
