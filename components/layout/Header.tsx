@@ -34,10 +34,9 @@ export default function Header() {
 
         {/* Auth Controls - Right */}
         <div className="flex-shrink-0 z-20 flex items-center">
-          <div className="md:hidden absolute left-4">
-            <UserMenu />
+          <div className="hidden md:block">
+            <AuthButton />
           </div>
-          <AuthButton />
           <div className="hidden md:block">
             <UserMenu />
           </div>
