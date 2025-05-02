@@ -57,7 +57,7 @@ export default function ResponsiveNav({
       </div>
 
       {/* Mobile Navigation */}
-      <div className="md:hidden fixed z-20 top-4 right-4" ref={menuRef}>
+      <div className="md:hidden fixed z-20 top-4 right-4">
         <button 
           className="btn btn-ghost btn-circle"
           onClick={() => setIsOpen(!isOpen)}
@@ -86,7 +86,7 @@ export default function ResponsiveNav({
             animate={{ opacity: 1 }}
             transition={{ duration: 0.15, ease: "easeOut" }}
           >
-            <div className="backdrop-blur-md bg-black/70 w-full pt-16 px-4 pb-2">
+            <div className="backdrop-blur-md bg-black/70 w-full pt-16 px-4 pb-2" ref={menuRef}>
               <div className="flex justify-between items-center fixed top-6 left-6 right-6">
                 <Link 
                   href="/" 
