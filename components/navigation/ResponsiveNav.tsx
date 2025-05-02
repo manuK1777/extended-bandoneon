@@ -7,7 +7,6 @@ import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import AdminNavItem from './AdminNavItem';
-import UserMenu from '../auth/UserMenu';
 import MobileUserMenu from '../auth/MobileUserMenu';
 import AuthButton from '../auth/AuthButton';
 import { useAuth } from '@/contexts/AuthContext';
