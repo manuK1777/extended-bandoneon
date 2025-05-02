@@ -136,7 +136,7 @@ export default function ResponsiveNav({
                 </button>
               </div>
               
-              <ul className="menu menu-lg mt-10">
+              <ul className="menu menu-lg mt-5">
                  
                 {mobileNavItems.map((item) => {
                   const isActive = pathname === item.href;
