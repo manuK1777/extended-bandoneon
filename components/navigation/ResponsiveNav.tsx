@@ -104,7 +104,7 @@ export default function ResponsiveNav({
                     viewBox="0 0 24 24"
                     strokeWidth={1.5}
                     stroke="currentColor"
-                    className="h-7 w-7 text-fuchsia-200 hover:text-red-600 transition-colors duration-200"
+                    className="h-7 w-7 hover:text-red-600 transition-colors duration-200"
                   >
                     <path
                       strokeLinecap="round"
@@ -121,7 +121,7 @@ export default function ResponsiveNav({
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
-                    className="h-7 w-7"
+                    className="h-7 w-7 mb-2"
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="#D1D5DB"
