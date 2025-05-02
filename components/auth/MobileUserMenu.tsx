@@ -29,7 +29,7 @@ export default function MobileUserMenu() {
 
       <button
         onClick={() => logout()}
-        className="block w-full text-left py-2 text-sm text-fuchsia-200 hover:text-red-500 transition-colors duration-200"
+        className="block w-full text-left pt-2 text-sm text-fuchsia-200 hover:text-red-500 transition-colors duration-200"
       >
         Sign out
       </button>

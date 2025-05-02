@@ -160,7 +160,7 @@ export default function ResponsiveNav({
                   );
                 })}
                 <AdminNavItem />
-                <li className="mb-2 mt-2">
+                <li className="mt-2">
                   {user ? (
                     <MobileUserMenu />
                   ) : (
