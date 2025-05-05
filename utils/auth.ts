@@ -1,5 +1,4 @@
 import jwt from 'jsonwebtoken';
-import { jwtVerify } from 'jose';
 import { findUserByEmail, verifyPassword, UserWithoutPassword, sanitizeUser } from '@/lib/db/models/user';
 import { cookies } from 'next/headers';
 
@@ -32,29 +31,6 @@ export function verifyToken(token: string): JWTPayload | null {
     return jwt.verify(token, JWT_SECRET) as JWTPayload;
   } catch (error) {
     console.error('Error verifying token:', error);
-    return null;
-  }
-}
-
-// Verify JWT token - Edge Runtime environment
-export async function verifyTokenEdge(token: string): Promise<JWTPayload | null> {
-  if (!token) return null;
-  
-  try {
-    const encoder = new TextEncoder();
-    const secretKey = encoder.encode(JWT_SECRET);
-    
-    const { payload } = await jwtVerify(token, secretKey);
-    
-    return {
-      userId: payload.userId as string,
-      email: payload.email as string,
-      role: payload.role as string,
-      iat: payload.iat,
-      exp: payload.exp
-    };
-  } catch (error) {
-    console.error('Error verifying token in Edge Runtime:', error);
     return null;
   }
 }

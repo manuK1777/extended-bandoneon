@@ -1,17 +1,15 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
-// Explicitly set the runtime to edge
-export const runtime = 'edge';
+export const runtime = 'experimental-edge';
 
 export async function middleware(request: NextRequest) {
-  // Check if the request is for an admin route
+
   if (request.nextUrl.pathname.startsWith('/admin') || 
       request.nextUrl.pathname.startsWith('/api/admin')) {
     
     const token = request.cookies.get('auth_token')?.value;
     
-    // If no token is present, redirect to login
     if (!token) {
       return NextResponse.redirect(new URL('/', request.url));
     }
