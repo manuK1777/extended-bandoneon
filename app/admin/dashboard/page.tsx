@@ -16,14 +16,24 @@ export default function AdminDashboard() {
   const router = useRouter();
   const { user, isAdmin, isLoading, logout } = useAuth();
   const [activeComponent, setActiveComponent] = useState<string | null>(null);
+  const [initialLoadComplete, setInitialLoadComplete] = useState(false);
 
   // Check if user is authenticated and has admin role
   useEffect(() => {
-    // Only redirect if authentication has completed loading and user is not admin
-    if (!isLoading && (!user || !isAdmin)) {
+    // Give the auth context time to fully initialize before making decisions
+    const timer = setTimeout(() => {
+      setInitialLoadComplete(true);
+    }, 1500); // Longer timeout to ensure auth is fully loaded
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  // Only redirect after initial load is complete and auth state is determined
+  useEffect(() => {
+    if (initialLoadComplete && !isLoading && (!user || !isAdmin)) {
       router.push('/');
     }
-  }, [user, isAdmin, isLoading, router]);
+  }, [user, isAdmin, isLoading, router, initialLoadComplete]);
 
   const handleLogout = async () => {
     await logout();
@@ -31,7 +41,7 @@ export default function AdminDashboard() {
   };
 
   // Show loading state while authentication is being checked
-  if (isLoading) {
+  if (isLoading || !initialLoadComplete) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-100">
         <p className="text-lg text-gray-600">Verifying admin access...</p>
