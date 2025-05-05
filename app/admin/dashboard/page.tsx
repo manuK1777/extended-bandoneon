@@ -5,28 +5,41 @@ import dynamic from 'next/dynamic';
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 
-// Dynamically import the UploadSounds component
+// Dynamically import the UploadSounds component with SSR disabled to avoid
+// any Node.js specific code from running during server-side rendering
 const UploadSounds = dynamic(() => import('@/components/dashboard/upload-sounds'), {
-  loading: () => <p>Loading...</p>
+  loading: () => <p>Loading...</p>,
+  ssr: false
 });
 
 export default function AdminDashboard() {
   const router = useRouter();
-  const { user, isAdmin, logout } = useAuth();
+  const { user, isAdmin, isLoading, logout } = useAuth();
   const [activeComponent, setActiveComponent] = useState<string | null>(null);
 
   // Check if user is authenticated and has admin role
   useEffect(() => {
-    if (!user || !isAdmin) {
+    // Only redirect if authentication has completed loading and user is not admin
+    if (!isLoading && (!user || !isAdmin)) {
       router.push('/');
     }
-  }, [user, isAdmin, router]);
+  }, [user, isAdmin, isLoading, router]);
 
   const handleLogout = async () => {
     await logout();
     router.push('/');
   };
 
+  // Show loading state while authentication is being checked
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-100">
+        <p className="text-lg text-gray-600">Verifying admin access...</p>
+      </div>
+    );
+  }
+
+  // Redirect if not authenticated or not admin
   if (!user || !isAdmin) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-100">
