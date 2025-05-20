@@ -98,6 +98,25 @@ export default function SoundbankPage() {
   const [tagSearch, setTagSearch] = useState<string | null>(null);
   const { isAuthenticated, openRegisterModal } = useAuth();
   
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const dropdowns = document.querySelectorAll('details.dropdown[open]');
+      
+      dropdowns.forEach(dropdown => {
+        if (!dropdown.contains(event.target as Node)) {
+          dropdown.removeAttribute('open');
+        }
+      });
+    };
+    
+    document.addEventListener('click', handleClickOutside);
+    
+    // Clean up the event listener when component unmounts
+    return () => {
+      document.removeEventListener('click', handleClickOutside);
+    };
+  }, []);
+  
   const downloadFile = async (soundId: string, format: 'mp3' | 'wav') => {
     if (!isAuthenticated) {
       openRegisterModal();
@@ -385,14 +404,14 @@ export default function SoundbankPage() {
                     >
                       <Download size={18} />
                     </summary>
-                    <ul className="dropdown-content z-[1] menu p-2 shadow bg-gray-800 rounded-box w-40">
+                    <ul className="dropdown-content z-[1] menu p-2 shadow-lg bg-gray-800 border border-white/10 rounded-box w-40 mt-1">
                       <li key="wav-download">
                         <button
                           onClick={(e) => {
                             (e.target as HTMLElement).closest('details')?.removeAttribute('open');
                             downloadFile(sound.id, 'wav');
                           }}
-                          className="text-sm"
+                          className="text-sm text-white transition-colors duration-200 hover:bg-white/15 w-full text-left rounded-md"
                         >
                           Download WAV
                         </button>
@@ -403,7 +422,7 @@ export default function SoundbankPage() {
                             (e.target as HTMLElement).closest('details')?.removeAttribute('open');
                             downloadFile(sound.id, 'mp3');
                           }}
-                          className="text-sm"
+                          className="text-sm text-white transition-colors duration-200 hover:bg-white/15 w-full text-left rounded-md"
                         >
                           Download MP3
                         </button>
