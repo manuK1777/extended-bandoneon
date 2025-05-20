@@ -255,7 +255,7 @@ export default function SoundbankPage() {
                               className={({ selected }) =>
                                 `relative cursor-pointer select-none py-2 pl-10 pr-4 bg-cyan-900 ${
                                   selected ? 'bg-red-500 text-white' : 'text-white'
-                                } ${!selected && '[&:hover]:bg-red-400 touch:hover:bg-transparent'}`
+                                } ${!selected && 'hover:bg-red-400/80'}`
                               }
                             >
                               {({ selected }) => (
@@ -278,7 +278,7 @@ export default function SoundbankPage() {
                                 className={({ selected }) =>
                                   `relative cursor-pointer select-none py-2 pl-10 pr-4 bg-cyan-900 ${
                                     selected ? 'bg-red-500 text-white' : 'text-white'
-                                  } ${!selected && 'hover:not-touch:bg-red-400'}`
+                                  } ${!selected && 'hover:bg-red-400/80'}`
                                 }
                               >
                                 {({ selected }) => (
@@ -347,7 +347,7 @@ export default function SoundbankPage() {
                                   className={({ selected }) =>
                                     `relative cursor-pointer select-none py-2 pl-10 pr-4 bg-cyan-900 ${
                                       selected ? 'bg-red-500 text-white' : 'text-white'
-                                    } ${!selected && 'hover:not-touch:bg-red-400'}`
+                                    } ${!selected && 'hover:bg-red-400/80'}`
                                   }
                                 >
                                   {({ selected }) => (
