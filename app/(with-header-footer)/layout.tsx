@@ -1,6 +1,7 @@
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import AuthModal from '@/components/auth/AuthModal';
+import { Toaster } from 'react-hot-toast';
 
 export default function WithHeaderFooterLayout({
   children,
@@ -15,6 +16,7 @@ export default function WithHeaderFooterLayout({
       </main>
       <Footer />
       <AuthModal />
+      <Toaster position="top-right" />
     </div>
   );
 }

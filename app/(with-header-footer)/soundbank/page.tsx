@@ -10,6 +10,7 @@ import { Listbox, Transition, ListboxOption, ListboxButton, ListboxOptions } fro
 import { ChevronUpDownIcon, CheckIcon } from '@heroicons/react/20/solid';
 import { generateSoundbankStructuredData } from './metadata';
 import Script from 'next/script';
+import { useAuth } from '@/contexts/AuthContext';
 
 // Lazy load the SoundPlayer component
 const SoundPlayer = dynamic(() => import('@/components/SoundPlayer'), {
@@ -61,7 +62,7 @@ async function fetchSounds({ pageParam, limit = 12 }: FetchSoundsParams): Promis
     throw new Error(error.error || 'Failed to fetch sounds');
   }
   const data = await response.json();
-  return data; // The API already returns data in the correct format
+  return data;
 }
 
 async function fetchFilters(): Promise<Filters> {
@@ -95,27 +96,44 @@ export default function SoundbankPage() {
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [selectedSoundpack, setSelectedSoundpack] = useState("");
   const [tagSearch, setTagSearch] = useState<string | null>(null);
+  const { isAuthenticated, openRegisterModal } = useAuth();
   
-  const downloadFile = async (url: string, filename: string) => {
+  const downloadFile = async (soundId: string, format: 'mp3' | 'wav') => {
+    if (!isAuthenticated) {
+      openRegisterModal();
+      toast('Please register or log in to download sounds');
+      return;
+    }
+    
     try {
-      const response = await fetch(url);
-      const blob = await response.blob();
+      const response = await fetch(`/api/download?id=${soundId}&format=${format}`);
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Download failed');
+      }
+      
+      const data = await response.json();
+      
+      const fileResponse = await fetch(data.url);
+      const blob = await fileResponse.blob();
       const objectUrl = window.URL.createObjectURL(blob);
+      
       const a = document.createElement('a');
       a.href = objectUrl;
-      a.download = filename;
+      a.download = data.filename;
       document.body.appendChild(a);
       a.click();
       window.URL.revokeObjectURL(objectUrl);
       document.body.removeChild(a);
-      toast.success(`Downloading ${filename}`);
+      
+      toast.success(`Downloading ${data.filename}`);
     } catch (error) {
       console.error('Error downloading file:', error);
       toast.error('Error downloading file');
     }
   };
 
-  // Infinite query for sounds
   const {
     data,
     error,
@@ -130,7 +148,6 @@ export default function SoundbankPage() {
     initialPageParam: null as string | null
   });
 
-  // Query for filters
   const { data: filtersData } = useQuery({
     queryKey: ['filters'],
     queryFn: fetchFilters
@@ -146,14 +163,11 @@ export default function SoundbankPage() {
     }
   }, [inView, hasNextPage, isFetchingNextPage, fetchNextPage]);
 
-  // Flatten and filter sounds
   const sounds = data?.pages.flatMap(page => page.sounds) ?? [];
   
-  // Get unique tags and soundpacks from filters data
   const allTags = filtersData?.tags ?? [];
   const allSoundpacks = filtersData?.soundpacks ?? [];
 
-  // Filter sounds based on selected tags and soundpack
   const filteredSounds = sounds.filter(sound => {
     const matchesTags = selectedTags.length === 0 || 
       selectedTags.every(tag => sound.tags.includes(tag));
@@ -166,7 +180,6 @@ export default function SoundbankPage() {
     return matchesTags && matchesSoundpack && isMp3;
   });
 
-  // Generate structured data for the current filtered sounds
   const structuredData = generateSoundbankStructuredData(filteredSounds);
 
   return (
@@ -377,7 +390,7 @@ export default function SoundbankPage() {
                         <button
                           onClick={(e) => {
                             (e.target as HTMLElement).closest('details')?.removeAttribute('open');
-                            downloadFile(sound.wavUrl, `${sound.title}.wav`);
+                            downloadFile(sound.id, 'wav');
                           }}
                           className="text-sm"
                         >
@@ -388,7 +401,7 @@ export default function SoundbankPage() {
                         <button
                           onClick={(e) => {
                             (e.target as HTMLElement).closest('details')?.removeAttribute('open');
-                            downloadFile(sound.fileUrl, `${sound.title}.mp3`);
+                            downloadFile(sound.id, 'mp3');
                           }}
                           className="text-sm"
                         >
