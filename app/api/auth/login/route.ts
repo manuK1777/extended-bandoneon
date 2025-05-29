@@ -24,9 +24,11 @@ export async function POST(req: NextRequest) {
     const { email, password } = body;
 
     // Authenticate user
-    const user = await authenticateUser(email, password);
+    const authResult = await authenticateUser(email, password);
     
-    if (user) {
+    if (authResult) {
+      const { user, emailVerified } = authResult;
+      
       // Generate JWT token
       const token = generateToken({
         userId: user.id,
@@ -34,15 +36,19 @@ export async function POST(req: NextRequest) {
         role: user.role,
       });
 
-      // Create the response
+      // Create the response with verification status
       const response = NextResponse.json({ 
         success: true,
-        message: 'Successfully logged in',
+        message: emailVerified 
+          ? 'Successfully logged in' 
+          : 'Successfully logged in. Please verify your email for full access.',
         user: {
           id: user.id,
           email: user.email,
-          role: user.role
-        }
+          role: user.role,
+          email_verified: emailVerified
+        },
+        email_verified: emailVerified
       });
 
       // Set the cookie in the response

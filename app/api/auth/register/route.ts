@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createUser, findUserByEmail } from '@/lib/db/models/user';
 import { generateToken } from '@/utils/auth';
+import { createVerificationToken } from '@/lib/db/models/emailVerification';
+import { sendVerificationEmail } from '@/lib/email/emailService';
 
 export async function POST(req: NextRequest) {
   if (!process.env.JWT_SECRET) {
@@ -35,6 +37,16 @@ export async function POST(req: NextRequest) {
 
     // Create new user
     const user = await createUser(email, password);
+    
+    // Create verification token
+    const verificationToken = await createVerificationToken(user.id, 24); // 24 hours expiry
+    
+    // Generate verification URL
+    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || `https://${req.headers.get('host')}`;
+    const verificationUrl = `${baseUrl}/verify-email?token=${verificationToken.token}`;
+    
+    // Send verification email
+    await sendVerificationEmail(email, verificationUrl);
 
     // Generate JWT token
     const token = generateToken({
@@ -46,11 +58,12 @@ export async function POST(req: NextRequest) {
     // Create the response
     const response = NextResponse.json({ 
       success: true,
-      message: 'Registration successful',
+      message: 'Registration successful. Please check your email to verify your account.',
       user: {
         id: user.id,
         email: user.email,
-        role: user.role
+        role: user.role,
+        email_verified: user.email_verified
       }
     });
 

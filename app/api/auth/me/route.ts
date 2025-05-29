@@ -28,10 +28,13 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ user: null, authenticated: false }, { status: 200 });
     }
     
-    // Return user without password
+    // Return user without password (including email verification status)
+    const sanitizedUser = sanitizeUser(user);
+    
     return NextResponse.json({ 
-      user: sanitizeUser(user), 
-      authenticated: true 
+      user: sanitizedUser,
+      authenticated: true,
+      email_verified: sanitizedUser.email_verified === true
     });
   } catch (error) {
     console.error('Error getting current user:', error);

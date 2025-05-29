@@ -72,7 +72,7 @@ export function isAdmin(user: UserWithoutPassword | null): boolean {
 }
 
 // Authenticate user with email and password
-export async function authenticateUser(email: string, password: string): Promise<UserWithoutPassword | null> {
+export async function authenticateUser(email: string, password: string): Promise<{ user: UserWithoutPassword; emailVerified: boolean } | null> {
   try {
     const user = await findUserByEmail(email);
     if (!user) return null;
@@ -80,7 +80,10 @@ export async function authenticateUser(email: string, password: string): Promise
     const isValid = await verifyPassword(user, password);
     if (!isValid) return null;
     
-    return sanitizeUser(user);
+    return {
+      user: sanitizeUser(user),
+      emailVerified: user.email_verified === true
+    };
   } catch (error) {
     console.error('Authentication error:', error);
     return null;

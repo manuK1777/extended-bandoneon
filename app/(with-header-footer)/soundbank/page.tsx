@@ -129,6 +129,16 @@ export default function SoundbankPage() {
       
       if (!response.ok) {
         const errorData = await response.json();
+        
+        // Handle email verification required error
+        if (response.status === 403 && errorData.error === 'Email verification required') {
+          toast.error('Please verify your email address to download sounds', {
+            duration: 5000,
+            icon: '✉️',
+          });
+          return;
+        }
+        
         throw new Error(errorData.error || 'Download failed');
       }
       

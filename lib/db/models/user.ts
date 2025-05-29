@@ -11,6 +11,8 @@ export interface User {
   role: UserRole;
   created_at?: Date;
   updated_at?: Date;
+  email_verified?: boolean;
+  email_verified_at?: Date;
 }
 
 export interface UserWithoutPassword {
@@ -19,6 +21,8 @@ export interface UserWithoutPassword {
   role: UserRole;
   created_at?: Date;
   updated_at?: Date;
+  email_verified?: boolean;
+  email_verified_at?: Date;
 }
 
 export async function findUserByEmail(email: string): Promise<User | null> {
@@ -75,7 +79,9 @@ export function sanitizeUser(user: User): UserWithoutPassword {
     email: user.email,
     role: user.role,
     created_at: user.created_at,
-    updated_at: user.updated_at
+    updated_at: user.updated_at,
+    email_verified: user.email_verified,
+    email_verified_at: user.email_verified_at
   };
   return userWithoutPassword;
 }

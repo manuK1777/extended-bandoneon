@@ -22,6 +22,14 @@ export async function GET(request: NextRequest) {
     if (!authData.authenticated || !authData.user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
+    
+    // Check if user's email is verified
+    if (!authData.email_verified) {
+      return NextResponse.json({ 
+        error: 'Email verification required', 
+        message: 'Please verify your email address to download sounds.'
+      }, { status: 403 });
+    }
 
     // 2. Get parameters
     const { searchParams } = new URL(request.url);
