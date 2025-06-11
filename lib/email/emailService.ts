@@ -1,5 +1,5 @@
 import { Resend } from 'resend';
-import { renderAsync } from '@react-email/render';
+import { render } from '@react-email/render';
 import VerificationEmail from '@/emails/VerificationEmail';
 import * as React from 'react';
 
@@ -18,7 +18,7 @@ export async function sendVerificationEmail(
     }
 
     // Render the React email template to HTML
-    const html = await renderAsync(
+    const html = await render(
       React.createElement(VerificationEmail, { verificationUrl, userName })
     );
 
