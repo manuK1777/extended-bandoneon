@@ -15,14 +15,16 @@ export async function POST(request: NextRequest) {
       );
     }
     
-    const user = await authenticateUser(email, password);
+    const authResult = await authenticateUser(email, password);
     
-    if (!user) {
+    if (!authResult) {
       return NextResponse.json(
         { error: 'Invalid credentials' },
         { status: 401 }
       );
     }
+    
+    const { user } = authResult;
     
     // Generate JWT token
     const token = generateToken({
