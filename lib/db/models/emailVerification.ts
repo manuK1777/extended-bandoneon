@@ -1,6 +1,5 @@
 import { db } from '../index';
 import { v4 as uuidv4 } from 'uuid';
-import { User } from './user';
 import crypto from 'crypto';
 
 export interface EmailVerification {
