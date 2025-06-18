@@ -3,8 +3,14 @@ import { render } from '@react-email/render';
 import VerificationEmail from '@/emails/VerificationEmail';
 import * as React from 'react';
 
-// Initialize Resend with API key
-const resend = new Resend(process.env.RESEND_API_KEY);
+// Create a function to get the Resend client
+const getResendClient = () => {
+  const apiKey = process.env.RESEND_API_KEY;
+  if (!apiKey) {
+    throw new Error('RESEND_API_KEY environment variable is not defined');
+  }
+  return new Resend(apiKey);
+};
 
 // Function to send verification email
 export async function sendVerificationEmail(
@@ -22,8 +28,9 @@ export async function sendVerificationEmail(
       React.createElement(VerificationEmail, { verificationUrl, userName })
     );
 
-    // Send the email
-    const { data, error } = await resend.emails.send({
+    // Get Resend client and send the email
+    const resendClient = getResendClient();
+    const { data, error } = await resendClient.emails.send({
       from: `Extended Bandoneon <${process.env.EMAIL_FROM || 'info@extendedbandoneon.com'}>`,
       to: email,
       subject: 'Confirm your email for Extended Bandoneon',
