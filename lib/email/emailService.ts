@@ -24,7 +24,7 @@ export async function sendVerificationEmail(
 
     // Send the email
     const { data, error } = await resend.emails.send({
-      from: `Extended Bandoneon <${process.env.EMAIL_FROM || 'noreply@extended-bandoneon.com'}>`,
+      from: `Extended Bandoneon <${process.env.EMAIL_FROM || 'info@extendedbandoneon.com'}>`,
       to: email,
       subject: 'Confirm your email for Extended Bandoneon',
       html,
