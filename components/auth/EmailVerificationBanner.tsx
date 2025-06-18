@@ -41,7 +41,7 @@ export default function EmailVerificationBanner() {
           message: data.error || 'Failed to send verification email. Please try again.',
         });
       }
-    } catch (error) {
+    } catch (_) {
       setResendStatus({
         success: false,
         message: 'An unexpected error occurred. Please try again.',

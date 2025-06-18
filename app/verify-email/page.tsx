@@ -1,11 +1,10 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 
 export default function VerifyEmailPage() {
-  const router = useRouter();
   const searchParams = useSearchParams();
   const token = searchParams.get('token');
   
@@ -46,7 +45,7 @@ export default function VerifyEmailPage() {
             error: data.error || 'Failed to verify email',
           });
         }
-      } catch (error) {
+      } catch (_) {
         setVerificationStatus({
           loading: false,
           success: false,
