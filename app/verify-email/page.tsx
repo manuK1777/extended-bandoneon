@@ -45,7 +45,7 @@ export default function VerifyEmailPage() {
             error: data.error || 'Failed to verify email',
           });
         }
-      } catch (_) {
+      } catch {
         setVerificationStatus({
           loading: false,
           success: false,
