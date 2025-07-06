@@ -27,8 +27,37 @@ export async function POST(req: NextRequest) {
     const verificationToken = await createVerificationToken(user.id, 24); // 24 hours expiry
     
     // Generate verification URL
-    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || `https://${req.headers.get('host')}`;
-    const verificationUrl = `${baseUrl}/verify-email?token=${verificationToken.token}`;
+    let baseUrl;
+    
+    // In development, always use the local URL from request headers
+    if (process.env.NODE_ENV === 'development') {
+      const host = req.headers.get('host') || 'localhost:3000';
+      const protocol = 'http://';
+      baseUrl = `${protocol}${host}`;
+    } else {
+      // In production, use the configured URL
+      baseUrl = process.env.NEXT_PUBLIC_APP_URL;
+      if (!baseUrl) {
+        // Fallback if somehow NEXT_PUBLIC_APP_URL is not set in production
+        // In production, the host header should always be present
+        const host = req.headers.get('host');
+        if (host) {
+          const protocol = 'https://';
+          baseUrl = `${protocol}${host}`;
+        } else {
+          // If we somehow don't have a host header in production, use a default domain
+          // This is extremely unlikely but added as a last resort
+          baseUrl = 'https://extendedbandoneon.com';
+          console.error('WARNING: Missing host header and NEXT_PUBLIC_APP_URL in production environment');
+        }
+      } else if (!baseUrl.startsWith('http')) {
+        // Ensure production URL has the correct protocol
+        baseUrl = `https://${baseUrl}`;
+      }
+    }
+    
+    // Ensure the URL doesn't have double slashes
+    const verificationUrl = `${baseUrl.replace(/\/$/, '')}/verify-email?token=${verificationToken.token}`;
     
     // Send verification email
     const emailResult = await sendVerificationEmail(user.email, verificationUrl);

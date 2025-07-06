@@ -1,13 +1,18 @@
 'use client';
 
 import { useEffect, useState, Suspense } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { useSearchParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { toast } from 'react-hot-toast';
 
 // Component that uses useSearchParams must be wrapped in Suspense
 function VerifyEmailContent() {
   const searchParams = useSearchParams();
+  const router = useRouter();
   const token = searchParams.get('token');
+  
+  // Get the redirect path from localStorage if available
+  const [redirectPath, setRedirectPath] = useState<string>('/');
   
   const [verificationStatus, setVerificationStatus] = useState<{
     loading: boolean;
@@ -19,6 +24,14 @@ function VerifyEmailContent() {
   });
 
   useEffect(() => {
+    // Try to get the redirect path from localStorage
+    if (typeof window !== 'undefined') {
+      const storedPath = localStorage.getItem('verificationRedirectPath');
+      if (storedPath) {
+        setRedirectPath(storedPath);
+      }
+    }
+    
     const verifyEmail = async () => {
       if (!token) {
         setVerificationStatus({
@@ -39,12 +52,27 @@ function VerifyEmailContent() {
             success: true,
             message: data.message || 'Your email has been verified successfully!',
           });
+          
+          // Show success toast
+          toast.success('Email verified successfully!');
+          
+          // Auto-redirect after 3 seconds
+          setTimeout(() => {
+            // Clear the stored path
+            if (typeof window !== 'undefined') {
+              localStorage.removeItem('verificationRedirectPath');
+            }
+            router.push(redirectPath);
+          }, 3000);
         } else {
           setVerificationStatus({
             loading: false,
             success: false,
             error: data.error || 'Failed to verify email',
           });
+          
+          // Show error toast
+          toast.error(data.error || 'Failed to verify email');
         }
       } catch {
         setVerificationStatus({
@@ -52,11 +80,14 @@ function VerifyEmailContent() {
           success: false,
           error: 'An unexpected error occurred',
         });
+        
+        // Show error toast
+        toast.error('An unexpected error occurred during verification');
       }
     };
 
     verifyEmail();
-  }, [token]);
+  }, [token, redirectPath, router]);
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">

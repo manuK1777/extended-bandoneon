@@ -3,9 +3,14 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
+import { toast } from 'react-hot-toast';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 export default function RegisterForm() {
-  const { register } = useAuth();
+  const { register, resendVerificationEmail } = useAuth();
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -14,6 +19,10 @@ export default function RegisterForm() {
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [registrationComplete, setRegistrationComplete] = useState(false);
+  
+  // Store the current path for redirection after verification
+  const currentPath = typeof window !== 'undefined' ? window.location.pathname : '/';
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
@@ -66,16 +75,85 @@ export default function RegisterForm() {
     try {
       const result = await register(email, password);
       
-      if (!result.success) {
+      if (result.success) {
+        // Store the current path in localStorage for redirection after verification
+        if (typeof window !== 'undefined') {
+          localStorage.setItem('verificationRedirectPath', currentPath);
+        }
+        
+        setRegistrationComplete(true);
+        toast.success('Registration successful! Please check your email to verify your account.');
+      } else {
         setError(result.error || 'Registration failed');
+        toast.error(result.error || 'Registration failed');
       }
     } catch (error) {
-      setError(error instanceof Error ? error.message : 'An error occurred during registration');
+      const errorMessage = error instanceof Error ? error.message : 'An error occurred during registration';
+      setError(errorMessage);
+      toast.error(errorMessage);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  
+  const handleResendVerification = async () => {
+    try {
+      setIsLoading(true);
+      const result = await resendVerificationEmail();
+      
+      if (result.success) {
+        toast.success(result.message);
+      } else {
+        toast.error(result.message);
+      }
+    } catch (error) {
+      toast.error('Failed to resend verification email. Please try again.');
     } finally {
       setIsLoading(false);
     }
   };
 
+  // If registration is complete, show verification pending state
+  if (registrationComplete) {
+    return (
+      <div className="space-y-6 text-center">
+        <div className="bg-blue-50 border-l-4 border-blue-400 p-4 mb-4">
+          <div className="flex">
+            <div className="flex-shrink-0">
+              <svg className="h-5 w-5 text-blue-400" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a.75.75 0 000 1.5h.253a.25.25 0 01.244.304l-.459 2.066A1.75 1.75 0 0010.747 15H11a.75.75 0 000-1.5h-.253a.25.25 0 01-.244-.304l.459-2.066A1.75 1.75 0 009.253 9H9z" clipRule="evenodd" />
+              </svg>
+            </div>
+            <div className="ml-3">
+              <p className="text-sm text-blue-700">
+                <strong>Verification Required</strong><br />
+                We've sent a verification email to <span className="font-medium">{email}</span>.<br />
+                Please check your inbox and click the verification link to complete your registration.
+              </p>
+            </div>
+          </div>
+        </div>
+        
+        <p className="text-sm text-gray-600 dark:text-gray-400">
+          Didn't receive the email?
+        </p>
+        
+        <button
+          type="button"
+          onClick={handleResendVerification}
+          disabled={isLoading}
+          className="w-full flex justify-center py-2 px-4 border border-transparent 
+                    rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 
+                    hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 
+                    focus:ring-indigo-500 disabled:bg-indigo-400 disabled:cursor-not-allowed
+                    transition-colors duration-200"
+        >
+          {isLoading ? 'Sending...' : 'Resend Verification Email'}
+        </button>
+      </div>
+    );
+  }
+  
   return (
     <form className="space-y-6" onSubmit={handleSubmit}>
       <div>

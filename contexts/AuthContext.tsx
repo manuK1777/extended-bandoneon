@@ -8,6 +8,7 @@ interface User {
   id: string;
   email: string;
   role: UserRole;
+  email_verified?: boolean;
 }
 
 interface AuthContextType {
@@ -16,13 +17,16 @@ interface AuthContextType {
   isAuthenticated: boolean;
   isAdmin: boolean;
   login: (email: string, password: string) => Promise<{ success: boolean; error?: string }>;
-  register: (email: string, password: string) => Promise<{ success: boolean; error?: string }>;
+  register: (email: string, password: string) => Promise<{ success: boolean; error?: string; message?: string }>;
   logout: () => Promise<void>;
   openLoginModal: () => void;
   openRegisterModal: () => void;
   closeAuthModal: () => void;
   authModalOpen: boolean;
   authModalType: 'login' | 'register' | null;
+  resendVerificationEmail: () => Promise<{ success: boolean; message: string }>;
+  refreshUserData: () => Promise<void>;
+  isEmailVerified: boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -35,6 +39,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const isAuthenticated = !!user;
   const isAdmin = user?.role === 'admin';
+  const isEmailVerified = user?.email_verified ?? false;
 
   // Check if user is already logged in
   useEffect(() => {
@@ -103,7 +108,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       setUser(data.user);
       closeAuthModal();
-      return { success: true };
+      return { 
+        success: true, 
+        message: data.message || 'Registration successful. Please check your email to verify your account.'
+      };
     } catch (error) {
       console.error('Registration error:', error);
       return { 
@@ -137,6 +145,47 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setAuthModalType(null);
   };
 
+  // Function to refresh user data
+  const refreshUserData = async () => {
+    try {
+      const response = await fetch('/api/auth/me');
+      const data = await response.json();
+      
+      if (data.authenticated && data.user) {
+        setUser(data.user);
+      } else {
+        setUser(null);
+      }
+    } catch (error) {
+      console.error('Error refreshing user data:', error);
+    }
+  };
+
+  // Function to resend verification email
+  const resendVerificationEmail = async () => {
+    try {
+      const response = await fetch('/api/auth/resend-verification', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+      });
+      
+      const data = await response.json();
+      
+      return { 
+        success: response.ok, 
+        message: response.ok 
+          ? data.message || 'Verification email sent!' 
+          : data.error || 'Failed to send verification email'
+      };
+    } catch (error) {
+      console.error('Error resending verification email:', error);
+      return { 
+        success: false, 
+        message: 'An unexpected error occurred while sending the verification email'
+      };
+    }
+  };
+
   return (
     <AuthContext.Provider
       value={{
@@ -151,7 +200,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         openRegisterModal,
         closeAuthModal,
         authModalOpen,
-        authModalType
+        authModalType,
+        resendVerificationEmail,
+        refreshUserData,
+        isEmailVerified
       }}
     >
       {children}
