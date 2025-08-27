@@ -82,7 +82,7 @@ export default function RegisterForm() {
         }
         
         setRegistrationComplete(true);
-        toast.success('Registration successful! Please check your email to verify your account.');
+        toast.success('Please check your email to verify your account.');
       } else {
         setError(result.error || 'Registration failed');
         toast.error(result.error || 'Registration failed');
@@ -169,7 +169,7 @@ export default function RegisterForm() {
             required
             className={`appearance-none block w-full px-3 py-2 border ${
               emailError ? 'border-red-500' : 'border-gray-300'
-            } rounded-md shadow-sm placeholder-gray-400 
+            } rounded-md shadow-sm placeholder-gray-400 text-gray-900 
                       focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 
                       dark:bg-gray-800 dark:border-gray-700 dark:text-white
                       sm:text-sm`}
@@ -194,7 +194,7 @@ export default function RegisterForm() {
             autoComplete="new-password"
             required
             className="appearance-none block w-full px-3 py-2 border border-gray-300 
-                      rounded-md shadow-sm placeholder-gray-400 
+                      rounded-md shadow-sm placeholder-gray-400 text-gray-900 
                       focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 
                       dark:bg-gray-800 dark:border-gray-700 dark:text-white
                       sm:text-sm"
@@ -224,7 +224,7 @@ export default function RegisterForm() {
             autoComplete="new-password"
             required
             className="appearance-none block w-full px-3 py-2 border border-gray-300 
-                      rounded-md shadow-sm placeholder-gray-400 
+                      rounded-md shadow-sm placeholder-gray-400 text-gray-900 
                       focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 
                       dark:bg-gray-800 dark:border-gray-700 dark:text-white
                       sm:text-sm"

@@ -23,8 +23,19 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
     
-    // Check if user's email is verified
-    if (!authData.email_verified) {
+    // Check if user's email is verified - convert to boolean to handle both boolean and numeric values
+    const isEmailVerified = Boolean(authData.email_verified);
+    
+    // Add debug info in development
+    if (process.env.NODE_ENV === 'development') {
+      console.log('Download API - Email verification status:', {
+        raw: authData.email_verified,
+        type: typeof authData.email_verified,
+        converted: isEmailVerified
+      });
+    }
+    
+    if (!isEmailVerified) {
       return NextResponse.json({ 
         error: 'Email verification required', 
         message: 'Please verify your email address to download sounds.'

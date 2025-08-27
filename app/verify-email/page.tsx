@@ -56,6 +56,22 @@ function VerifyEmailContent() {
           // Show success toast
           toast.success('Email verified successfully!');
           
+          // Broadcast verification success to other tabs/windows
+          if (typeof window !== 'undefined') {
+            // Store verification success in localStorage
+            localStorage.setItem('email_verified', 'true');
+            
+            // Broadcast event for other tabs
+            try {
+              const broadcastChannel = new BroadcastChannel('auth_updates');
+              broadcastChannel.postMessage({ type: 'EMAIL_VERIFIED' });
+              broadcastChannel.close();
+            } catch (e) {
+              // BroadcastChannel might not be supported in all browsers
+              console.log('BroadcastChannel not supported, falling back to localStorage');
+            }
+          }
+          
           // Auto-redirect after 3 seconds
           setTimeout(() => {
             // Clear the stored path

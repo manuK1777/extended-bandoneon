@@ -81,7 +81,7 @@ export async function POST(req: NextRequest) {
     // Create the response
     const response = NextResponse.json({ 
       success: true,
-      message: 'Registration successful. Please check your email to verify your account.',
+      message: 'Registration successful.Please check your email to verify your account.',
       user: {
         id: user.id,
         email: user.email,

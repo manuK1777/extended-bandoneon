@@ -31,10 +31,22 @@ export async function GET(req: NextRequest) {
     // Return user without password (including email verification status)
     const sanitizedUser = sanitizeUser(user);
     
+    // Convert email_verified to boolean properly (handles both boolean true and numeric 1)
+    const isEmailVerified = Boolean(sanitizedUser.email_verified);
+    
+    // Add debug info in development
+    if (process.env.NODE_ENV === 'development') {
+      console.log('Email verification status:', {
+        raw: sanitizedUser.email_verified,
+        type: typeof sanitizedUser.email_verified,
+        converted: isEmailVerified
+      });
+    }
+    
     return NextResponse.json({ 
       user: sanitizedUser,
       authenticated: true,
-      email_verified: sanitizedUser.email_verified === true
+      email_verified: isEmailVerified
     });
   } catch (error) {
     console.error('Error getting current user:', error);

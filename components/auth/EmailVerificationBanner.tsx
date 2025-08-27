@@ -1,17 +1,14 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'react-hot-toast';
 
 export default function EmailVerificationBanner() {
   const { user, isLoading, resendVerificationEmail, refreshUserData } = useAuth();
   const [isResending, setIsResending] = useState(false);
-
-  // Don't show banner if user is not logged in, loading, or email is verified
-  if (isLoading || !user || user.email_verified) {
-    return null;
-  }
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const [didAutoRefresh, setDidAutoRefresh] = useState(false);
   
   // Check if the banner was dismissed in this session
   const [isDismissed, setIsDismissed] = useState(() => {
@@ -20,10 +17,6 @@ export default function EmailVerificationBanner() {
     }
     return false;
   });
-  
-  if (isDismissed) {
-    return null;
-  }
 
   const handleResendVerification = async () => {
     try {
@@ -34,8 +27,6 @@ export default function EmailVerificationBanner() {
       
       if (result.success) {
         toast.success(result.message);
-        // Refresh user data to check if verification status has changed
-        await refreshUserData();
       } else {
         toast.error(result.message);
       }
@@ -43,8 +34,38 @@ export default function EmailVerificationBanner() {
       toast.error('An unexpected error occurred. Please try again.');
     } finally {
       setIsResending(false);
+      // Always refresh to sync status regardless of resend outcome
+      await refreshUserData();
     }
   };
+
+  const handleManualRefresh = async () => {
+    try {
+      setIsRefreshing(true);
+      await refreshUserData();
+      toast.success('Status refreshed');
+    } catch (e) {
+      toast.error('Failed to refresh status');
+    } finally {
+      setIsRefreshing(false);
+    }
+  };
+
+  // One-time auto-refresh when banner mounts and user appears unverified
+  useEffect(() => {
+    if (!didAutoRefresh && user && !user.email_verified) {
+      setDidAutoRefresh(true);
+      // fire and forget
+      refreshUserData();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [didAutoRefresh, user]);
+
+  // Compute visibility after all hooks ran
+  const shouldHide = isLoading || !user || user.email_verified || isDismissed;
+  if (shouldHide) {
+    return null;
+  }
   
   const handleDismiss = () => {
     if (typeof window !== 'undefined') {
@@ -73,6 +94,13 @@ export default function EmailVerificationBanner() {
                 className="text-sm font-medium text-yellow-700 hover:text-yellow-600 disabled:opacity-50 mr-4"
               >
                 {isResending ? 'Sending...' : 'Resend verification email'}
+              </button>
+              <button
+                onClick={handleManualRefresh}
+                disabled={isRefreshing}
+                className="text-sm font-medium text-yellow-700 hover:text-yellow-600 disabled:opacity-50"
+              >
+                {isRefreshing ? 'Refreshing...' : 'Refresh status'}
               </button>
             </div>
           </div>

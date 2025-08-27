@@ -39,7 +39,29 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const isAuthenticated = !!user;
   const isAdmin = user?.role === 'admin';
-  const isEmailVerified = user?.email_verified ?? false;
+  // Convert email_verified to boolean (handles both boolean true and numeric 1)
+  const isEmailVerified = Boolean(user?.email_verified);
+
+  // Function to refresh user data - using useCallback to prevent recreation on each render
+  const refreshUserData = React.useCallback(async () => {
+    try {
+      const response = await fetch('/api/auth/me');
+      const data = await response.json();
+      
+      if (data.authenticated && data.user) {
+        // Ensure email_verified is properly converted to a boolean
+        const processedUser = {
+          ...data.user,
+          email_verified: Boolean(data.user.email_verified)
+        };
+        setUser(processedUser);
+      } else {
+        setUser(null);
+      }
+    } catch (error) {
+      console.error('Error refreshing user data:', error);
+    }
+  }, []);
 
   // Check if user is already logged in
   useEffect(() => {
@@ -51,7 +73,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         
         // The API always returns 200 with authenticated flag
         if (data.authenticated && data.user) {
-          setUser(data.user);
+          // Ensure email_verified is properly converted to a boolean
+          const processedUser = {
+            ...data.user,
+            email_verified: Boolean(data.user.email_verified)
+          };
+          setUser(processedUser);
         } else {
           setUser(null);
         }
@@ -64,7 +91,46 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     };
 
     checkAuth();
-  }, []);
+    
+    // Listen for email verification events from other tabs/windows
+    let broadcastChannel: BroadcastChannel | null = null;
+    
+    try {
+      broadcastChannel = new BroadcastChannel('auth_updates');
+      broadcastChannel.onmessage = (event) => {
+        if (event.data && event.data.type === 'EMAIL_VERIFIED') {
+          // Refresh user data when email is verified in another tab
+          refreshUserData();
+        }
+      };
+    } catch (e) {
+      // BroadcastChannel might not be supported in all browsers
+      console.log('BroadcastChannel not supported, falling back to localStorage');
+    }
+    
+    // Also listen for localStorage changes as a fallback
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === 'email_verified' && e.newValue === 'true') {
+        refreshUserData();
+      }
+    };
+    
+    window.addEventListener('storage', handleStorageChange);
+    
+    // Check localStorage on mount in case verification happened before this component mounted
+    if (localStorage.getItem('email_verified') === 'true') {
+      refreshUserData();
+      localStorage.removeItem('email_verified'); // Clear it after processing
+    }
+    
+    return () => {
+      // Clean up listeners
+      if (broadcastChannel) {
+        broadcastChannel.close();
+      }
+      window.removeEventListener('storage', handleStorageChange);
+    };
+  }, []); // Empty dependency array to run only once on mount
 
   const login = async (email: string, password: string) => {
     try {
@@ -145,21 +211,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setAuthModalType(null);
   };
 
-  // Function to refresh user data
-  const refreshUserData = async () => {
-    try {
-      const response = await fetch('/api/auth/me');
-      const data = await response.json();
-      
-      if (data.authenticated && data.user) {
-        setUser(data.user);
-      } else {
-        setUser(null);
-      }
-    } catch (error) {
-      console.error('Error refreshing user data:', error);
-    }
-  };
 
   // Function to resend verification email
   const resendVerificationEmail = async () => {
