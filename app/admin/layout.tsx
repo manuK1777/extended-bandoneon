@@ -14,7 +14,6 @@ export default function AdminLayout({
           padding-top: 0 !important;
         }
       `}</style>
-      <Toaster position="top-right" />
       {children}
     </>
   );
