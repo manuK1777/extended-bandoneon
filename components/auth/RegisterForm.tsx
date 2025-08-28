@@ -22,7 +22,7 @@ export default function RegisterForm() {
   const [registrationComplete, setRegistrationComplete] = useState(false);
   
   // Store the current path for redirection after verification
-  const currentPath = typeof window !== 'undefined' ? window.location.pathname : '/';
+  const currentPath = typeof window !== 'undefined' ? (searchParams.get('next') ?? window.location.pathname) : '/';
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
@@ -47,6 +47,11 @@ export default function RegisterForm() {
       setEmailError('');
     }
   }, [email]);
+
+  // Prefetch home to utilize router and improve UX
+  useEffect(() => {
+    router.prefetch('/');
+  }, [router]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -106,7 +111,7 @@ export default function RegisterForm() {
       } else {
         toast.error(result.message);
       }
-    } catch (error) {
+    } catch {
       toast.error('Failed to resend verification email. Please try again.');
     } finally {
       setIsLoading(false);
@@ -127,7 +132,7 @@ export default function RegisterForm() {
             <div className="ml-3">
               <p className="text-sm text-blue-700">
                 <strong>Verification Required</strong><br />
-                We've sent a verification email to <span className="font-medium">{email}</span>.<br />
+                We&apos;ve sent a verification email to <span className="font-medium">{email}</span>.<br />
                 Please check your inbox and click the verification link to complete your registration.
               </p>
             </div>
@@ -135,7 +140,7 @@ export default function RegisterForm() {
         </div>
         
         <p className="text-sm text-gray-600 dark:text-gray-400">
-          Didn't receive the email?
+          Didn&apos;t receive the email?
         </p>
         
         <button

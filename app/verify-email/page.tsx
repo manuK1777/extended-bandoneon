@@ -66,7 +66,7 @@ function VerifyEmailContent() {
               const broadcastChannel = new BroadcastChannel('auth_updates');
               broadcastChannel.postMessage({ type: 'EMAIL_VERIFIED' });
               broadcastChannel.close();
-            } catch (e) {
+            } catch {
               // BroadcastChannel might not be supported in all browsers
               console.log('BroadcastChannel not supported, falling back to localStorage');
             }

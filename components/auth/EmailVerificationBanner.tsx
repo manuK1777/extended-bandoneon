@@ -30,7 +30,7 @@ export default function EmailVerificationBanner() {
       } else {
         toast.error(result.message);
       }
-    } catch (error) {
+    } catch {
       toast.error('An unexpected error occurred. Please try again.');
     } finally {
       setIsResending(false);
@@ -44,7 +44,7 @@ export default function EmailVerificationBanner() {
       setIsRefreshing(true);
       await refreshUserData();
       toast.success('Status refreshed');
-    } catch (e) {
+    } catch {
       toast.error('Failed to refresh status');
     } finally {
       setIsRefreshing(false);
@@ -118,3 +118,4 @@ export default function EmailVerificationBanner() {
     </div>
   );
 }
+
