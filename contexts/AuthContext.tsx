@@ -21,10 +21,12 @@ interface AuthContextType {
   logout: () => Promise<void>;
   openLoginModal: () => void;
   openRegisterModal: () => void;
+  openForgotPasswordModal: () => void;
   closeAuthModal: () => void;
   authModalOpen: boolean;
-  authModalType: 'login' | 'register' | null;
+  authModalType: 'login' | 'register' | 'forgot-password' | null;
   resendVerificationEmail: () => Promise<{ success: boolean; message: string }>;
+  forgotPassword: (email: string) => Promise<{ success: boolean; message: string }>;
   refreshUserData: () => Promise<void>;
   isEmailVerified: boolean;
 }
@@ -35,7 +37,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [authModalOpen, setAuthModalOpen] = useState(false);
-  const [authModalType, setAuthModalType] = useState<'login' | 'register' | null>(null);
+  const [authModalType, setAuthModalType] = useState<'login' | 'register' | 'forgot-password' | null>(null);
 
   const isAuthenticated = !!user;
   const isAdmin = user?.role === 'admin';
@@ -218,6 +220,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setAuthModalOpen(true);
   };
 
+  const openForgotPasswordModal = () => {
+    setAuthModalType('forgot-password');
+    setAuthModalOpen(true);
+  };
+
   const closeAuthModal = () => {
     setAuthModalOpen(false);
     setAuthModalType(null);
@@ -249,6 +256,32 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
+  // Function to request password reset
+  const forgotPassword = async (email: string) => {
+    try {
+      const response = await fetch('/api/auth/forgot-password', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      });
+      
+      const data = await response.json();
+      
+      return { 
+        success: response.ok, 
+        message: response.ok 
+          ? data.message || 'Password reset email sent!' 
+          : data.error || 'Failed to send password reset email'
+      };
+    } catch (error) {
+      console.error('Error requesting password reset:', error);
+      return { 
+        success: false, 
+        message: 'An unexpected error occurred while requesting password reset'
+      };
+    }
+  };
+
   return (
     <AuthContext.Provider
       value={{
@@ -261,10 +294,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         logout,
         openLoginModal,
         openRegisterModal,
+        openForgotPasswordModal,
         closeAuthModal,
         authModalOpen,
         authModalType,
         resendVerificationEmail,
+        forgotPassword,
         refreshUserData,
         isEmailVerified
       }}

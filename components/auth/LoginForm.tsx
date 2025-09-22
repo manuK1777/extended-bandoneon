@@ -5,7 +5,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
 
 export default function LoginForm() {
-  const { login } = useAuth();
+  const { login, openForgotPasswordModal } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -59,9 +59,18 @@ export default function LoginForm() {
       </div>
 
       <div>
-        <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-          Password
-        </label>
+        <div className="flex items-center justify-between">
+          <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+            Password
+          </label>
+          <button
+            type="button"
+            onClick={openForgotPasswordModal}
+            className="text-sm text-yellow-400 hover:text-fuchsia-500 font-medium"
+          >
+            Forgot password?
+          </button>
+        </div>
         <div className="mt-1 relative">
           <input
             id="password"

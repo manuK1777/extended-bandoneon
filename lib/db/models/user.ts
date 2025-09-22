@@ -85,3 +85,17 @@ export function sanitizeUser(user: User): UserWithoutPassword {
   };
   return userWithoutPassword;
 }
+
+// Update user password
+export async function updateUserPassword(userId: string, newPassword: string): Promise<void> {
+  // Hash the new password
+  const salt = await bcrypt.genSalt(10);
+  const hashed_password = await bcrypt.hash(newPassword, salt);
+  
+  const now = new Date();
+  
+  await db.execute(
+    'UPDATE users SET hashed_password = ?, updated_at = ? WHERE id = ?',
+    [hashed_password, now.toISOString().slice(0, 19).replace('T', ' '), userId]
+  );
+}

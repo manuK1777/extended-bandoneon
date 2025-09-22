@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '@/contexts/AuthContext';
 import LoginForm from './LoginForm';
 import RegisterForm from './RegisterForm';
+import ForgotPasswordForm from './ForgotPasswordForm';
 
 export default function AuthModal() {
   const { authModalOpen, authModalType, closeAuthModal, openLoginModal, openRegisterModal } = useAuth();
@@ -67,7 +68,7 @@ export default function AuthModal() {
                       </button>
                     </div>
                   </>
-                ) : (
+                ) : authModalType === 'register' ? (
                   <>
                     <h2 className="text-center text-3xl font-extrabold text-gray-900 dark:text-white mb-6">
                       Create Account
@@ -83,7 +84,9 @@ export default function AuthModal() {
                       </button>
                     </div>
                   </>
-                )}
+                ) : authModalType === 'forgot-password' ? (
+                  <ForgotPasswordForm onBack={openLoginModal} />
+                ) : null}
               </div>
             </motion.div>
           </motion.div>
