@@ -146,7 +146,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         return { success: false, error: data.error || 'Login failed' };
       }
 
-      setUser(data.user);
+      // Ensure email_verified is properly converted to a boolean like in other functions
+      const processedUser = {
+        ...data.user,
+        email_verified: Boolean(data.user.email_verified)
+      };
+      
+      setUser(processedUser);
       closeAuthModal();
       return { success: true };
     } catch (error) {
@@ -172,7 +178,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         return { success: false, error: data.error || 'Registration failed' };
       }
 
-      setUser(data.user);
+      // Ensure email_verified is properly converted to a boolean like in other functions
+      const processedUser = {
+        ...data.user,
+        email_verified: Boolean(data.user.email_verified)
+      };
+      
+      setUser(processedUser);
       closeAuthModal();
       return { 
         success: true, 

@@ -82,7 +82,7 @@ export async function authenticateUser(email: string, password: string): Promise
     
     return {
       user: sanitizeUser(user),
-      emailVerified: user.email_verified === true
+      emailVerified: Boolean(user.email_verified)
     };
   } catch (error) {
     console.error('Authentication error:', error);
