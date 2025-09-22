@@ -3,9 +3,6 @@ import { render } from '@react-email/render';
 import VerificationEmail from '@/emails/VerificationEmail';
 import * as React from 'react';
 
-// Debug: Log the imported component
-console.log('VerificationEmail component:', typeof VerificationEmail);
-
 // Create a function to get the Resend client
 const getResendClient = () => {
   const apiKey = process.env.RESEND_API_KEY;
@@ -30,14 +27,6 @@ export async function sendVerificationEmail(
     const html = await render(
       React.createElement(VerificationEmail, { verificationUrl, userName })
     );
-
-    // Debug: Log the rendered HTML (remove in production)
-    console.log('=== EMAIL DEBUG INFO ===');
-    console.log('Verification URL:', verificationUrl);
-    console.log('User Name:', userName);
-    console.log('Rendered email HTML length:', html.length);
-    console.log('First 200 chars of HTML:', html.substring(0, 200));
-    console.log('========================');
 
     // Get Resend client and send the email
     const resendClient = getResendClient();
