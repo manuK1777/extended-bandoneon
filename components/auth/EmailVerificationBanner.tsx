@@ -91,14 +91,14 @@ export default function EmailVerificationBanner() {
               <button
                 onClick={handleResendVerification}
                 disabled={isResending}
-                className="text-sm font-medium text-yellow-700 hover:text-yellow-600 disabled:opacity-50 mr-4"
+                className="text-sm font-medium text-indigo-600 hover:text-yellow-600 disabled:opacity-50 mr-4"
               >
                 {isResending ? 'Sending...' : 'Resend verification email'}
               </button>
               <button
                 onClick={handleManualRefresh}
                 disabled={isRefreshing}
-                className="text-sm font-medium text-yellow-700 hover:text-yellow-600 disabled:opacity-50"
+                className="text-sm font-medium text-indigo-600 hover:text-yellow-600 disabled:opacity-50"
               >
                 {isRefreshing ? 'Refreshing...' : 'Refresh status'}
               </button>
