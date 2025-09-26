@@ -63,7 +63,7 @@ export default function ForgotPasswordForm({ onBack }: ForgotPasswordFormProps) 
             String(now)
           );
           setRemainingSeconds(300);
-        } catch (_) {
+        } catch {
           // ignore storage errors (e.g., SSR or private mode)
           setRemainingSeconds(300);
         }
@@ -94,7 +94,7 @@ export default function ForgotPasswordForm({ onBack }: ForgotPasswordFormProps) 
         const remaining = Math.max(0, 300 - Math.floor(elapsedMs / 1000));
         if (remaining !== remainingSeconds) setRemainingSeconds(remaining);
       }
-    } catch (_) {
+    } catch {
       // ignore
     }
 
