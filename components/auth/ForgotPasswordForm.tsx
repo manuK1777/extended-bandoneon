@@ -13,6 +13,7 @@ export default function ForgotPasswordForm({ onBack }: ForgotPasswordFormProps) 
   const [emailError, setEmailError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [remainingSeconds, setRemainingSeconds] = useState<number>(0);
 
   // Email validation function
   const validateEmail = (email: string): boolean => {
@@ -54,6 +55,18 @@ export default function ForgotPasswordForm({ onBack }: ForgotPasswordFormProps) 
       if (response.ok) {
         setIsSubmitted(true);
         toast.success('Password reset instructions sent to your email');
+        // Start a 5-minute (300s) cooldown timer and persist timestamp
+        try {
+          const now = Date.now();
+          localStorage.setItem(
+            `forgotPasswordLastRequestAt:${email.toLowerCase().trim()}`,
+            String(now)
+          );
+          setRemainingSeconds(300);
+        } catch (_) {
+          // ignore storage errors (e.g., SSR or private mode)
+          setRemainingSeconds(300);
+        }
       } else {
         setError(data.error || 'Failed to send password reset email');
         toast.error(data.error || 'Failed to send password reset email');
@@ -66,6 +79,32 @@ export default function ForgotPasswordForm({ onBack }: ForgotPasswordFormProps) 
       setIsLoading(false);
     }
   };
+
+  // Countdown effect: ticks every second while submitted
+  useEffect(() => {
+    if (!isSubmitted) return;
+
+    // Initialize remaining time from localStorage if available (resilient to refresh)
+    try {
+      const key = `forgotPasswordLastRequestAt:${email.toLowerCase().trim()}`;
+      const stored = localStorage.getItem(key);
+      if (stored) {
+        const last = parseInt(stored, 10);
+        const elapsedMs = Date.now() - last;
+        const remaining = Math.max(0, 300 - Math.floor(elapsedMs / 1000));
+        if (remaining !== remainingSeconds) setRemainingSeconds(remaining);
+      }
+    } catch (_) {
+      // ignore
+    }
+
+    if (remainingSeconds <= 0) return;
+
+    const interval = setInterval(() => {
+      setRemainingSeconds((prev) => Math.max(0, prev - 1));
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [isSubmitted, email, remainingSeconds]);
 
   // If email was submitted successfully, show confirmation
   if (isSubmitted) {
@@ -89,8 +128,16 @@ export default function ForgotPasswordForm({ onBack }: ForgotPasswordFormProps) 
         </div>
         
         <p className="text-sm text-gray-600 dark:text-gray-400">
-          Didn&apos;t receive the email? Check your spam folder or try again in a few minutes.
+          Didn&apos;t receive the email? Check your spam folder. If you requested a reset recently,
+          check your inbox or try again in about <span className="font-medium">5 minutes</span>.
         </p>
+
+        {remainingSeconds > 0 && (
+          <p className="text-sm text-gray-600 dark:text-gray-400">
+            You can request another reset in
+            {` ${String(Math.floor(remainingSeconds / 60)).padStart(2, '0')}:${String(remainingSeconds % 60).padStart(2, '0')}`}
+          </p>
+        )}
         
         <button
           type="button"

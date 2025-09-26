@@ -66,7 +66,7 @@ export default function LoginForm() {
           <button
             type="button"
             onClick={openForgotPasswordModal}
-            className="text-sm text-yellow-400 hover:text-fuchsia-500 font-medium"
+            className="text-sm text-yellow-200 hover:text-fuchsia-500 font-medium"
           >
             Forgot password?
           </button>
