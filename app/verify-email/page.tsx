@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, Suspense } from 'react';
+import { useEffect, useState, useRef, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { toast } from 'react-hot-toast';
@@ -13,6 +13,7 @@ function VerifyEmailContent() {
   
   // Get the redirect path from localStorage if available
   const [redirectPath, setRedirectPath] = useState<string>('/');
+  const didVerifyRef = useRef(false);
   
   const [verificationStatus, setVerificationStatus] = useState<{
     loading: boolean;
@@ -23,15 +24,18 @@ function VerifyEmailContent() {
     loading: true,
   });
 
+  // Load redirect path once on mount
   useEffect(() => {
-    // Try to get the redirect path from localStorage
     if (typeof window !== 'undefined') {
       const storedPath = localStorage.getItem('verificationRedirectPath');
       if (storedPath) {
         setRedirectPath(storedPath);
       }
     }
-    
+  }, []);
+
+  // Verify exactly once per token
+  useEffect(() => {
     const verifyEmail = async () => {
       if (!token) {
         setVerificationStatus({
@@ -74,11 +78,14 @@ function VerifyEmailContent() {
           
           // Auto-redirect after 3 seconds
           setTimeout(() => {
-            // Clear the stored path
+            // Prefer latest stored path at redirect time
+            let path = redirectPath;
             if (typeof window !== 'undefined') {
+              const stored = localStorage.getItem('verificationRedirectPath');
+              if (stored) path = stored;
               localStorage.removeItem('verificationRedirectPath');
             }
-            router.push(redirectPath);
+            router.push(path);
           }, 3000);
         } else {
           setVerificationStatus({
@@ -102,8 +109,11 @@ function VerifyEmailContent() {
       }
     };
 
-    verifyEmail();
-  }, [token, redirectPath, router]);
+    if (!didVerifyRef.current) {
+      didVerifyRef.current = true;
+      verifyEmail();
+    }
+  }, [token, router, redirectPath]);
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
