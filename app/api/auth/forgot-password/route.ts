@@ -43,8 +43,14 @@ export async function POST(request: NextRequest) {
     const resetToken = await createPasswordResetToken(user.id, 1); // 1 hour expiry
 
     // Generate reset URL
-    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 
-      (process.env.NODE_ENV === 'development' ? 'http://localhost:3000' : 'https://extendedbandoneon.com');
+    // Prefer explicit app URL, then Vercel deployment URL (preview/production), then dev/prod fallback
+    const baseUrl = process.env.NEXT_PUBLIC_APP_URL
+      ? process.env.NEXT_PUBLIC_APP_URL
+      : process.env.VERCEL_URL
+      ? `https://${process.env.VERCEL_URL}`
+      : process.env.NODE_ENV === 'development'
+      ? 'http://localhost:3000'
+      : 'https://extendedbandoneon.com';
     
     // Ensure no double slashes in URL
     const cleanBaseUrl = baseUrl.replace(/\/$/, '');
