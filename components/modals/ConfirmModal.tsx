@@ -1,6 +1,7 @@
 "use client";
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
 
 interface ConfirmModalProps {
   isOpen: boolean;
@@ -25,7 +26,9 @@ export default function ConfirmModal({
   confirmVariant = 'primary',
   isProcessing = false,
 }: ConfirmModalProps) {
-  if (!isOpen) return null;
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+  if (!isOpen || !mounted) return null;
 
   const confirmBase =
     'inline-flex justify-center px-4 py-2 text-sm font-medium rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed';
@@ -34,9 +37,9 @@ export default function ConfirmModal({
       ? `${confirmBase} text-white bg-red-600 hover:bg-red-700 focus:ring-red-500`
       : `${confirmBase} text-white bg-indigo-600 hover:bg-indigo-700 focus:ring-indigo-500`;
 
-  return (
+  return createPortal(
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm"
+      className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm"
       role="dialog"
       aria-modal="true"
     >
@@ -76,6 +79,7 @@ export default function ConfirmModal({
           </button>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }
