@@ -4,10 +4,14 @@ import { useState, useRef, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
+import { toast } from 'react-hot-toast';
+import ConfirmModal from '@/components/modals/ConfirmModal';
 
 export default function UserMenu() {
   const { user, logout, isAdmin } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
   // Close menu when clicking outside
@@ -65,23 +69,7 @@ export default function UserMenu() {
             )}
 
             <button
-              onClick={async () => {
-                const confirmed = window.confirm('Are you sure you want to delete your account? This action cannot be undone.');
-                if (!confirmed) return;
-                try {
-                  const res = await fetch('/api/auth/delete-account', { method: 'DELETE' });
-                  const data = await res.json();
-                  if (!res.ok) {
-                    throw new Error(data.error || 'Failed to delete account');
-                  }
-                  // Log out locally and close menu
-                  await logout();
-                  setIsOpen(false);
-                } catch (err) {
-                  console.error('Delete account error:', err);
-                  // Non-blocking: keep menu open to allow retry or cancel
-                }
-              }}
+              onClick={() => setConfirmOpen(true)}
               className="block w-full text-left px-4 py-2 text-sm text-red-700 hover:bg-red-50 dark:text-red-300 dark:hover:bg-red-900/30"
             >
               Delete account
@@ -96,6 +84,37 @@ export default function UserMenu() {
             >
               Sign out
             </button>
+            {/* Delete Account Confirmation Modal */}
+            <ConfirmModal
+              isOpen={confirmOpen}
+              title="Delete account"
+              description="Are you sure you want to delete your account? This action cannot be undone."
+              confirmText="Delete account"
+              cancelText="Cancel"
+              confirmVariant="danger"
+              isProcessing={isDeleting}
+              onCancel={() => setConfirmOpen(false)}
+              onConfirm={async () => {
+                if (isDeleting) return;
+                setIsDeleting(true);
+                try {
+                  const res = await fetch('/api/auth/delete-account', { method: 'DELETE' });
+                  const data = await res.json();
+                  if (!res.ok) {
+                    throw new Error(data.error || 'Failed to delete account');
+                  }
+                  toast.success('Account deleted');
+                  await logout();
+                  setIsOpen(false);
+                } catch (err) {
+                  console.error('Delete account error:', err);
+                  toast.error('Failed to delete account');
+                } finally {
+                  setIsDeleting(false);
+                  setConfirmOpen(false);
+                }
+              }}
+            />
           </motion.div>
         )}
       </AnimatePresence>
