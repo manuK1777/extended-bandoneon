@@ -1,10 +1,8 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 
 export const runtime = 'nodejs'; // Explicitly use Node.js runtime
 
-// DEPRECATED: This endpoint previously handled login at /api/auth (POST).
-// To avoid duplicate login handlers and messages, use /api/auth/login instead.
-export async function POST(_request: NextRequest) {
+export async function POST() {
   return NextResponse.json(
     { error: 'Not Found. Use /api/auth/login for authentication.' },
     { status: 404 }
