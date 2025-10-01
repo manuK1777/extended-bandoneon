@@ -75,7 +75,7 @@ export default function EmailVerificationBanner() {
   };
 
   return (
-    <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-4">
+    <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-4 mt-18 md:mt-24">
       <div className="flex justify-between">
         <div className="flex">
           <div className="flex-shrink-0">
