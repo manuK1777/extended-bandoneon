@@ -99,3 +99,8 @@ export async function updateUserPassword(userId: string, newPassword: string): P
     [hashed_password, now.toISOString().slice(0, 19).replace('T', ' '), userId]
   );
 }
+
+// Delete user by ID
+export async function deleteUserById(userId: string): Promise<void> {
+  await db.execute('DELETE FROM users WHERE id = ?', [userId]);
+}

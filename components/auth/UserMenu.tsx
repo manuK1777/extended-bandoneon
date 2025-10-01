@@ -65,6 +65,29 @@ export default function UserMenu() {
             )}
 
             <button
+              onClick={async () => {
+                const confirmed = window.confirm('Are you sure you want to delete your account? This action cannot be undone.');
+                if (!confirmed) return;
+                try {
+                  const res = await fetch('/api/auth/delete-account', { method: 'DELETE' });
+                  const data = await res.json();
+                  if (!res.ok) {
+                    throw new Error(data.error || 'Failed to delete account');
+                  }
+                  // Log out locally and close menu
+                  await logout();
+                  setIsOpen(false);
+                } catch (err) {
+                  console.error('Delete account error:', err);
+                  // Non-blocking: keep menu open to allow retry or cancel
+                }
+              }}
+              className="block w-full text-left px-4 py-2 text-sm text-red-700 hover:bg-red-50 dark:text-red-300 dark:hover:bg-red-900/30"
+            >
+              Delete account
+            </button>
+
+            <button
               onClick={() => {
                 logout();
                 setIsOpen(false);

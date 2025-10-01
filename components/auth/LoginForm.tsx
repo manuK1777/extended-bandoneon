@@ -18,6 +18,7 @@ export default function LoginForm() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (isLoading) return; // prevent duplicate submissions
     setError('');
     setIsLoading(true);
 

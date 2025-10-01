@@ -1,6 +1,7 @@
 'use client';
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { useRef } from 'react';
 
 type UserRole = 'admin' | 'user';
 
@@ -36,6 +37,8 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  // Guard to prevent concurrent login attempts
+  const loginInFlightRef = useRef(false);
   const [authModalOpen, setAuthModalOpen] = useState(false);
   const [authModalType, setAuthModalType] = useState<'login' | 'register' | 'forgot-password' | null>(null);
 
@@ -135,6 +138,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []); // Empty dependency array to run only once on mount
 
   const login = async (email: string, password: string) => {
+    // Prevent concurrent login attempts which can cause conflicting messages
+    if (loginInFlightRef.current) {
+      return { success: false, error: 'Login already in progress' };
+    }
+
+    loginInFlightRef.current = true;
     try {
       const response = await fetch('/api/auth/login', {
         method: 'POST',
@@ -163,6 +172,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         success: false, 
         error: error instanceof Error ? error.message : 'An error occurred during login'
       };
+    } finally {
+      loginInFlightRef.current = false;
     }
   };
 
