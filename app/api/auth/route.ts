@@ -1,68 +1,20 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { authenticateUser, generateToken } from '@/utils/auth';
 
 export const runtime = 'nodejs'; // Explicitly use Node.js runtime
 
-export async function POST(request: NextRequest) {
-  try {
-    const body = await request.json();
-    const { email, password } = body;
-    
-    if (!email || !password) {
-      return NextResponse.json(
-        { error: 'Email and password are required' },
-        { status: 400 }
-      );
-    }
-    
-    const authResult = await authenticateUser(email, password);
-    
-    if (!authResult) {
-      return NextResponse.json(
-        { error: 'Invalid credentials' },
-        { status: 401 }
-      );
-    }
-    
-    const { user } = authResult;
-    
-    // Generate JWT token
-    const token = generateToken({
-      userId: user.id,
-      email: user.email,
-      role: user.role
-    });
-    
-    // Create response with user data
-    const response = NextResponse.json({ user }, { status: 200 });
-    
-    // Set cookie in the response
-    response.cookies.set({
-      name: 'auth_token',
-      value: token,
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
-      path: '/',
-      maxAge: 60 * 60 * 24 // 24 hours
-    });
-    
-    return response;
-  } catch (error) {
-    console.error('Authentication error:', error);
-    return NextResponse.json(
-      { error: 'Authentication failed' },
-      { status: 500 }
-    );
-  }
+// DEPRECATED: This endpoint previously handled login at /api/auth (POST).
+// To avoid duplicate login handlers and messages, use /api/auth/login instead.
+export async function POST(_request: NextRequest) {
+  return NextResponse.json(
+    { error: 'Not Found. Use /api/auth/login for authentication.' },
+    { status: 404 }
+  );
 }
 
+// NOTE: Keeping DELETE for backward compatibility if anything still calls /api/auth (DELETE)
+// Prefer using /api/auth/logout (if implemented) going forward.
 export async function DELETE() {
-  // Create response for logout
   const response = NextResponse.json({ success: true });
-  
-  // Clear the auth cookie
   response.cookies.delete('auth_token');
-  
   return response;
 }
