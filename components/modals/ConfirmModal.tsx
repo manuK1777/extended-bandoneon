@@ -42,6 +42,8 @@ export default function ConfirmModal({
       className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm"
       role="dialog"
       aria-modal="true"
+      onMouseDown={(e) => e.stopPropagation()}
+      onClick={(e) => e.stopPropagation()}
     >
       {/* Backdrop click closes */}
       <div
@@ -51,7 +53,11 @@ export default function ConfirmModal({
       />
 
       {/* Modal card */}
-      <div className="relative z-10 w-full max-w-md rounded-lg bg-white dark:bg-gray-900 shadow-xl">
+      <div 
+        className="relative z-10 w-full max-w-md rounded-lg bg-white dark:bg-gray-900 shadow-xl"
+        onMouseDown={(e) => e.stopPropagation()}
+        onClick={(e) => e.stopPropagation()}
+      >
         <div className="px-6 py-5">
           <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
             {title}

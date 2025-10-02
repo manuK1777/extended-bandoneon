@@ -40,7 +40,7 @@ export default function MobileUserMenu() {
         </button>
         <button
           onClick={() => setConfirmOpen(true)}
-          className="block w-full text-left px-4 py-2 text-sm text-red-700 hover:bg-red-50 dark:text-red-300 dark:hover:bg-red-900/30"
+          className="block w-full text-left py-2 text-sm text-red-700 hover:bg-red-50 dark:text-red-300 dark:hover:bg-red-900/30"
         >
           Delete account
         </button>
