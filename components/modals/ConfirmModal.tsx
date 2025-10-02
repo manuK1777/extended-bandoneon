@@ -9,7 +9,7 @@ interface ConfirmModalProps {
   description?: string;
   confirmText?: string;
   cancelText?: string;
-  onConfirm: () => void;
+  onConfirm: () => void | Promise<void>;
   onCancel: () => void;
   confirmVariant?: 'danger' | 'primary';
   isProcessing?: boolean;
