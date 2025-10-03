@@ -1,4 +1,4 @@
-import jwt from 'jsonwebtoken';
+import jwt, { type SignOptions } from 'jsonwebtoken';
 import { findUserByEmail, verifyPassword, UserWithoutPassword, sanitizeUser } from '@/lib/db/models/user';
 import { cookies } from 'next/headers';
 
@@ -13,12 +13,16 @@ export interface JWTPayload {
   exp?: number;
 }
 
-export function generateToken(payload: Omit<JWTPayload, 'iat' | 'exp'>) {
+export function generateToken(
+  payload: Omit<JWTPayload, 'iat' | 'exp'>,
+  options?: { expiresIn?: string }
+) {
   try {
-    return jwt.sign(payload, JWT_SECRET, { 
-      expiresIn: TOKEN_EXPIRY,
-      algorithm: 'HS256'
-    });
+    const signOptions: SignOptions = {
+      expiresIn: (options?.expiresIn ?? TOKEN_EXPIRY) as SignOptions['expiresIn'],
+      // algorithm left as default (HS256) to avoid type mismatches across @types versions
+    };
+    return jwt.sign(payload, JWT_SECRET, signOptions);
   } catch (error) {
     console.error('Error generating token:', error);
     throw new Error('Failed to generate authentication token');

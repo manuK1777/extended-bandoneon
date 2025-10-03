@@ -21,7 +21,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const { email, password } = body;
+    const { email, password, remember } = body as { email: string; password: string; remember?: boolean };
 
     // Authenticate user
     const authResult = await authenticateUser(email, password);
@@ -29,12 +29,15 @@ export async function POST(req: NextRequest) {
     if (authResult) {
       const { user, emailVerified } = authResult;
       
-      // Generate JWT token
-      const token = generateToken({
-        userId: user.id,
-        email: user.email,
-        role: user.role,
-      });
+      // Generate JWT token with optional extended expiry
+      const token = generateToken(
+        {
+          userId: user.id,
+          email: user.email,
+          role: user.role,
+        },
+        { expiresIn: remember ? '30d' : undefined }
+      );
 
       // Create the response with verification status
       const response = NextResponse.json({ 
@@ -57,7 +60,7 @@ export async function POST(req: NextRequest) {
         secure: process.env.NODE_ENV !== 'development',
         sameSite: 'strict',
         path: '/',
-        maxAge: 60 * 60 * 24, // 24 hours
+        maxAge: remember ? 60 * 60 * 24 * 30 : 60 * 60 * 24, // 30 days or 24 hours
       });
 
       return response;

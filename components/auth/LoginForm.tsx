@@ -11,6 +11,7 @@ export default function LoginForm() {
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [remember, setRemember] = useState(false);
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
@@ -23,7 +24,7 @@ export default function LoginForm() {
     setIsLoading(true);
 
     try {
-      const result = await login(email, password);
+      const result = await login(email, password, remember);
       
       if (!result.success) {
         setError(result.error || 'Login failed');
@@ -96,6 +97,18 @@ export default function LoginForm() {
             {showPassword ? <FaEyeSlash size={16} /> : <FaEye size={16} />}
           </button>
         </div>
+      </div>
+
+      <div className="flex items-center justify-between">
+        <label className="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300">
+          <input
+            type="checkbox"
+            className="checkbox checkbox-sm"
+            checked={remember}
+            onChange={(e) => setRemember(e.target.checked)}
+          />
+          Remember me (30 days)
+        </label>
       </div>
 
       {error && (
