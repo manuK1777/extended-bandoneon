@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import { toast } from 'react-hot-toast';
+import { useAuth } from '@/contexts/AuthContext';
 
 interface ResetPasswordFormProps {
   token: string;
@@ -11,6 +12,7 @@ interface ResetPasswordFormProps {
 
 export default function ResetPasswordForm({ token }: ResetPasswordFormProps) {
   const router = useRouter();
+  const { refreshUserData } = useAuth();
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
@@ -99,10 +101,20 @@ export default function ResetPasswordForm({ token }: ResetPasswordFormProps) {
         setIsSuccess(true);
         toast.success('Password reset successfully!');
         
+        // Give the browser a brief moment to persist Set-Cookie
+        await new Promise((r) => setTimeout(r, 100));
+        // Refresh auth state so the app picks up the new session cookie
+        try {
+          await refreshUserData();
+        } catch (e) {
+          // non-fatal
+        }
+
         // Redirect to home after a short delay
         setTimeout(() => {
-          router.push('/');
-        }, 2000);
+          // Force a full navigation to ensure cookies are applied in all layers
+          window.location.href = '/';
+        }, 1200);
       } else {
         console.error('Password reset failed:', data);
         setError(data.error || 'Failed to reset password');

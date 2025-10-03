@@ -50,7 +50,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   // Function to refresh user data - using useCallback to prevent recreation on each render
   const refreshUserData = React.useCallback(async () => {
     try {
-      const response = await fetch('/api/auth/me');
+      const response = await fetch('/api/auth/me', { cache: 'no-store', credentials: 'include' });
       const data = await response.json();
       
       if (data.authenticated && data.user) {
@@ -73,7 +73,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const checkAuth = async () => {
       try {
         setIsLoading(true);
-        const response = await fetch('/api/auth/me');
+        const response = await fetch('/api/auth/me', { cache: 'no-store', credentials: 'include' });
         const data = await response.json();
         
         // The API always returns 200 with authenticated flag

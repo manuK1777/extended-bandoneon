@@ -3,6 +3,8 @@ import { findPasswordResetByToken, markPasswordResetAsUsed } from '@/lib/db/mode
 import { findUserById, updateUserPassword } from '@/lib/db/models/user';
 import { generateToken } from '@/utils/auth';
 
+export const runtime = 'nodejs';
+
 export async function POST(request: NextRequest) {
   if (!process.env.JWT_SECRET) {
     console.error('Missing required environment variables for authentication');
