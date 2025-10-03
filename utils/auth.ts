@@ -43,7 +43,22 @@ export async function getUserFromToken(token: string): Promise<UserWithoutPasswo
   try {
     const user = await findUserByEmail(payload.email);
     if (!user) return null;
-    
+
+    // Invalidate tokens issued before the user's last update (e.g., password change)
+    // payload.iat is in seconds since epoch
+    if (user.updated_at && payload.iat) {
+      const updatedAtSec = Math.floor(new Date(user.updated_at).getTime() / 1000);
+      const iatSec = typeof payload.iat === 'number' ? payload.iat : Number(payload.iat);
+      if (Number.isFinite(iatSec) && iatSec < updatedAtSec) {
+        console.warn('Token invalidated due to user update (likely password change)', {
+          userId: user.id,
+          iat: iatSec,
+          updatedAt: updatedAtSec,
+        });
+        return null;
+      }
+    }
+
     return sanitizeUser(user);
   } catch (error) {
     console.error('Error getting user from token:', error);

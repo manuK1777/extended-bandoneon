@@ -1,8 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { findPasswordResetByToken, markPasswordResetAsUsed } from '@/lib/db/models/passwordReset';
 import { findUserById, updateUserPassword } from '@/lib/db/models/user';
+import { generateToken } from '@/utils/auth';
 
 export async function POST(request: NextRequest) {
+  if (!process.env.JWT_SECRET) {
+    console.error('Missing required environment variables for authentication');
+    return NextResponse.json(
+      { error: 'Authentication not properly configured' },
+      { status: 500 }
+    );
+  }
   try {
     const { token, password } = await request.json();
 
@@ -79,10 +87,34 @@ export async function POST(request: NextRequest) {
     // Mark the reset token as used
     await markPasswordResetAsUsed(resetToken.id);
 
-    return NextResponse.json({
-      success: true,
-      message: 'Password has been reset successfully. You can now log in with your new password.'
+    // Auto-login: issue JWT and set cookie like in the login route
+    const jwt = generateToken({
+      userId: user.id,
+      email: user.email,
+      role: user.role,
     });
+
+    const response = NextResponse.json({
+      success: true,
+      message: 'Password has been reset successfully. You are now logged in.',
+      user: {
+        id: user.id,
+        email: user.email,
+        role: user.role,
+        email_verified: Boolean(user.email_verified),
+      },
+      email_verified: Boolean(user.email_verified),
+    });
+
+    response.cookies.set('auth_token', jwt, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV !== 'development',
+      sameSite: 'strict',
+      path: '/',
+      maxAge: 60 * 60 * 24, // 24 hours
+    });
+
+    return response;
 
   } catch (error) {
     console.error('Reset password error:', error);
