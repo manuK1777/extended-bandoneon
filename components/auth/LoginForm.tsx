@@ -103,11 +103,11 @@ export default function LoginForm() {
         <label className="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300">
           <input
             type="checkbox"
-            className="checkbox checkbox-sm"
+            className="checkbox checkbox-sm checkbox-warning"
             checked={remember}
             onChange={(e) => setRemember(e.target.checked)}
           />
-          Remember me (30 days)
+          Keep me signed in
         </label>
       </div>
 
