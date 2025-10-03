@@ -187,7 +187,7 @@ export default function ResetPasswordForm({ token }: ResetPasswordFormProps) {
                 <div className="ml-3">
                   <p className="text-sm text-green-700">
                     <strong>Password Reset Successful</strong><br />
-                    Your password has been reset successfully. You're now logged in.
+                    Your password has been reset successfully. You&apos;re now logged in.
                   </p>
                 </div>
               </div>
