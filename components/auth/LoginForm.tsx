@@ -103,7 +103,7 @@ export default function LoginForm() {
         <label className="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300">
           <input
             type="checkbox"
-            className="checkbox checkbox-sm checkbox-warning"
+            className="checkbox checkbox-sm border-fuchsia-500 [--chkbg:theme(colors.fuchsia.500)] [--chkfg:#ffffff]"
             checked={remember}
             onChange={(e) => setRemember(e.target.checked)}
           />
