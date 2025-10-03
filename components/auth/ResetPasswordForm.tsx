@@ -106,7 +106,7 @@ export default function ResetPasswordForm({ token }: ResetPasswordFormProps) {
         // Refresh auth state so the app picks up the new session cookie
         try {
           await refreshUserData();
-        } catch (e) {
+        } catch {
           // non-fatal
         }
 
