@@ -9,6 +9,8 @@ interface Article {
   author: string | null;
   pdf_url: string | null;
   slug: string;
+  publisher: string | null;
+  publication_info: string | null;
 }
 
 export async function GET(
@@ -76,7 +78,7 @@ export async function POST(
 ) {
   try {
     const body = await request.json();
-    const { title, abstract, author, pdf_url } = body;
+    const { title, abstract, author, pdf_url, publisher, publication_info } = body;
     
     // Generate slug from title
     const baseSlug = generateSlug(title);
@@ -94,14 +96,18 @@ export async function POST(
       counter++;
     }
 
-    const query = `
-      INSERT INTO articles (title, abstract, author, pdf_url, slug)
-      VALUES (?, ?, ?, ?, ?)
-      RETURNING id, title, abstract, author, pdf_url, slug
+    const insertQuery = `
+      INSERT INTO articles (title, abstract, author, pdf_url, slug, publisher, publication_info)
+      VALUES (?, ?, ?, ?, ?, ?, ?)
     `;
     
-    const values = [title, abstract, author, pdf_url, slug];
-    const result = await db.query<Article>(query, values);
+    const values = [title, abstract, author, pdf_url, slug, publisher ?? null, publication_info ?? null];
+    await db.query(insertQuery, values);
+
+    const result = await db.query<Article>(
+      'SELECT id, title, abstract, author, pdf_url, slug, publisher, publication_info FROM articles WHERE slug = ?',
+      [slug]
+    );
     
     return NextResponse.json(result[0]);
   } catch (error) {
