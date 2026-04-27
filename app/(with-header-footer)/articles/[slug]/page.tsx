@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { db } from '@/lib/db';
 import { Download } from 'lucide-react';
+import ArticleContentBlocks from '@/components/ArticleContentBlocks';
 
 interface Article {
   id: number;
@@ -11,6 +12,7 @@ interface Article {
   slug: string;
   publisher: string | null;
   publication_info: string | null;
+  content_blocks: { type: 'video' | 'sound'; url: string; label?: string }[] | string | null;
 }
 
 async function getArticle(slug: string): Promise<Article | null> {
@@ -23,7 +25,8 @@ async function getArticle(slug: string): Promise<Article | null> {
       pdf_url,
       slug,
       publisher,
-      publication_info
+      publication_info,
+      content_blocks
     FROM articles 
     WHERE slug = ?
   `;
@@ -88,6 +91,9 @@ export default async function ArticlePage({ params }: Props) {
             <h2 className="text-lg font-semibold mb-4 text-fuchsia-200">Abstract</h2>
             <p className="text-gray-300 font-body space-y-4 leading-relaxed">{article.abstract}</p>
           </div>
+        )}
+        {article.content_blocks && (
+          <ArticleContentBlocks blocks={typeof article.content_blocks === 'string' ? JSON.parse(article.content_blocks) : article.content_blocks} />
         )}
         {article.pdf_url && (
           <div className="mt-8 flex justify-center md:justify-end">

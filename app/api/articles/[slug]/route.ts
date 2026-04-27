@@ -1,6 +1,12 @@
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 
+interface ContentBlock {
+  type: 'video' | 'sound';
+  url: string;
+  label?: string;
+}
+
 interface Article {
   id: number;
   title: string;
@@ -8,6 +14,9 @@ interface Article {
   author: string | null;
   pdf_url: string | null;
   slug: string;
+  publisher: string | null;
+  publication_info: string | null;
+  content_blocks: ContentBlock[] | null;
 }
 
 export async function GET(
@@ -31,7 +40,10 @@ export async function GET(
         abstract,
         author,
         pdf_url,
-        slug
+        slug,
+        publisher,
+        publication_info,
+        content_blocks
       FROM articles 
       WHERE slug = ?
     `;
@@ -88,6 +100,7 @@ export async function PUT(
     if (publisher !== undefined)        { fields.push('publisher = ?');        values.push(publisher); }
     if (publication_info !== undefined) { fields.push('publication_info = ?'); values.push(publication_info); }
     if (newSlug !== undefined)          { fields.push('slug = ?');             values.push(newSlug); }
+    if (body.content_blocks !== undefined) { fields.push('content_blocks = ?'); values.push(body.content_blocks !== null ? JSON.stringify(body.content_blocks) : null); }
 
     if (fields.length === 0) {
       return NextResponse.json({ error: 'No fields to update' }, { status: 400 });
@@ -97,7 +110,7 @@ export async function PUT(
     await db.query(`UPDATE articles SET ${fields.join(', ')} WHERE slug = ?`, values);
 
     const updated = await db.query<Article>(
-      'SELECT id, title, abstract, author, pdf_url, slug, publisher, publication_info FROM articles WHERE slug = ?',
+      'SELECT id, title, abstract, author, pdf_url, slug, publisher, publication_info, content_blocks FROM articles WHERE slug = ?',
       [newSlug ?? slug]
     );
 
