@@ -21,12 +21,14 @@ export default function Footer() {
         </div>
         <div className='text-[0.7rem] md:text-[0.8rem] mt-2 md:mt-0 font-display tracking-wide'>
           Site by{' '}
-          <Link 
-            href="/"
+          <a 
+            href="https://mkrapo.dev/"
+            target="_blank"
+            rel="noopener noreferrer"
             className="hover:text-red-600 transition-colors duration-200 font-heading tracking-tight"
           >
             <span className="inline-block [transform:rotateY(180deg)_translateY(0.3rem)]">K</span><span className="align-middle">M</span>
-          </Link>
+          </a>
         </div>
       </div>
     </footer>
