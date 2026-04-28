@@ -15,9 +15,13 @@ interface ArticleContentBlocksProps {
 }
 
 export default function ArticleContentBlocks({ blocks }: ArticleContentBlocksProps) {
+  const rendered = new Set<number>();
+
   return (
     <div className="mt-8">
       {blocks.map((block, idx) => {
+        if (rendered.has(idx)) return null;
+
         if (block.type === 'heading') {
           return (
             <h3 key={idx} className="text-lg font-semibold text-gray-300 mt-20 mb-8 text-center">
@@ -25,6 +29,7 @@ export default function ArticleContentBlocks({ blocks }: ArticleContentBlocksPro
             </h3>
           );
         }
+
         if (block.type === 'video') {
           return (
             <div key={idx} className="mt-20 mb-4">
@@ -46,18 +51,31 @@ export default function ArticleContentBlocks({ blocks }: ArticleContentBlocksPro
             </div>
           );
         }
+
         if (block.type === 'sound') {
-          const isLastSound = blocks.slice(idx + 1).every((b) => b.type !== 'sound');
+          const group: { block: ContentBlock; idx: number }[] = [];
+          let i = idx;
+          while (i < blocks.length && blocks[i].type === 'sound') {
+            group.push({ block: blocks[i], idx: i });
+            rendered.add(i);
+            i++;
+          }
+          const isLastSoundGroup = blocks.slice(i).every((b) => b.type !== 'sound');
+
           return (
-            <div key={idx} className="mb-6">
-              <div className="bg-gradient-to-b from-white/5 to-white/10 backdrop-blur-sm p-4 rounded-lg">
-                {block.label && (
-                  <p className="text-base text-fuchsia-200 mb-4">{block.label}</p>
-                )}
-                <SoundPlayer fileUrl={block.url!} />
+            <div key={idx}>
+              <div className="flex flex-wrap justify-center gap-8">
+                {group.map(({ block: b, idx: i }) => (
+                  <div key={i} className="bg-gradient-to-b from-white/5 to-white/10 backdrop-blur-sm p-4 rounded-lg w-[300px] lg:w-[400px]">
+                    {b.label && (
+                      <p className="text-base text-fuchsia-200 mb-4">{b.label}</p>
+                    )}
+                    <SoundPlayer fileUrl={b.url!} />
+                  </div>
+                ))}
               </div>
-              {isLastSound && (
-                <p className="text-sm text-gray-400 mt-8">
+              {isLastSoundGroup && (
+                <p className="text-sm text-gray-400 mt-8 text-center">
                   Larger sound bank available at:{' '}
                   <a
                     href="https://www.extendedbandoneon.com/soundbank"
@@ -72,6 +90,7 @@ export default function ArticleContentBlocks({ blocks }: ArticleContentBlocksPro
             </div>
           );
         }
+
         return null;
       })}
     </div>
