@@ -12,7 +12,7 @@ interface Article {
   slug: string;
   publisher: string | null;
   publication_info: string | null;
-  content_blocks: { type: 'video' | 'sound'; url: string; label?: string }[] | string | null;
+  content_blocks: { type: 'video' | 'sound' | 'heading'; url?: string; label?: string }[] | string | null;
 }
 
 async function getArticle(slug: string): Promise<Article | null> {
@@ -77,7 +77,7 @@ export default async function ArticlePage({ params }: Props) {
           </p>
         )}
         {(article.publication_info || article.publisher) && (
-          <div className="text-sm text-gray-400 mb-8 mt-2 space-y-1">
+          <div className="text-sm text-gray-400 mt-2 space-y-1">
             {article.publication_info && (
               <p>{article.publication_info}</p>
             )}
@@ -87,7 +87,7 @@ export default async function ArticlePage({ params }: Props) {
           </div>
         )}
         {article.abstract && (
-          <div className="bg-gradient-to-b from-white/5 to-white/10 backdrop-blur-sm p-6 rounded-lg mb-8">
+          <div className="bg-gradient-to-b from-white/5 to-white/10 backdrop-blur-sm p-6 rounded-lg mb-8 mt-8">
             <h2 className="text-lg font-semibold mb-4 text-fuchsia-200">Abstract</h2>
             <p className="text-gray-300 font-body space-y-4 leading-relaxed">{article.abstract}</p>
           </div>

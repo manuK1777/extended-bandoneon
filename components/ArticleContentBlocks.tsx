@@ -5,8 +5,8 @@ import dynamic from 'next/dynamic';
 const SoundPlayer = dynamic(() => import('@/components/SoundPlayer'), { ssr: false });
 
 interface ContentBlock {
-  type: 'video' | 'sound';
-  url: string;
+  type: 'video' | 'sound' | 'heading';
+  url?: string;
   label?: string;
 }
 
@@ -15,17 +15,21 @@ interface ArticleContentBlocksProps {
 }
 
 export default function ArticleContentBlocks({ blocks }: ArticleContentBlocksProps) {
-  const videos = blocks.filter((b) => b.type === 'video');
-  const sounds = blocks.filter((b) => b.type === 'sound');
-
   return (
-    <div className="space-y-10 mt-8">
-      {videos.length > 0 && (
-        <div className="space-y-6">
-          {videos.map((block, idx) => (
-            <div key={idx}>
+    <div className="mt-8">
+      {blocks.map((block, idx) => {
+        if (block.type === 'heading') {
+          return (
+            <h3 key={idx} className="text-lg font-semibold text-gray-300 mt-20 mb-8 text-center">
+              {block.label}
+            </h3>
+          );
+        }
+        if (block.type === 'video') {
+          return (
+            <div key={idx} className="mt-20 mb-4">
               {block.label && (
-                <p className="text-sm text-fuchsia-200 mb-2">{block.label}</p>
+                <h4 className="text-lg font-semibold text-gray-300 text-center mb-8">{block.label}</h4>
               )}
               <div className="flex justify-center">
                 <div className="w-[300px] lg:w-[400px] aspect-[16/9] relative">
@@ -40,22 +44,36 @@ export default function ArticleContentBlocks({ blocks }: ArticleContentBlocksPro
                 </div>
               </div>
             </div>
-          ))}
-        </div>
-      )}
-
-      {sounds.length > 0 && (
-        <div className="space-y-6">
-          {sounds.map((block, idx) => (
-            <div key={idx} className="bg-gradient-to-b from-white/5 to-white/10 backdrop-blur-sm p-4 rounded-lg">
-              {block.label && (
-                <p className="text-sm text-fuchsia-200 mb-3">{block.label}</p>
+          );
+        }
+        if (block.type === 'sound') {
+          const isLastSound = blocks.slice(idx + 1).every((b) => b.type !== 'sound');
+          return (
+            <div key={idx} className="mb-6">
+              <div className="bg-gradient-to-b from-white/5 to-white/10 backdrop-blur-sm p-4 rounded-lg">
+                {block.label && (
+                  <p className="text-base text-fuchsia-200 mb-4">{block.label}</p>
+                )}
+                <SoundPlayer fileUrl={block.url!} />
+              </div>
+              {isLastSound && (
+                <p className="text-sm text-gray-400 mt-8">
+                  Larger sound bank available at:{' '}
+                  <a
+                    href="https://www.extendedbandoneon.com/soundbank"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-fuchsia-200 hover:text-fuchsia-300 transition-colors duration-200"
+                  >
+                    extendedbandoneon.com/soundbank
+                  </a>
+                </p>
               )}
-              <SoundPlayer fileUrl={block.url} />
             </div>
-          ))}
-        </div>
-      )}
+          );
+        }
+        return null;
+      })}
     </div>
   );
 }
