@@ -1,4 +1,3 @@
-import Link from 'next/link';
 import SocialMediaBar from '../SocialMediaBar';
 
 export default function Footer() {
