@@ -37,7 +37,7 @@ export default function ArticleContentBlocks({ blocks }: ArticleContentBlocksPro
                 <h4 className="text-lg font-semibold text-gray-300 text-center mb-8">{block.label}</h4>
               )}
               <div className="flex justify-center">
-                <div className="w-[300px] lg:w-[400px] aspect-[16/9] relative">
+                <div className="w-[300px] md:w-[500px] aspect-[16/9] relative">
                   <iframe
                     src={block.url}
                     style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', border: 0 }}
