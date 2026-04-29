@@ -83,7 +83,7 @@ export default function ArticleContentBlocks({ blocks }: ArticleContentBlocksPro
 
     if (block.type === 'table') {
       return (
-        <div key={idx} className="overflow-x-auto">
+        <div key={idx}>
           {block.label && (
             <h4 className={`text-lg font-semibold text-gray-300 text-center ${headingGap}`}>
               {block.label.split('\n').map((line, i) => (
@@ -91,12 +91,12 @@ export default function ArticleContentBlocks({ blocks }: ArticleContentBlocksPro
               ))}
             </h4>
           )}
-          <table className="mx-auto w-full max-w-2xl border-collapse text-sm text-gray-300">
+          <table className="mx-auto w-full max-w-2xl border-collapse text-sm text-gray-300 table-fixed">
             {block.headers && (
               <thead>
                 <tr>
                   {block.headers.map((h, i) => (
-                    <th key={i} className="border border-white/20 bg-white/10 px-4 py-3 text-left font-semibold text-fuchsia-200">{h}</th>
+                    <th key={i} className="border border-white/20 bg-white/10 px-3 py-3 text-left font-semibold text-fuchsia-200 whitespace-normal break-words">{h}</th>
                   ))}
                 </tr>
               </thead>
@@ -105,7 +105,7 @@ export default function ArticleContentBlocks({ blocks }: ArticleContentBlocksPro
               {block.rows?.map((row, ri) => (
                 <tr key={ri} className="even:bg-white/5">
                   {row.map((cell, ci) => (
-                    <td key={ci} className="border border-white/20 px-4 py-3 leading-snug">{cell}</td>
+                    <td key={ci} className="border border-white/20 px-3 py-3 leading-snug break-words">{cell}</td>
                   ))}
                 </tr>
               ))}
