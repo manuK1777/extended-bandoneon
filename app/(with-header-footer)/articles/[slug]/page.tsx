@@ -12,7 +12,7 @@ interface Article {
   slug: string;
   publisher: string | null;
   publication_info: string | null;
-  content_blocks: { type: 'video' | 'sound' | 'heading' | 'table'; url?: string; label?: string; headers?: string[]; rows?: string[][] }[] | string | null;
+  content_blocks: { type: 'video' | 'sound' | 'heading' | 'table' | 'text' | 'link' | 'subheading'; url?: string; label?: string; text?: string; headers?: string[]; rows?: string[][] }[] | string | null;
 }
 
 async function getArticle(slug: string): Promise<Article | null> {

@@ -5,9 +5,12 @@ import dynamic from 'next/dynamic';
 const SoundPlayer = dynamic(() => import('@/components/SoundPlayer'), { ssr: false });
 
 interface ContentBlock {
-  type: 'video' | 'sound' | 'heading' | 'table';
+  type: 'video' | 'sound' | 'heading' | 'table' | 'text' | 'link' | 'subheading';
   url?: string;
   label?: string;
+  text?: string;
+  centered?: boolean;
+  spaceBefore?: boolean;
   headers?: string[];
   rows?: string[][];
 }
@@ -17,15 +20,52 @@ interface ArticleContentBlocksProps {
 }
 
 export default function ArticleContentBlocks({ blocks }: ArticleContentBlocksProps) {
-  const rendered = new Set<number>();
   const headingGap = 'mb-10';
 
-  function renderContent(block: ContentBlock, idx: number, rendered: Set<number>) {
+  function renderItem(block: ContentBlock, idx: number, soundRendered: Set<number>, sectionItems: ContentBlock[]) {
+    if (block.type === 'text') {
+      return (
+        <div key={idx} className={`space-y-1 max-w-4xl mx-auto ${sectionItems[idx - 1]?.type === 'subheading' ? '!mt-2' : ''}`}>
+          {(block.text ?? block.label ?? '').split('\n').filter(p => p.trim()).map((p, i) => (
+            <p key={i} className={`leading-relaxed ${block.centered ? 'text-sm text-gray-400' : 'text-gray-300'}`}>{p}</p>
+          ))}
+        </div>
+      );
+    }
+
+    if (block.type === 'subheading') {
+      return (
+        <div key={idx} className={`max-w-4xl mx-auto ${block.spaceBefore ? '!mt-20' : ''}`}>
+          <h4 className="text-base font-semibold text-gray-300">
+            {block.label?.split('\n').map((line, i, arr) => (
+              <span key={i}>{line}{i < arr.length - 1 && <br />}</span>
+            ))}
+          </h4>
+        </div>
+      );
+    }
+
+    if (block.type === 'link') {
+      return (
+        <p key={idx} className="text-sm text-gray-400 text-center">
+          {block.label && <span>{block.label} </span>}
+          <a
+            href={block.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-fuchsia-200 hover:text-fuchsia-300 transition-colors duration-200"
+          >
+            {block.url}
+          </a>
+        </p>
+      );
+    }
+
     if (block.type === 'video') {
       return (
-        <div key={idx}>
+        <div key={idx} className="space-y-6">
           {block.label && (
-            <h4 className={`text-lg font-semibold text-gray-300 text-center ${headingGap}`}>{block.label}</h4>
+            <h4 className="text-base font-semibold text-gray-300 text-center">{block.label}</h4>
           )}
           <div className="flex justify-center">
             <div className="w-[300px] md:w-[500px] aspect-[16/9] relative">
@@ -44,14 +84,15 @@ export default function ArticleContentBlocks({ blocks }: ArticleContentBlocksPro
     }
 
     if (block.type === 'sound') {
+      if (soundRendered.has(idx)) return null;
       const group: { block: ContentBlock; idx: number }[] = [];
       let i = idx;
-      while (i < blocks.length && blocks[i].type === 'sound') {
-        group.push({ block: blocks[i], idx: i });
-        rendered.add(i);
+      while (i < sectionItems.length && sectionItems[i].type === 'sound') {
+        group.push({ block: sectionItems[i], idx: i });
+        soundRendered.add(i);
         i++;
       }
-      const isLastSoundGroup = blocks.slice(i).every((b) => b.type !== 'sound');
+      const isLastSoundGroup = sectionItems.slice(i).every((b) => b.type !== 'sound');
       return (
         <div key={idx}>
           <div className="flex flex-wrap justify-center gap-8">
@@ -118,28 +159,39 @@ export default function ArticleContentBlocks({ blocks }: ArticleContentBlocksPro
     return null;
   }
 
+  const sections: { heading: ContentBlock | null; items: ContentBlock[] }[] = [];
+  let current: { heading: ContentBlock | null; items: ContentBlock[] } = { heading: null, items: [] };
+
+  for (const block of blocks) {
+    if (block.type === 'heading') {
+      if (current.heading !== null || current.items.length > 0) {
+        sections.push(current);
+      }
+      current = { heading: block, items: [] };
+    } else {
+      current.items.push(block);
+    }
+  }
+  sections.push(current);
+
   return (
     <div className="mt-24 space-y-24">
-      {blocks.map((block, idx) => {
-        if (rendered.has(idx)) return null;
-
-        if (block.type === 'heading') {
-          const next = blocks[idx + 1];
-          if (next && next.type !== 'heading') {
-            rendered.add(idx + 1);
-            return (
-              <div key={idx}>
-                <h3 className={`text-lg font-semibold text-gray-300 ${headingGap} text-center`}>{block.label}</h3>
-                {renderContent(next, idx + 1, rendered)}
-              </div>
-            );
-          }
-          return (
-            <h3 key={idx} className="text-lg font-semibold text-gray-300 text-center">{block.label}</h3>
-          );
-        }
-
-        return renderContent(block, idx, rendered);
+      {sections.map((section, si) => {
+        const soundRendered = new Set<number>();
+        return (
+          <div key={si}>
+            {section.heading && (
+              <h3 className={`text-lg font-semibold text-gray-300 text-center ${headingGap}`}>
+                {section.heading.label?.split('\n').map((line, i, arr) => (
+                  <span key={i}>{line}{i < arr.length - 1 && <br />}</span>
+                ))}
+              </h3>
+            )}
+            <div className="space-y-10">
+              {section.items.map((block, ii) => renderItem(block, ii, soundRendered, section.items))}
+            </div>
+          </div>
+        );
       })}
     </div>
   );
