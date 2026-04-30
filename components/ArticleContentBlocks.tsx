@@ -11,6 +11,7 @@ interface ContentBlock {
   text?: string;
   centered?: boolean;
   spaceBefore?: boolean;
+  small?: boolean;
   headers?: string[];
   rows?: string[][];
 }
@@ -27,7 +28,7 @@ export default function ArticleContentBlocks({ blocks }: ArticleContentBlocksPro
       return (
         <div key={idx} className={`space-y-1 max-w-4xl mx-auto ${sectionItems[idx - 1]?.type === 'subheading' ? '!mt-2' : ''}`}>
           {(block.text ?? block.label ?? '').split('\n').filter(p => p.trim()).map((p, i) => (
-            <p key={i} className={`leading-relaxed ${block.centered ? 'text-sm text-gray-400' : 'text-gray-300'}`}>{p}</p>
+            <p key={i} className={`leading-relaxed ${block.centered ? 'text-sm text-gray-400' : 'text-gray-300'}`} style={block.small ? { fontSize: '0.85rem' } : block.centered ? undefined : { fontSize: '1rem' }}>{p}</p>
           ))}
         </div>
       );
