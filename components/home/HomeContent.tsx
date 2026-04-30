@@ -3,6 +3,9 @@
 import { motion } from "framer-motion";
 import Image from "next/image";
 import ResponsiveNav from "../navigation/ResponsiveNav";
+import AuthButton from "../auth/AuthButton";
+import UserMenu from "../auth/UserMenu";
+import AuthModal from "../auth/AuthModal";
 
 export default function HomeContent() {
   return (
@@ -29,7 +32,18 @@ export default function HomeContent() {
         <div className="absolute inset-0 bg-black/30" />
       </motion.div>
 
+      <div className="relative z-20 flex justify-end p-6">
+        <div className="hidden md:block">
+          <AuthButton />
+        </div>
+        <div className="hidden md:block">
+          <UserMenu />
+        </div>
+      </div>
+
       <ResponsiveNav />
+
+      <AuthModal />
 
       {/* Content */}
       <motion.div

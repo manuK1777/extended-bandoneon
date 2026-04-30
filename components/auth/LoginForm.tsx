@@ -1,0 +1,133 @@
+'use client';
+
+import { useState } from 'react';
+import { useAuth } from '@/contexts/AuthContext';
+import { FaEye, FaEyeSlash } from 'react-icons/fa';
+
+export default function LoginForm() {
+  const { login, openForgotPasswordModal } = useAuth();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [remember, setRemember] = useState(false);
+
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (isLoading) return; // prevent duplicate submissions
+    setError('');
+    setIsLoading(true);
+
+    try {
+      const result = await login(email, password, remember);
+      
+      if (!result.success) {
+        setError(result.error || 'Login failed');
+      }
+    } catch (error) {
+      setError(error instanceof Error ? error.message : 'An error occurred during login');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return (
+    <form className="space-y-6" onSubmit={handleSubmit}>
+      <div>
+        <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+          Email address
+        </label>
+        <div className="mt-1">
+          <input
+            id="email"
+            name="email"
+            type="email"
+            autoComplete="email"
+            required
+            className="appearance-none block w-full px-3 py-2 border border-gray-300 
+                      rounded-md shadow-sm placeholder-gray-400 text-gray-900 
+                      focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 
+                      dark:bg-gray-800 dark:border-gray-700 dark:text-white
+                      sm:text-sm"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+        </div>
+      </div>
+
+      <div>
+        <div className="flex items-center justify-between">
+          <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+            Password
+          </label>
+          <button
+            type="button"
+            onClick={openForgotPasswordModal}
+            className="text-sm text-yellow-200 hover:text-fuchsia-500 font-medium"
+          >
+            Forgot password?
+          </button>
+        </div>
+        <div className="mt-1 relative">
+          <input
+            id="password"
+            name="password"
+            type={showPassword ? "text" : "password"}
+            autoComplete="current-password"
+            required
+            className="appearance-none block w-full px-3 py-2 border border-gray-300 
+                      rounded-md shadow-sm placeholder-gray-400 text-gray-900 
+                      focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 
+                      dark:bg-gray-800 dark:border-gray-700 dark:text-white
+                      sm:text-sm"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+          <button
+            type="button"
+            className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-600 dark:text-gray-500 hover:text-red-500 dark:hover:text-red-400 transition-colors"
+            onClick={togglePasswordVisibility}
+            aria-label={showPassword ? "Hide password" : "Show password"}
+          >
+            {showPassword ? <FaEyeSlash size={16} /> : <FaEye size={16} />}
+          </button>
+        </div>
+      </div>
+
+      <div className="flex items-center justify-between">
+        <label className="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300">
+          <input
+            type="checkbox"
+            className="checkbox checkbox-sm border-fuchsia-500 [--chkbg:theme(colors.fuchsia.500)] [--chkfg:#ffffff]"
+            checked={remember}
+            onChange={(e) => setRemember(e.target.checked)}
+          />
+          Keep me signed in
+        </label>
+      </div>
+
+      {error && (
+        <div className="text-red-500 text-sm text-center">{error}</div>
+      )}
+
+      <div>
+        <button
+          type="submit"
+          disabled={isLoading}
+          className="w-full flex justify-center py-2 px-4 border border-transparent 
+                    rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 
+                    hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 
+                    focus:ring-indigo-500 disabled:bg-indigo-400 disabled:cursor-not-allowed
+                    transition-colors duration-200"
+        >
+          {isLoading ? 'Signing in...' : 'Sign in'}
+        </button>
+      </div>
+    </form>
+  );
+}

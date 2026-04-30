@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { db } from '@/lib/db';
 import { Download } from 'lucide-react';
+import ArticleContentBlocks from '@/components/ArticleContentBlocks';
 
 interface Article {
   id: number;
@@ -11,6 +12,7 @@ interface Article {
   slug: string;
   publisher: string | null;
   publication_info: string | null;
+  content_blocks: { type: 'video' | 'sound' | 'heading' | 'table' | 'text' | 'link' | 'subheading'; url?: string; label?: string; text?: string; headers?: string[]; rows?: string[][] }[] | string | null;
 }
 
 async function getArticle(slug: string): Promise<Article | null> {
@@ -23,7 +25,8 @@ async function getArticle(slug: string): Promise<Article | null> {
       pdf_url,
       slug,
       publisher,
-      publication_info
+      publication_info,
+      content_blocks
     FROM articles 
     WHERE slug = ?
   `;
@@ -74,7 +77,7 @@ export default async function ArticlePage({ params }: Props) {
           </p>
         )}
         {(article.publication_info || article.publisher) && (
-          <div className="text-sm text-gray-400 mb-8 mt-2 space-y-1">
+          <div className="text-sm text-gray-400 mt-2 space-y-1">
             {article.publication_info && (
               <p>{article.publication_info}</p>
             )}
@@ -84,10 +87,17 @@ export default async function ArticlePage({ params }: Props) {
           </div>
         )}
         {article.abstract && (
-          <div className="bg-gradient-to-b from-white/5 to-white/10 backdrop-blur-sm p-6 rounded-lg mb-8">
+          <div className="bg-gradient-to-b from-white/5 to-white/10 backdrop-blur-sm p-6 rounded-lg mb-8 mt-8">
             <h2 className="text-lg font-semibold mb-4 text-fuchsia-200">Abstract</h2>
-            <p className="text-gray-300 font-body space-y-4 leading-relaxed">{article.abstract}</p>
+            <div className="space-y-4">
+              {article.abstract.split('\n').filter(p => p.trim()).map((paragraph, i) => (
+                <p key={i} className="text-gray-300 font-body leading-relaxed">{paragraph}</p>
+              ))}
+            </div>
           </div>
+        )}
+        {article.content_blocks && (
+          <ArticleContentBlocks blocks={typeof article.content_blocks === 'string' ? JSON.parse(article.content_blocks) : article.content_blocks} />
         )}
         {article.pdf_url && (
           <div className="mt-8 flex justify-center md:justify-end">

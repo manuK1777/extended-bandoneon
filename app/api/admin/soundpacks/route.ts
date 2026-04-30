@@ -3,6 +3,8 @@ import { db } from '@/lib/db';
 import { processTags } from '@/utils/tag-utils';
 import { v2 as cloudinary } from 'cloudinary';
 
+export const runtime = 'nodejs'; // Explicitly use Node.js runtime
+
 // Configure Cloudinary
 cloudinary.config({
   cloud_name: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,

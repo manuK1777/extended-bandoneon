@@ -1,35 +1,25 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
-export function middleware(request: NextRequest) {
-  console.log('Middleware triggered for:', request.nextUrl.pathname);
+export const runtime = 'experimental-edge';
 
-  // Check if the request is for an admin route
+export async function middleware(request: NextRequest) {
+
   if (request.nextUrl.pathname.startsWith('/admin') || 
       request.nextUrl.pathname.startsWith('/api/admin')) {
     
-    // Skip authentication for the login page itself
-    if (request.nextUrl.pathname === '/login') {
-      console.log('Skipping authentication for login page');
-      return NextResponse.next();
-    }
-
-    const token = request.cookies.get('admin_token')?.value;
-    console.log('Token found:', token);
+    const token = request.cookies.get('auth_token')?.value;
     
-    // If no token is present, redirect to login
     if (!token) {
-      console.log('No auth token found, redirecting to login');
-      return NextResponse.redirect(new URL('/login', request.url));
+      return NextResponse.redirect(new URL('/', request.url));
     }
 
-    // Token is present, proceed with the request
-    console.log('Token present, proceeding to admin route');
+    // For simplicity, we'll just check if the token exists
+    // The actual verification will happen in the admin pages/API routes
     return NextResponse.next();
   }
 
   // Not an admin route, proceed normally
-  console.log('Not an admin route, proceeding normally');
   return NextResponse.next();
 }
 
@@ -37,7 +27,6 @@ export function middleware(request: NextRequest) {
 export const config = {
   matcher: [
     '/admin/:path*',
-    '/api/admin/:path*',
-    '/login'
+    '/api/admin/:path*'
   ],
 };
