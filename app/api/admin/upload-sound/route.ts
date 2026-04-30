@@ -50,10 +50,10 @@ function processTags(tags: string[]) {
 }
 
 export async function POST(req: NextRequest) {
-  const token = req.cookies.get('admin_token')?.value;
+  const token = req.cookies.get('auth_token')?.value;
   const payload = verifyJWT(token || '');
 
-  if (!payload || !payload.isAdmin) {
+  if (!payload || payload.role !== 'admin') {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
