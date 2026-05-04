@@ -12,6 +12,7 @@ interface ContentBlock {
   centered?: boolean;
   spaceBefore?: boolean;
   small?: boolean;
+  color?: string;
   headers?: string[];
   rows?: string[][];
 }
@@ -37,7 +38,7 @@ export default function ArticleContentBlocks({ blocks }: ArticleContentBlocksPro
     if (block.type === 'subheading') {
       return (
         <div key={idx} className={`max-w-4xl mx-auto ${block.spaceBefore ? '!mt-20' : ''}`}>
-          <h4 className="text-base font-semibold text-gray-300">
+          <h4 className={`text-base font-semibold ${block.color || 'text-gray-300'}`} style={block.small ? { fontSize: '0.95rem' } : undefined}>
             {block.label?.split('\n').map((line, i, arr) => (
               <span key={i}>{line}{i < arr.length - 1 && <br />}</span>
             ))}
@@ -176,11 +177,14 @@ export default function ArticleContentBlocks({ blocks }: ArticleContentBlocksPro
   sections.push(current);
 
   return (
-    <div className="mt-24 space-y-24">
+    <div className="mt-16">
       {sections.map((section, si) => {
         const soundRendered = new Set<number>();
+        const isFirstSection = si === 0;
+        const prevSectionHasNoHeading = !isFirstSection && !sections[si - 1].heading;
+        const sectionMargin = isFirstSection ? '' : prevSectionHasNoHeading && si === 1 ? 'mt-16' : 'mt-24';
         return (
-          <div key={si}>
+          <div key={si} className={sectionMargin}>
             {section.heading && (
               <h3 className={`text-lg font-semibold text-gray-300 text-center ${headingGap}`}>
                 {section.heading.label?.split('\n').map((line, i, arr) => (

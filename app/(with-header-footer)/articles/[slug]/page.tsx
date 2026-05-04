@@ -87,7 +87,7 @@ export default async function ArticlePage({ params }: Props) {
           </div>
         )}
         {article.abstract && (
-          <div className="bg-gradient-to-b from-white/5 to-white/10 backdrop-blur-sm p-6 rounded-lg mb-8 mt-8">
+          <div className="bg-gradient-to-b from-white/5 to-white/10 backdrop-blur-sm p-6 rounded-lg mb-16 mt-8">
             <h2 className="text-lg font-semibold mb-4 text-fuchsia-200">Abstract</h2>
             <div className="space-y-4">
               {article.abstract.split('\n').filter(p => p.trim()).map((paragraph, i) => (
