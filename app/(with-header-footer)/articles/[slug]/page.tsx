@@ -13,6 +13,7 @@ interface Article {
   publisher: string | null;
   publication_info: string | null;
   content_blocks: { type: 'video' | 'sound' | 'heading' | 'table' | 'text' | 'link' | 'subheading'; url?: string; label?: string; text?: string; headers?: string[]; rows?: string[][] }[] | string | null;
+  documentation_url: string | null;
 }
 
 async function getArticle(slug: string): Promise<Article | null> {
@@ -26,7 +27,8 @@ async function getArticle(slug: string): Promise<Article | null> {
       slug,
       publisher,
       publication_info,
-      content_blocks
+      content_blocks,
+      documentation_url
     FROM articles 
     WHERE slug = ?
   `;
@@ -99,17 +101,32 @@ export default async function ArticlePage({ params }: Props) {
         {article.content_blocks && (
           <ArticleContentBlocks blocks={typeof article.content_blocks === 'string' ? JSON.parse(article.content_blocks) : article.content_blocks} />
         )}
-        {article.pdf_url && (
-          <div className="mt-8 flex justify-center md:justify-end">
-            <a 
-              href={article.pdf_url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center px-2 py-3 bg-gradient-to-b from-white/5 to-white/10 backdrop-blur-sm transition-colors duration-200 hover:from-white/10 hover:to-white/15 text-yellow-200 rounded-lg hover:text-fuchsia-500"
-            >
-              <Download size={18} className="mr-2" />
-              Full pdf article
-            </a>
+        {(article.pdf_url || article.documentation_url) && (
+          <div className="mt-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+            {article.documentation_url && (
+              <p className="text-sm text-gray-400">
+                Link to documentation:{' '}
+                <a
+                  href={article.documentation_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-fuchsia-200 hover:text-fuchsia-300 transition-colors duration-200"
+                >
+                  {article.documentation_url}
+                </a>
+              </p>
+            )}
+            {article.pdf_url && (
+              <a 
+                href={article.pdf_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center px-2 py-3 bg-gradient-to-b from-white/5 to-white/10 backdrop-blur-sm transition-colors duration-200 hover:from-white/10 hover:to-white/15 text-yellow-200 rounded-lg hover:text-fuchsia-500"
+              >
+                <Download size={18} className="mr-2" />
+                Full pdf article
+              </a>
+            )}
           </div>
         )}
       </article>

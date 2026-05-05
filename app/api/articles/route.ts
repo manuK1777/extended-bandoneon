@@ -80,7 +80,7 @@ export async function POST(
 ) {
   try {
     const body = await request.json();
-    const { title, abstract, author, pdf_url, publisher, publication_info, sort_order } = body;
+    const { title, abstract, author, pdf_url, publisher, publication_info, sort_order, documentation_url } = body;
     
     // Generate slug from title
     const baseSlug = generateSlug(title);
@@ -99,15 +99,15 @@ export async function POST(
     }
 
     const insertQuery = `
-      INSERT INTO articles (title, abstract, author, pdf_url, slug, publisher, publication_info, sort_order)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+      INSERT INTO articles (title, abstract, author, pdf_url, slug, publisher, publication_info, sort_order, documentation_url)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
     `;
     
-    const values = [title, abstract, author, pdf_url, slug, publisher ?? null, publication_info ?? null, sort_order ?? 0];
+    const values = [title, abstract, author, pdf_url, slug, publisher ?? null, publication_info ?? null, sort_order ?? 0, documentation_url ?? null];
     await db.query(insertQuery, values);
 
     const result = await db.query<Article>(
-      'SELECT id, title, abstract, author, pdf_url, slug, publisher, publication_info, sort_order FROM articles WHERE slug = ?',
+      'SELECT id, title, abstract, author, pdf_url, slug, publisher, publication_info, sort_order, documentation_url FROM articles WHERE slug = ?',
       [slug]
     );
     
