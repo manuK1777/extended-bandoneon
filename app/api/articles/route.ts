@@ -11,6 +11,7 @@ interface Article {
   slug: string;
   publisher: string | null;
   publication_info: string | null;
+  sort_order: number;
 }
 
 export async function GET(
@@ -27,7 +28,8 @@ export async function GET(
         abstract,
         author,
         pdf_url,
-        slug
+        slug,
+        sort_order
       FROM articles
     `;
 
@@ -38,7 +40,7 @@ export async function GET(
       queryParams.push(articleId);
     }
 
-    query += ` ORDER BY created_at DESC`;
+    query += ` ORDER BY sort_order ASC`;
 
     const articles = await db.query<Article>(query, queryParams);
 
@@ -78,7 +80,7 @@ export async function POST(
 ) {
   try {
     const body = await request.json();
-    const { title, abstract, author, pdf_url, publisher, publication_info } = body;
+    const { title, abstract, author, pdf_url, publisher, publication_info, sort_order } = body;
     
     // Generate slug from title
     const baseSlug = generateSlug(title);
@@ -97,15 +99,15 @@ export async function POST(
     }
 
     const insertQuery = `
-      INSERT INTO articles (title, abstract, author, pdf_url, slug, publisher, publication_info)
-      VALUES (?, ?, ?, ?, ?, ?, ?)
+      INSERT INTO articles (title, abstract, author, pdf_url, slug, publisher, publication_info, sort_order)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?)
     `;
     
-    const values = [title, abstract, author, pdf_url, slug, publisher ?? null, publication_info ?? null];
+    const values = [title, abstract, author, pdf_url, slug, publisher ?? null, publication_info ?? null, sort_order ?? 0];
     await db.query(insertQuery, values);
 
     const result = await db.query<Article>(
-      'SELECT id, title, abstract, author, pdf_url, slug, publisher, publication_info FROM articles WHERE slug = ?',
+      'SELECT id, title, abstract, author, pdf_url, slug, publisher, publication_info, sort_order FROM articles WHERE slug = ?',
       [slug]
     );
     

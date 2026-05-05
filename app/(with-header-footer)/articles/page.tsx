@@ -6,6 +6,7 @@ interface Article {
   title: string;
   author: string | null;
   slug: string;
+  sort_order: number;
 }
 
 async function getArticles(): Promise<Article[]> {
@@ -14,9 +15,10 @@ async function getArticles(): Promise<Article[]> {
       id,
       title,
       author,
-      slug
+      slug,
+      sort_order
     FROM articles 
-    ORDER BY id DESC
+    ORDER BY sort_order ASC
   `;
   
   return await db.query<Article>(query);
