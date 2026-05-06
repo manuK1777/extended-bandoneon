@@ -17,6 +17,8 @@ interface Article {
   publisher: string | null;
   publication_info: string | null;
   content_blocks: ContentBlock[] | null;
+  sort_order: number;
+  documentation_url: string | null;
 }
 
 export async function GET(
@@ -43,7 +45,9 @@ export async function GET(
         slug,
         publisher,
         publication_info,
-        content_blocks
+        content_blocks,
+        sort_order,
+        documentation_url
       FROM articles 
       WHERE slug = ?
     `;
@@ -88,10 +92,10 @@ export async function PUT(
     }
 
     const body = await request.json();
-    const { title, abstract, author, pdf_url, publisher, publication_info, slug: newSlug } = body;
+    const { title, abstract, author, pdf_url, publisher, publication_info, slug: newSlug, sort_order, documentation_url } = body;
 
     const fields: string[] = [];
-    const values: (string | null)[] = [];
+    const values: (string | number | null)[] = [];
 
     if (title !== undefined)            { fields.push('title = ?');            values.push(title); }
     if (abstract !== undefined)         { fields.push('abstract = ?');         values.push(abstract); }
@@ -100,6 +104,8 @@ export async function PUT(
     if (publisher !== undefined)        { fields.push('publisher = ?');        values.push(publisher); }
     if (publication_info !== undefined) { fields.push('publication_info = ?'); values.push(publication_info); }
     if (newSlug !== undefined)          { fields.push('slug = ?');             values.push(newSlug); }
+    if (sort_order !== undefined)       { fields.push('sort_order = ?');        values.push(sort_order); }
+    if (documentation_url !== undefined) { fields.push('documentation_url = ?'); values.push(documentation_url); }
     if (body.content_blocks !== undefined) { fields.push('content_blocks = ?'); values.push(body.content_blocks !== null ? JSON.stringify(body.content_blocks) : null); }
 
     if (fields.length === 0) {
@@ -110,7 +116,7 @@ export async function PUT(
     await db.query(`UPDATE articles SET ${fields.join(', ')} WHERE slug = ?`, values);
 
     const updated = await db.query<Article>(
-      'SELECT id, title, abstract, author, pdf_url, slug, publisher, publication_info, content_blocks FROM articles WHERE slug = ?',
+      'SELECT id, title, abstract, author, pdf_url, slug, publisher, publication_info, content_blocks, sort_order, documentation_url FROM articles WHERE slug = ?',
       [newSlug ?? slug]
     );
 
