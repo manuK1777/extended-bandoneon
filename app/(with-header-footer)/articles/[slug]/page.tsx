@@ -102,7 +102,7 @@ export default async function ArticlePage({ params }: Props) {
           <ArticleContentBlocks blocks={typeof article.content_blocks === 'string' ? JSON.parse(article.content_blocks) : article.content_blocks} />
         )}
         {(article.pdf_url || article.documentation_url) && (
-          <div className="mt-8 flex flex-col md:flex-row justify-between items-center gap-4">
+          <div className={`mt-8 flex flex-col md:flex-row ${article.documentation_url ? 'justify-between' : 'md:justify-end'} items-center gap-4`}>
             {article.documentation_url && (
               <p className="text-base text-gray-400 text-center">
                 Link to documentation:{' '}
