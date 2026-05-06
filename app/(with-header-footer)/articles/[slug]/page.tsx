@@ -104,7 +104,7 @@ export default async function ArticlePage({ params }: Props) {
         {(article.pdf_url || article.documentation_url) && (
           <div className="mt-8 flex flex-col md:flex-row justify-between items-center gap-4">
             {article.documentation_url && (
-              <p className="text-base text-gray-400">
+              <p className="text-base text-gray-400 text-center">
                 Link to documentation:{' '}
                 <a
                   href={article.documentation_url}
