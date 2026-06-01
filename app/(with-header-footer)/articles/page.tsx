@@ -18,7 +18,7 @@ async function getArticles(): Promise<Article[]> {
       slug,
       sort_order
     FROM articles 
-    ORDER BY sort_order ASC
+    ORDER BY sort_order DESC
   `;
   
   return await db.query<Article>(query);
