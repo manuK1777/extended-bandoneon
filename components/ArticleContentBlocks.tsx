@@ -94,7 +94,6 @@ export default function ArticleContentBlocks({ blocks }: ArticleContentBlocksPro
         soundRendered.add(i);
         i++;
       }
-      const isLastSoundGroup = sectionItems.slice(i).every((b) => b.type !== 'sound');
       return (
         <div key={idx}>
           <div className="flex flex-wrap justify-center gap-8">
@@ -107,19 +106,6 @@ export default function ArticleContentBlocks({ blocks }: ArticleContentBlocksPro
               </div>
             ))}
           </div>
-          {isLastSoundGroup && (
-            <p className="text-sm text-gray-400 mt-8 text-center">
-              Larger sound bank available at:{' '}
-              <a
-                href="https://www.extendedbandoneon.com/soundbank"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-fuchsia-200 hover:text-fuchsia-300 transition-colors duration-200"
-              >
-                extendedbandoneon.com/soundbank
-              </a>
-            </p>
-          )}
         </div>
       );
     }
