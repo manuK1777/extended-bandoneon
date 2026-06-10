@@ -37,6 +37,12 @@ async function getArticle(slug: string): Promise<Article | null> {
   return rows?.[0] || null;
 }
 
+async function hasSpanishTranslation(articleId: number): Promise<boolean> {
+  const query = `SELECT 1 FROM article_translations WHERE article_id = ? AND locale = 'es' LIMIT 1`;
+  const rows = await db.query(query, [articleId]);
+  return rows && rows.length > 0;
+}
+
 interface Props {
   params: Promise<{
     slug: string;
@@ -46,6 +52,7 @@ interface Props {
 export default async function ArticlePage({ params }: Props) {
   const { slug } = await params;
   const article = await getArticle(slug);
+  const hasEsVersion = article ? await hasSpanishTranslation(article.id) : false;
 
   if (!article) {
     return (
@@ -72,12 +79,14 @@ export default async function ArticlePage({ params }: Props) {
           <span className="inline-block align-middle">←</span>
           <span className="ml-2">Back to Articles list</span>
         </Link>
-        <Link
-          href={`/es/articles/${article.slug}`}
-          className="inline-flex text-sm items-center text-fuchsia-200 hover:text-fuchsia-300 transition-colors duration-200"
-        >
-          Versión en español →
-        </Link>
+        {hasEsVersion && (
+          <Link
+            href={`/es/articles/${article.slug}`}
+            className="inline-flex text-sm items-center text-fuchsia-200 hover:text-fuchsia-300 transition-colors duration-200"
+          >
+            Versión en español →
+          </Link>
+        )}
       </div>
       <article className="mt-4">
         <h1 className="text-2xl font-bold mb-2 text-yellow-200">{article.title}</h1>
