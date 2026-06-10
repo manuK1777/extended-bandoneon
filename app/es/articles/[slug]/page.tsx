@@ -21,7 +21,7 @@ async function getArticleEs(slug: string): Promise<ArticleWithTranslation | null
     SELECT
       a.id,
       a.slug,
-      a.author,
+      COALESCE(t.author, a.author) AS author,
       COALESCE(t.pdf_url, a.pdf_url) AS pdf_url,
       a.publisher,
       a.publication_info,
