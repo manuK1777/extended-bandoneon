@@ -1,4 +1,5 @@
 import SocialMediaBar from '../SocialMediaBar';
+import Image from 'next/image';
 
 export default function Footer() {
   return (
@@ -15,8 +16,23 @@ export default function Footer() {
           </a>
           </div>
         </div>
-        <div className="flex-shrink-0 z-20 order-first md:order-none mb-2 md:mb-0 md:-ml-[7rem]">
+        {/* <div className="flex-shrink-0 z-20 order-first md:order-none mb-2 md:mb-0 md:-ml-[7rem]">
           <SocialMediaBar className="flex" />
+        </div> */}
+        <div className="flex justify-center my-2 md:my-0">
+          <a
+            href="https://www.uniarts.fi/en/units/sibelius-academy/"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <Image
+              src="/PNG-kuva-fuchsia.png"
+              alt="Logos of Centre for Music and Technology (CMAT), Uniarts Helsinki, Sibelius Academy"
+              width={180}
+              height={180}
+              className="opacity-80 hover:opacity-100 transition-opacity duration-200"
+            />
+          </a>
         </div>
         <div className='text-[0.7rem] md:text-[0.8rem] mt-2 md:mt-0 font-display tracking-wide'>
           Site by{' '}
