@@ -12,6 +12,8 @@ interface Article {
   slug: string;
   publisher: string | null;
   publication_info: string | null;
+  publication_url: string | null;
+  publication_link_label: string | null;
   content_blocks: { type: 'video' | 'sound' | 'heading' | 'table' | 'text' | 'link' | 'subheading'; url?: string; label?: string; text?: string; headers?: string[]; rows?: string[][] }[] | string | null;
   documentation_url: string | null;
 }
@@ -27,6 +29,8 @@ async function getArticle(slug: string): Promise<Article | null> {
       slug,
       publisher,
       publication_info,
+      publication_url,
+      publication_link_label,
       content_blocks,
       documentation_url
     FROM articles 
@@ -95,10 +99,23 @@ export default async function ArticlePage({ params }: Props) {
             By {article.author}
           </p>
         )}
-        {(article.publication_info || article.publisher) && (
+        {(article.publication_info || article.publisher || article.publication_url) && (
           <div className="text-sm text-gray-400 mt-2 space-y-1">
-            {article.publication_info && (
-              <p>{article.publication_info}</p>
+            {(article.publication_info || article.publication_url) && (
+              <p>
+                {article.publication_info}
+                {article.publication_info && article.publication_url && ' '}
+                {article.publication_url && (
+                  <a
+                    href={article.publication_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-fuchsia-200 hover:text-fuchsia-300 transition-colors duration-200"
+                  >
+                    {article.publication_link_label || article.publication_url}
+                  </a>
+                )}
+              </p>
             )}
             {article.publisher && (
               <p>Published by {article.publisher}</p>

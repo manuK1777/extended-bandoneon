@@ -10,6 +10,8 @@ interface ArticleWithTranslation {
   pdf_url: string | null;
   publisher: string | null;
   publication_info: string | null;
+  publication_url: string | null;
+  publication_link_label: string | null;
   documentation_url: string | null;
   title: string;
   abstract: string | null;
@@ -25,6 +27,8 @@ async function getArticleEs(slug: string): Promise<ArticleWithTranslation | null
       COALESCE(t.pdf_url, a.pdf_url) AS pdf_url,
       COALESCE(t.publisher, a.publisher) AS publisher,
       COALESCE(t.publication_info, a.publication_info) AS publication_info,
+      COALESCE(t.publication_url, a.publication_url) AS publication_url,
+      COALESCE(t.publication_link_label, a.publication_link_label) AS publication_link_label,
       a.documentation_url,
       COALESCE(t.title, a.title) AS title,
       COALESCE(t.abstract, a.abstract) AS abstract,
@@ -88,10 +92,23 @@ export default async function ArticlePageEs({ params }: Props) {
             Por {article.author}
           </p>
         )}
-        {(article.publication_info || article.publisher) && (
+        {(article.publication_info || article.publisher || article.publication_url) && (
           <div className="text-sm text-gray-400 mt-2 space-y-1">
-            {article.publication_info && (
-              <p>{article.publication_info}</p>
+            {(article.publication_info || article.publication_url) && (
+              <p>
+                {article.publication_info}
+                {article.publication_info && article.publication_url && ' '}
+                {article.publication_url && (
+                  <a
+                    href={article.publication_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-fuchsia-200 hover:text-fuchsia-300 transition-colors duration-200"
+                  >
+                    {article.publication_link_label || article.publication_url}
+                  </a>
+                )}
+              </p>
             )}
             {article.publisher && (
               <p>Publicado por {article.publisher}</p>
