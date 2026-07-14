@@ -1,36 +1,69 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Extended Bandoneon
 
-## Getting Started
+A full-stack multimedia platform documenting extended techniques of the bandoneon — built as part of a PhD research project at the Sibelius Academy, Helsinki. Combines a curated sound bank, video demonstrations, academic articles, and a podcast into a scalable digital archive.
 
-First, run the development server:
+**Live site:** [extendedbandoneon.com](https://www.extendedbandoneon.com/)
+
+## Features
+
+- **Sound bank** — searchable, tag-filtered audio library with cursor-based pagination and infinite scroll, lazy-loaded custom audio player ([WaveSurfer.js](https://wavesurfer.xyz/)) with waveform visualization and client-side blob streaming for downloads.
+- **Articles & techniques** — structured content for extended bandoneon techniques and research articles, with embedded video and image support.
+- **Podcast** — sortable episode listing with embedded audio players.
+- **Authentication** — email/password registration with email verification, JWT-based sessions, and password reset flow.
+- **Admin dashboard** — protected content management for sound and article uploads, with WAV→MP3 conversion on ingestion.
+- **Multilingual** — English, Spanish and Finnish locales.
+- **SEO** — SSR/SSG via Next.js, JSON-LD structured data (`AudioObject`, `Article`), auto-generated sitemap.
+- **Tested** — Jest unit and integration tests covering API routes, the database layer, and utilities.
+
+## Tech stack
+
+**Frontend:** `Next.js 15` (App Router) · `React 19` · `TypeScript` · `Tailwind CSS` · `DaisyUI` · `Framer Motion` · `TanStack Query`
+
+**Backend:** `Next.js API routes` · `MySQL` (`mysql2`) · `JWT` (`jsonwebtoken`, `bcryptjs`) · `Cloudinary` (audio/image storage) · `fluent-ffmpeg` (audio conversion) · `Resend` + `react-email` (transactional email)
+
+**Testing & tooling:** `Jest` · `ESLint` · `next-sitemap`
+
+## Getting started
+
+```bash
+git clone https://github.com/manuK1777/extended-bandoneon.git
+cd extended-bandoneon
+npm install
+```
+
+Create a `.env.local` with the required environment variables (MySQL connection, Cloudinary credentials, JWT secret, Resend API key), then:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Testing
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+npm test          # full Jest suite
+npm run test:db    # database layer tests only
+```
 
-## Learn More
+## Project structure
 
-To learn more about Next.js, take a look at the following resources:
+```
+app/
+├── (with-header-footer)/   # public pages: soundbank, articles, techniques, podcast, about
+├── admin/                   # protected content-management dashboard
+├── api/                      # route handlers: auth, sounds, articles, filters, admin uploads
+└── es/                        # Spanish locale routes
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+components/                    # UI components (auth, dashboard, navigation, audio player...)
+lib/
+├── db/                         # MySQL connection + data models
+└── wavesurfer/                  # audio player integration
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+utils/                           # cloudinary, auth, audio, tag helpers
+__tests__/                        # Jest unit + integration tests
+```
 
-## Deploy on Vercel
+---
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+*Independent project — Sibelius Academy of Helsinki, PhD research on extended bandoneon techniques.*
