@@ -57,7 +57,7 @@ export async function GET(
       queryParams.push(parseInt(cursor));
     }
     
-    query += ' GROUP BY s.id ORDER BY s.id DESC LIMIT ?';
+    query += ' GROUP BY s.id, sp.name, sp.description ORDER BY s.id DESC LIMIT ?';
     queryParams.push(limit);
 
     const rows = await db.query<Sound>(query, queryParams);
