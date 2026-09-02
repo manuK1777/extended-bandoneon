@@ -41,7 +41,11 @@ export async function getConnectionPool() {
       waitForConnections: true,
       idleTimeout: 60000, // Close idle connections after 60 seconds
       enableKeepAlive: true,
-      keepAliveInitialDelay: 30000
+      keepAliveInitialDelay: 30000,
+      ssl: {
+        minVersion: 'TLSv1.2',
+        rejectUnauthorized: true,
+      },
     });
     
     // Test the pool with a ping
